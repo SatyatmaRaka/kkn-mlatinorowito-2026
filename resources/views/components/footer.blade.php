@@ -93,9 +93,8 @@
 
         {{-- Bottom copyright bar --}}
         <div style="height:1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);"></div>
-        <div class="py-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+        <div class="py-4 text-center">
             <p class="mb-0 small opacity-40">&copy; 2026 {{ $namaKelompok }}.</p>
-            <p class="mb-0 small opacity-40">Dibangun dengan ❤️ untuk Mlatinorowito</p>
         </div>
     </div>
 </footer>
