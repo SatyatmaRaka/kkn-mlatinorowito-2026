@@ -62,4 +62,16 @@ class PengaturanTest extends TestCase
 
         $this->assertSame('admin_baru', $user->fresh()->username);
     }
+
+    public function test_pengaturan_rejects_malicious_instagram_url(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->from(route('admin.pengaturan.index'))
+            ->put(route('admin.pengaturan.update'), [
+                'instagram' => 'https://evil.example/phishing',
+            ])
+            ->assertSessionHasErrors('instagram');
+    }
 }

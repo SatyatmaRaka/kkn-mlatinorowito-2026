@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pengaturan;
 use App\Services\PengaturanService;
+use App\Support\SocialLinks;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -28,7 +28,16 @@ class PengaturanController extends Controller
             'nama_kelompok' => 'nullable|string|max:255',
             'tagline' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
-            'instagram' => 'nullable|string|max:255',
+            'instagram' => [
+                'nullable',
+                'string',
+                'max:255',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! SocialLinks::isValidInstagramInput(is_string($value) ? $value : null)) {
+                        $fail('Instagram harus berupa username atau URL instagram.com yang valid.');
+                    }
+                },
+            ],
             'periode_kkn' => 'nullable|string|max:255',
         ]);
 
@@ -53,7 +62,7 @@ class PengaturanController extends Controller
         $user->username = $request->username;
 
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = $request->password;
         }
 
         $user->save();

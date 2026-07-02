@@ -54,14 +54,31 @@ Segera ganti password lewat menu **Pengaturan → Keamanan Akun** setelah login 
 
 ## Deploy ke Production
 
-Checklist singkat:
+### cPanel (public_html + kkn_app)
+
+Struktur di server:
+
+```
+/home/user/
+├── kkn_app/          ← seluruh proyek Laravel (di luar web root)
+└── public_html/
+    ├── index.php     ← salin dari deploy/index.php
+    ├── .htaccess     ← salin dari public/.htaccess
+    ├── build/        ← salin dari public/build/
+    └── images/       ← salin dari public/images/
+```
+
+`public/index.php` di repo tetap untuk development lokal. Untuk production, gunakan `deploy/index.php` yang mengarah ke folder `kkn_app/` di server.
+
+### Checklist
 
 1. `APP_ENV=production` dan `APP_DEBUG=false`
-2. `npm run build` — pastikan folder `public/build/` ada
-3. **Jangan** deploy file `public/hot` (penanda Vite dev server)
-4. `php artisan storage:link`
-5. `php artisan migrate --force`
-6. Rotasi `APP_KEY` dan password admin jika pernah bocor
+2. `SESSION_ENCRYPT=true`
+3. `npm run build` — pastikan folder `public/build/` ada
+4. **Jangan** deploy file `public/hot` (penanda Vite dev server)
+5. `php artisan storage:link`
+6. `php artisan migrate --force`
+7. Rotasi `APP_KEY` dan password admin jika pernah bocor
 
 ## Testing
 

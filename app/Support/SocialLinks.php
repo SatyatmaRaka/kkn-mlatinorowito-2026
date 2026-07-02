@@ -7,21 +7,51 @@ class SocialLinks
     public static function instagramUrl(?string $handle, string $defaultHandle = 'kknumk.mlatinorowito.26'): string
     {
         if (empty($handle)) {
-            return 'https://www.instagram.com/' . $defaultHandle;
+            return 'https://www.instagram.com/'.$defaultHandle;
         }
 
         if (str_starts_with($handle, 'http')) {
-            return $handle;
+            return self::isValidInstagramUrl($handle)
+                ? $handle
+                : 'https://www.instagram.com/'.$defaultHandle;
         }
 
-        return 'https://www.instagram.com/' . ltrim($handle, '@');
+        return 'https://www.instagram.com/'.ltrim($handle, '@');
     }
 
     public static function instagramLabel(?string $handle, string $default = '@kknumk.mlatinorowito.26'): string
     {
         $value = $handle ?: $default;
 
-        return str_starts_with($value, '@') ? $value : '@' . ltrim($value, '@');
+        return str_starts_with($value, '@') ? $value : '@'.ltrim($value, '@');
+    }
+
+    public static function isValidInstagramUrl(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if (! isset($parsed['host'], $parsed['scheme'])) {
+            return false;
+        }
+
+        if (! in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
+            return false;
+        }
+
+        return in_array(strtolower($parsed['host']), ['www.instagram.com', 'instagram.com'], true);
+    }
+
+    public static function isValidInstagramInput(?string $value): bool
+    {
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        if (str_starts_with($value, 'http')) {
+            return self::isValidInstagramUrl($value);
+        }
+
+        return (bool) preg_match('/^@?[\w.]+$/', $value);
     }
 
     /**
