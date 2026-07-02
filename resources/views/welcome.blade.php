@@ -149,6 +149,23 @@
                 z-index: 2000;
             }
 
+            .galeri-lightbox-backdrop {
+                z-index: 1;
+            }
+
+            .galeri-lightbox-image {
+                z-index: 2;
+                width: min(90vw, 720px);
+                aspect-ratio: 1 / 1;
+                max-height: 80vh;
+            }
+
+            .galeri-lightbox-close,
+            .galeri-lightbox-nav {
+                z-index: 3;
+                pointer-events: auto;
+            }
+
             .galeri-lightbox-nav {
                 width: 48px;
                 height: 48px;
@@ -162,6 +179,8 @@
                 align-items: center;
                 justify-content: center;
                 transition: background-color 0.2s ease;
+                top: 50%;
+                transform: translateY(-50%);
             }
 
             .galeri-lightbox-nav:hover {
@@ -179,6 +198,7 @@
                 color: #fff;
                 font-size: 1.75rem;
                 line-height: 1;
+                transform: none;
             }
 
             .galeri-lightbox-close:hover {
@@ -553,7 +573,7 @@
                         this.currentIndex = (this.currentIndex - 1 + this.photos.length) % this.photos.length;
                     }
                 }"
-                @keydown.escape.window="closeLightbox()"
+                @keydown.escape.window="lightboxOpen && closeLightbox()"
                 @keydown.arrow-right.window="lightboxOpen && nextPhoto()"
                 @keydown.arrow-left.window="lightboxOpen && prevPhoto()"
             >
@@ -585,46 +605,52 @@
                 </p>
 
                 {{-- Lightbox --}}
-                <div
-                    x-show="lightboxOpen"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    class="galeri-lightbox position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                    style="background: rgba(0, 0, 0, 0.92);"
-                    x-cloak
-                    @click.self="closeLightbox()"
-                >
-                    <button
-                        type="button"
-                        class="galeri-lightbox-close position-absolute"
-                        @click="closeLightbox()"
-                        aria-label="Tutup"
-                    >&times;</button>
-
-                    <button
-                        type="button"
-                        class="galeri-lightbox-nav position-absolute start-0 ms-3"
-                        @click="prevPhoto()"
-                        aria-label="Foto sebelumnya"
-                    >&lsaquo;</button>
-
+                <template x-teleport="body">
                     <div
-                        class="mx-5 rounded overflow-hidden shadow-lg"
-                        style="width: min(90vw, 720px); aspect-ratio: 1 / 1;"
-                        :style="{ background: photos[currentIndex] }"
-                    ></div>
+                        x-show="lightboxOpen"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="galeri-lightbox position-fixed top-0 start-0 w-100 h-100"
+                        style="background: rgba(0, 0, 0, 0.92);"
+                        x-cloak
+                    >
+                        <div
+                            class="galeri-lightbox-backdrop position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                            @click.self="closeLightbox()"
+                        >
+                            <button
+                                type="button"
+                                class="galeri-lightbox-close position-absolute"
+                                @click.stop="closeLightbox()"
+                                aria-label="Tutup"
+                            >&times;</button>
 
-                    <button
-                        type="button"
-                        class="galeri-lightbox-nav position-absolute end-0 me-3"
-                        @click="nextPhoto()"
-                        aria-label="Foto berikutnya"
-                    >&rsaquo;</button>
-                </div>
+                            <button
+                                type="button"
+                                class="galeri-lightbox-nav position-absolute start-0 ms-3"
+                                @click.stop="prevPhoto()"
+                                aria-label="Foto sebelumnya"
+                            >&lsaquo;</button>
+
+                            <div
+                                class="galeri-lightbox-image rounded overflow-hidden shadow-lg"
+                                @click.stop
+                                :style="{ backgroundImage: photos[currentIndex] }"
+                            ></div>
+
+                            <button
+                                type="button"
+                                class="galeri-lightbox-nav position-absolute end-0 me-3"
+                                @click.stop="nextPhoto()"
+                                aria-label="Foto berikutnya"
+                            >&rsaquo;</button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </section>
