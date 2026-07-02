@@ -95,27 +95,33 @@
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            (function () {
                 const kontenInput = document.getElementById('konten');
                 const form = document.getElementById('kegiatan-form');
 
-                const quill = new Quill('#editor-container', {
-                    theme: 'snow',
-                    placeholder: 'Tulis konten kegiatan di sini...',
-                });
+                if (typeof Quill !== 'undefined') {
+                    const quill = new Quill('#editor-container', {
+                        theme: 'snow',
+                        placeholder: 'Tulis konten kegiatan di sini...',
+                    });
 
-                if (kontenInput.value) {
-                    quill.root.innerHTML = kontenInput.value;
+                    if (kontenInput && kontenInput.value) {
+                        quill.root.innerHTML = kontenInput.value;
+                    }
+
+                    quill.on('text-change', function () {
+                        if (kontenInput) kontenInput.value = quill.root.innerHTML;
+                    });
+
+                    if (form) {
+                        form.addEventListener('submit', function () {
+                            if (kontenInput) kontenInput.value = quill.root.innerHTML;
+                        });
+                    }
+                } else {
+                    console.error('Quill is not loaded');
                 }
-
-                quill.on('text-change', function () {
-                    kontenInput.value = quill.root.innerHTML;
-                });
-
-                form.addEventListener('submit', function () {
-                    kontenInput.value = quill.root.innerHTML;
-                });
-            });
+            })();
         </script>
     @endpush
 </x-app-layout>
