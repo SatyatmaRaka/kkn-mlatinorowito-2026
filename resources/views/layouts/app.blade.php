@@ -14,6 +14,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        @stack('styles')
+
         <style>
             body.admin-layout {
                 font-family: 'Figtree', sans-serif;
@@ -97,5 +99,7 @@
                 </main>
             </div>
         </div>
+
+        @stack('scripts')
     </body>
 </html>

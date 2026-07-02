@@ -65,7 +65,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                    <a
+                        href="{{ route('admin.kegiatan.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}"
+                        @click="sidebarOpen = false"
+                    >
                         Kegiatan
                     </a>
                 </li>
