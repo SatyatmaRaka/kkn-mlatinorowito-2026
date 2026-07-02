@@ -36,11 +36,7 @@
 
                     <h1 class="h3 fw-bold mb-1">{{ $anggota->nama }}</h1>
 
-                    @if ($anggota->jabatan === 'Koordinator Desa')
-                        <span class="badge bg-warning text-dark mb-3">{{ $anggota->jabatan }}</span>
-                    @else
-                        <span class="badge bg-secondary mb-3">{{ $anggota->jabatan }}</span>
-                    @endif
+                    <x-jabatan-badge :jabatan="$anggota->jabatan" />
 
                     @if ($anggota->nim)
                         <p class="text-muted mb-2">NIM: {{ $anggota->nim }}</p>

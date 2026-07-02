@@ -88,6 +88,7 @@
                 <a class="public-nav-link" href="/#beranda">Beranda</a>
                 <a class="public-nav-link" href="/#tentang">Tentang</a>
                 <a class="public-nav-link" href="/#anggota">Anggota</a>
+                <a class="public-nav-link" href="/#proker">Program Kerja</a>
                 <a class="public-nav-link" href="/#kegiatan-galeri">Kegiatan & Galeri</a>
                 @auth
                     <a class="public-nav-link" href="{{ route('dashboard') }}" style="color: var(--umk-blue-accent);">Dashboard</a>

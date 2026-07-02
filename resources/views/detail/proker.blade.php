@@ -31,7 +31,7 @@
 
                     <div class="mb-4">
                         <h2 class="h6 fw-semibold text-uppercase text-muted mb-2">Deskripsi</h2>
-                        <p class="mb-0">{{ $programKerja->deskripsi }}</p>
+                        <p class="mb-0">{{ $programKerja->deskripsi ?: 'Deskripsi program kerja akan segera diumumkan.' }}</p>
                     </div>
 
                     <div class="mb-5">

@@ -185,7 +185,7 @@
         <div class="container px-3 px-md-5 hero-content">
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10 col-xl-8 text-center text-white">
-                    <h1 class="hero-title fw-bold mb-3">KKN UMK 2026</h1>
+                    <h1 class="hero-title fw-bold mb-3">{{ $pengaturan['nama_kelompok'] ?? 'KKN UMK 2026' }}</h1>
                     <p class="fs-5 fs-lg-4 mb-2">Kelurahan Mlatinorowito, Kec. Kota, Kab. Kudus</p>
                     <p class="lead mb-4 px-md-3">
                         {{ $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan' }}
@@ -357,21 +357,25 @@
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="premium-card h-100">
                             <div class="card-body text-center p-4">
-                                <div
-                                    class="avatar-circle rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                                    style="background-color: {{ $avatarColors[$loop->index % count($avatarColors)] }};"
-                                >
-                                    {{ strtoupper(substr($item->nama, 0, 2)) }}
-                                </div>
+                                @if ($item->foto)
+                                    <img
+                                        src="{{ asset('storage/' . $item->foto) }}"
+                                        alt="{{ $item->nama }}"
+                                        class="rounded-circle object-fit-cover mx-auto mb-3 avatar-circle"
+                                    >
+                                @else
+                                    <div
+                                        class="avatar-circle rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style="background-color: {{ $avatarColors[$loop->index % count($avatarColors)] }};"
+                                    >
+                                        {{ strtoupper(substr($item->nama, 0, 2)) }}
+                                    </div>
+                                @endif
 
                                 <h5 class="fw-bold mb-1">{{ $item->nama }}</h5>
                                 <p class="text-muted small mb-2">{{ $item->jurusan }}</p>
 
-                                @if ($item->jabatan === 'Koordinator Desa')
-                                    <span class="badge bg-warning text-dark mb-3">{{ $item->jabatan }}</span>
-                                @else
-                                    <span class="badge bg-secondary mb-3">{{ $item->jabatan }}</span>
-                                @endif
+                                <x-jabatan-badge :jabatan="$item->jabatan" />
 
                                 <a
                                     href="{{ route('detail.anggota', $item->id) }}"
@@ -644,9 +648,8 @@
     {{-- Section 8: Kontak & Lokasi --}}
     <section id="kontak" class="py-5 bg-light">
         @php
-            $kontakInstagram = $pengaturan['instagram'] ?? '@kknumk.mlatinorowito.26';
-            $kontakInstagramUrl = 'https://www.instagram.com/kknumk.mlatinorowito.26?igsh=MXM2ZGpiNzh5NTcxbg==';
-            $kontakInstagramLabel = str_starts_with($kontakInstagram, '@') ? $kontakInstagram : '@' . ltrim($kontakInstagram, '@');
+            $kontakInstagramUrl = \App\Support\SocialLinks::instagramUrl($pengaturan['instagram'] ?? null);
+            $kontakInstagramLabel = \App\Support\SocialLinks::instagramLabel($pengaturan['instagram'] ?? null);
         @endphp
         <div class="container px-3 px-md-5">
             <div class="text-center mb-5">

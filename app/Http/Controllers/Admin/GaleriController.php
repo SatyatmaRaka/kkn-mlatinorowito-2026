@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Throwable;
 
 class GaleriController extends Controller
 {
@@ -33,15 +34,27 @@ class GaleriController extends Controller
             'keterangan.*' => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function () use ($request) {
-            foreach ($request->file('foto') as $index => $file) {
-                $path = $file->store('galeri', 'public');
-                Galeri::create([
-                    'foto' => $path,
-                    'keterangan' => $request->keterangan[$index] ?? null,
-                ]);
+        $storedPaths = [];
+
+        try {
+            DB::transaction(function () use ($request, &$storedPaths) {
+                foreach ($request->file('foto') as $index => $file) {
+                    $path = $file->store('galeri', 'public');
+                    $storedPaths[] = $path;
+
+                    Galeri::create([
+                        'foto' => $path,
+                        'keterangan' => $request->keterangan[$index] ?? null,
+                    ]);
+                }
+            });
+        } catch (Throwable $e) {
+            foreach ($storedPaths as $path) {
+                Storage::disk('public')->delete($path);
             }
-        });
+
+            throw $e;
+        }
 
         return redirect()->route('admin.galeri.index')->with('success', 'Foto berhasil diupload.');
     }

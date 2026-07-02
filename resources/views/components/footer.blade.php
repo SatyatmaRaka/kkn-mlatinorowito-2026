@@ -1,10 +1,11 @@
 @php
+    use App\Support\SocialLinks;
+
     $namaKelompok = $pengaturan['nama_kelompok'] ?? 'KKN UMK Mlatinorowito 2026';
     $tagline = $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan';
-    $instagram = $pengaturan['instagram'] ?? '@kknumk.mlatinorowito.26';
-    $instagramUrl = 'https://www.instagram.com/kknumk.mlatinorowito.26?igsh=MXM2ZGpiNzh5NTcxbg==';
-    $instagramLabel = str_starts_with($instagram, '@') ? $instagram : '@' . ltrim($instagram, '@');
     $periode = $pengaturan['periode_kkn'] ?? 'Juli - Agustus 2026';
+    $instagramUrl = SocialLinks::instagramUrl($pengaturan['instagram'] ?? null);
+    $instagramLabel = SocialLinks::instagramLabel($pengaturan['instagram'] ?? null);
 @endphp
 
 <footer class="text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #001a3a 100%);">
@@ -36,7 +37,14 @@
                     {{ $tagline }}
                 </p>
 
-
+                <a
+                    href="{{ $instagramUrl }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-white text-decoration-none small d-inline-flex align-items-center gap-2 opacity-75"
+                >
+                    <i class="bi bi-instagram"></i> {{ $instagramLabel }}
+                </a>
             </div>
 
             {{-- Divider on desktop --}}

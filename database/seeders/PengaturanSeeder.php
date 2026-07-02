@@ -18,7 +18,7 @@ class PengaturanSeeder extends Seeder
             'nama_kelompok' => 'KKN Mlatinorowito 2026',
             'tagline' => 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan',
             'email' => 'kkn.mlatinorowito2026@gmail.com',
-            'instagram' => '@kkn_mlatinorowito2026',
+            'instagram' => '@kknumk.mlatinorowito.26',
             'periode_kkn' => 'Juli - Agustus 2026',
         ];
 
