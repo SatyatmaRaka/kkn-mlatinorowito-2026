@@ -155,9 +155,10 @@
 
             .galeri-lightbox-image {
                 z-index: 2;
-                width: min(90vw, 720px);
-                aspect-ratio: 1 / 1;
+                max-width: min(90vw, 720px);
                 max-height: 80vh;
+                width: auto;
+                height: auto;
             }
 
             .galeri-lightbox-close,
@@ -221,7 +222,7 @@
                     <h1 class="hero-title fw-bold mb-3">KKN UMK 2026</h1>
                     <p class="fs-5 fs-lg-4 mb-2">Kelurahan Mlatinorowito, Kec. Kota, Kab. Kudus</p>
                     <p class="lead mb-4 px-md-3">
-                        Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan
+                        {{ $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan' }}
                     </p>
 
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-stretch align-items-sm-center">
@@ -262,7 +263,7 @@
                         class="stat-card text-center"
                         x-data="{
                             count: 0,
-                            target: 12,
+                            target: {{ count($anggota) }},
                             started: false,
                             init() {
                                 const observer = new IntersectionObserver((entries) => {
@@ -298,7 +299,7 @@
                         class="stat-card text-center"
                         x-data="{
                             count: 0,
-                            target: 5,
+                            target: {{ count($programKerja) }},
                             started: false,
                             init() {
                                 const observer = new IntersectionObserver((entries) => {
@@ -368,7 +369,7 @@
             </div>
 
             <p class="text-center text-muted mb-0 small">
-                Universitas Muria Kudus &middot; Periode Juli - Agustus 2026 &middot; DPL: [Nama DPL akan diupdate]
+                Universitas Muria Kudus &middot; Periode {{ $pengaturan['periode_kkn'] ?? 'Juli - Agustus 2026' }} &middot; DPL: {{ $pengaturan['nama_dpl'] ?? '[Nama DPL akan diupdate]' }}
             </p>
         </div>
     </section>
@@ -386,7 +387,7 @@
             @endphp
 
             <div class="row g-4">
-                @foreach ($anggota as $item)
+                @forelse ($anggota as $item)
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm anggota-card">
                             <div class="card-body text-center p-4">
@@ -415,7 +416,13 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-12">
+                        <p class="text-center text-muted mb-0">
+                            Data anggota akan segera ditampilkan.
+                        </p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -429,7 +436,7 @@
             </div>
 
             <div class="row g-4">
-                @foreach ($programKerja as $item)
+                @forelse ($programKerja as $item)
                     <div class="col-12 col-sm-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm proker-card position-relative">
                             <div class="card-body p-4 d-flex flex-column">
@@ -459,7 +466,13 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-12">
+                        <p class="text-center text-muted mb-0">
+                            Program kerja akan segera diumumkan.
+                        </p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -539,24 +552,19 @@
             </div>
 
             @php
-                $galeriGradients = [
-                    'linear-gradient(135deg, #003366 0%, #1a5c99 100%)',
-                    'linear-gradient(135deg, #1a5c99 0%, #2d7ab8 100%)',
-                    'linear-gradient(135deg, #2d7ab8 0%, #5ba3d9 100%)',
-                    'linear-gradient(135deg, #003366 0%, #27ae60 100%)',
-                    'linear-gradient(135deg, #8e44ad 0%, #c0392b 100%)',
-                    'linear-gradient(135deg, #e67e22 0%, #f1c40f 100%)',
-                    'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)',
-                    'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)',
-                    'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)',
-                ];
+                $galeriPhotoUrls = $galeri->map(fn ($item) => asset('storage/' . $item->foto))->values();
             @endphp
 
+            @if ($galeri->isEmpty())
+                <p class="text-center text-muted mb-0">
+                    Dokumentasi kegiatan akan segera hadir.
+                </p>
+            @else
             <div
                 x-data="{
                     lightboxOpen: false,
                     currentIndex: 0,
-                    photos: @js($galeriGradients),
+                    photos: @js($galeriPhotoUrls),
                     openLightbox(index) {
                         this.currentIndex = index;
                         this.lightboxOpen = true;
@@ -578,31 +586,30 @@
                 @keydown.arrow-left.window="lightboxOpen && prevPhoto()"
             >
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-4">
-                    @for ($i = 1; $i <= 9; $i++)
-                        @php $index = $i - 1; @endphp
+                    @foreach ($galeri as $foto)
                         <div class="col">
                             <div
                                 class="galeri-item shadow-sm"
-                                @click="openLightbox({{ $index }})"
+                                @click="openLightbox({{ $loop->index }})"
                                 role="button"
                                 tabindex="0"
-                                @keydown.enter="openLightbox({{ $index }})"
+                                @keydown.enter="openLightbox({{ $loop->index }})"
                             >
-                                <div
-                                    class="galeri-item-inner"
-                                    style="background: {{ $galeriGradients[$index] }};"
-                                ></div>
+                                <img
+                                    src="{{ asset('storage/' . $foto->foto) }}"
+                                    alt="{{ $foto->keterangan ?? 'Foto galeri' }}"
+                                    class="galeri-item-inner w-100 h-100 object-fit-cover"
+                                >
                                 <div class="galeri-item-overlay">
                                     <span class="fs-2 text-white" aria-hidden="true">👁️</span>
                                 </div>
                             </div>
+                            @if ($foto->keterangan)
+                                <p class="small text-muted text-center mt-2 mb-0">{{ $foto->keterangan }}</p>
+                            @endif
                         </div>
-                    @endfor
+                    @endforeach
                 </div>
-
-                <p class="text-center text-muted mb-0">
-                    Dokumentasi kegiatan akan segera hadir.
-                </p>
 
                 {{-- Lightbox --}}
                 <template x-teleport="body">
@@ -636,11 +643,12 @@
                                 aria-label="Foto sebelumnya"
                             >&lsaquo;</button>
 
-                            <div
-                                class="galeri-lightbox-image rounded overflow-hidden shadow-lg"
+                            <img
+                                :src="photos[currentIndex]"
+                                alt="Foto galeri"
+                                class="galeri-lightbox-image rounded shadow-lg object-fit-contain bg-dark"
                                 @click.stop
-                                :style="{ backgroundImage: photos[currentIndex] }"
-                            ></div>
+                            >
 
                             <button
                                 type="button"
@@ -652,11 +660,21 @@
                     </div>
                 </template>
             </div>
+            @endif
         </div>
     </section>
 
     {{-- Section 8: Kontak & Lokasi --}}
     <section id="kontak" class="py-5 bg-light">
+        @php
+            $kontakEmail = $pengaturan['email'] ?? 'kkn.mlatinorowito2026@gmail.com';
+            $kontakInstagram = $pengaturan['instagram'] ?? '@kkn_mlatinorowito2026';
+            $kontakInstagramHandle = ltrim($kontakInstagram, '@');
+            $kontakInstagramUrl = str_starts_with($kontakInstagram, 'http')
+                ? $kontakInstagram
+                : 'https://instagram.com/' . $kontakInstagramHandle;
+            $kontakInstagramLabel = str_starts_with($kontakInstagram, '@') ? $kontakInstagram : '@' . $kontakInstagramHandle;
+        @endphp
         <div class="container px-3 px-md-5">
             <div class="text-center mb-5">
                 <h2 class="section-title h2 mb-0">Kontak & Lokasi</h2>
@@ -678,8 +696,8 @@
                                 <span class="fs-4" aria-hidden="true">📧</span>
                                 <div>
                                     <div class="fw-semibold mb-1">Email</div>
-                                    <a href="mailto:kkn.mlatinorowito2026@gmail.com" class="text-decoration-none">
-                                        kkn.mlatinorowito2026@gmail.com
+                                    <a href="mailto:{{ $kontakEmail }}" class="text-decoration-none">
+                                        {{ $kontakEmail }}
                                     </a>
                                 </div>
                             </li>
@@ -688,12 +706,12 @@
                                 <div>
                                     <div class="fw-semibold mb-1">Instagram</div>
                                     <a
-                                        href="https://instagram.com/kkn_mlatinorowito2026"
+                                        href="{{ $kontakInstagramUrl }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         class="text-decoration-none"
                                     >
-                                        @kkn_mlatinorowito2026
+                                        {{ $kontakInstagramLabel }}
                                     </a>
                                 </div>
                             </li>

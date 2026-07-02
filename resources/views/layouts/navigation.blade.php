@@ -83,7 +83,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                    <a
+                        href="{{ route('admin.pengaturan.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}"
+                        @click="sidebarOpen = false"
+                    >
                         Pengaturan
                     </a>
                 </li>

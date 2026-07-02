@@ -44,7 +44,7 @@
     <div class="container px-3 px-md-4">
         <div class="d-flex align-items-center justify-content-between w-100">
             <a class="public-navbar-brand fs-5 fs-md-4" href="#beranda" @click="mobileOpen = false">
-                KKN Mlatinorowito 2026
+                {{ $pengaturan['nama_kelompok'] ?? 'KKN Mlatinorowito 2026' }}
             </a>
 
             <button

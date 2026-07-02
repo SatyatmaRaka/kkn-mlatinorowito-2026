@@ -7,6 +7,7 @@ use App\Models\Anggota;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AnggotaController extends Controller
@@ -28,10 +29,10 @@ class AnggotaController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
-            'jabatan' => 'required|string|max:255',
-            'foto' => 'nullable|image|max:2048',
+            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Anggota'])],
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deskripsi' => 'nullable|string',
-            'urutan' => 'required|integer',
+            'urutan' => 'required|integer|min:1',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -53,10 +54,10 @@ class AnggotaController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
-            'jabatan' => 'required|string|max:255',
-            'foto' => 'nullable|image|max:2048',
+            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Anggota'])],
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deskripsi' => 'nullable|string',
-            'urutan' => 'required|integer',
+            'urutan' => 'required|integer|min:1',
         ]);
 
         if ($request->hasFile('foto')) {

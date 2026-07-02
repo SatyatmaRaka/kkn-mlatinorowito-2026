@@ -31,7 +31,7 @@ class ProkerController extends Controller
             'icon' => 'nullable|string|max:10',
             'pic' => 'nullable|string|max:255',
             'status' => 'required|in:Coming Soon,Aktif',
-            'urutan' => 'required|integer',
+            'urutan' => 'required|integer|min:1',
         ]);
 
         ProgramKerja::create($validated);
@@ -53,7 +53,7 @@ class ProkerController extends Controller
             'icon' => 'nullable|string|max:10',
             'pic' => 'nullable|string|max:255',
             'status' => 'required|in:Coming Soon,Aktif',
-            'urutan' => 'required|integer',
+            'urutan' => 'required|integer|min:1',
         ]);
 
         $proker->update($validated);

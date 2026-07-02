@@ -12,12 +12,21 @@
 
             <div class="card border-0 shadow-sm mx-auto" style="max-width: 700px;">
                 <div class="card-body p-4 p-md-5 text-center">
-                    <div
-                        class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 text-white fw-bold"
-                        style="width: 150px; height: 150px; font-size: 2.5rem; background-color: {{ $avatarColor }};"
-                    >
-                        {{ strtoupper(substr($anggota->nama, 0, 2)) }}
-                    </div>
+                    @if ($anggota->foto)
+                        <img
+                            src="{{ asset('storage/' . $anggota->foto) }}"
+                            alt="{{ $anggota->nama }}"
+                            class="rounded-circle object-fit-cover mx-auto mb-4"
+                            style="width: 150px; height: 150px;"
+                        >
+                    @else
+                        <div
+                            class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 text-white fw-bold"
+                            style="width: 150px; height: 150px; font-size: 2.5rem; background-color: {{ $avatarColor }};"
+                        >
+                            {{ strtoupper(substr($anggota->nama, 0, 2)) }}
+                        </div>
+                    @endif
 
                     <h1 class="h2 fw-bold mb-3">{{ $anggota->nama }}</h1>
 

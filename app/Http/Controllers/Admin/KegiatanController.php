@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,12 +30,16 @@ class KegiatanController extends Controller
             'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'deskripsi_singkat' => 'nullable|string',
-            'konten' => 'nullable|string',
-            'foto' => 'nullable|image|max:2048',
+            'konten' => 'nullable|string|max:20000',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('kegiatan', 'public');
+        }
+
+        if (array_key_exists('konten', $validated)) {
+            $validated['konten'] = HtmlSanitizer::sanitize($validated['konten']);
         }
 
         Kegiatan::create($validated);
@@ -53,8 +58,8 @@ class KegiatanController extends Controller
             'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'deskripsi_singkat' => 'nullable|string',
-            'konten' => 'nullable|string',
-            'foto' => 'nullable|image|max:2048',
+            'konten' => 'nullable|string|max:20000',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -62,6 +67,10 @@ class KegiatanController extends Controller
                 Storage::disk('public')->delete($kegiatan->foto);
             }
             $validated['foto'] = $request->file('foto')->store('kegiatan', 'public');
+        }
+
+        if (array_key_exists('konten', $validated)) {
+            $validated['konten'] = HtmlSanitizer::sanitize($validated['konten']);
         }
 
         $kegiatan->update($validated);

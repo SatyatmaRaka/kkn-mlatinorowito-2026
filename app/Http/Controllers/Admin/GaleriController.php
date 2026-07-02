@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Galeri;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -27,18 +28,20 @@ class GaleriController extends Controller
     {
         $request->validate([
             'foto' => 'required|array|min:1',
-            'foto.*' => 'image|max:2048',
+            'foto.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'keterangan' => 'nullable|array',
             'keterangan.*' => 'nullable|string|max:255',
         ]);
 
-        foreach ($request->file('foto') as $index => $file) {
-            $path = $file->store('galeri', 'public');
-            Galeri::create([
-                'foto' => $path,
-                'keterangan' => $request->keterangan[$index] ?? null,
-            ]);
-        }
+        DB::transaction(function () use ($request) {
+            foreach ($request->file('foto') as $index => $file) {
+                $path = $file->store('galeri', 'public');
+                Galeri::create([
+                    'foto' => $path,
+                    'keterangan' => $request->keterangan[$index] ?? null,
+                ]);
+            }
+        });
 
         return redirect()->route('admin.galeri.index')->with('success', 'Foto berhasil diupload.');
     }
