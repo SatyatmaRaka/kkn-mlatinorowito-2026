@@ -18,8 +18,7 @@
                 <div class="col-md-6">
                     <div class="h-100 p-4 bg-white rounded shadow-sm">
                         <ul class="list-unstyled mb-0">
-                            <li class="d-flex gap-3 mb-4">
-                                <span class="fs-4" aria-hidden="true">­ƒôì</span>
+                            <li class="mb-4">
                                 <div>
                                     <div class="fw-semibold mb-1">KKN UMK 2026 - Kelurahan Mlatinorowito</div>
                                     <div class="text-muted">{{ $kontakAlamat }}</div>
@@ -27,8 +26,7 @@
                             </li>
 
                             @if ($kontakEmail)
-                                <li class="d-flex gap-3 mb-4">
-                                    <span class="fs-4" aria-hidden="true">Ô£ë´©Å</span>
+                                <li class="mb-4">
                                     <div>
                                         <div class="fw-semibold mb-1">Email</div>
                                         <a href="mailto:{{ $kontakEmail }}" class="text-decoration-none">{{ $kontakEmail }}</a>
@@ -37,8 +35,7 @@
                             @endif
 
                             @if ($kontakWhatsapp)
-                                <li class="d-flex gap-3 mb-4">
-                                    <span class="fs-4" aria-hidden="true">­ƒÆ¼</span>
+                                <li class="mb-4">
                                     <div>
                                         <div class="fw-semibold mb-1">WhatsApp</div>
                                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', $kontakWhatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">{{ $kontakWhatsapp }}</a>
@@ -46,8 +43,7 @@
                                 </li>
                             @endif
 
-                            <li class="d-flex gap-3 mb-0">
-                                <span class="fs-4" aria-hidden="true">­ƒôÀ</span>
+                            <li class="mb-0">
                                 <div>
                                     <div class="fw-semibold mb-1">Instagram</div>
                                     <a

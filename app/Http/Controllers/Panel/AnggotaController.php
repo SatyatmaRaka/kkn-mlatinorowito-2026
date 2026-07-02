@@ -102,6 +102,8 @@ class AnggotaController extends Controller
 
     public function storeAkun(Request $request, Anggota $anggota): RedirectResponse
     {
+        abort_unless($request->user()?->isAdmin(), 403, 'Hanya admin yang dapat membuat akun login anggota.');
+
         if ($anggota->user) {
             return back()->withErrors(['username' => 'Anggota ini sudah memiliki akun login.']);
         }

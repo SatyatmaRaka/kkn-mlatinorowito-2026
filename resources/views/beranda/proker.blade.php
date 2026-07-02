@@ -19,9 +19,11 @@
                                     @endif
                                 </div>
 
-                                <div class="proker-icon mb-3 text-center pt-2">
-                                    {{ $item->icon ?? '­ƒôï' }}
-                                </div>
+                                @if ($item->icon)
+                                    <div class="proker-icon mb-3 text-center pt-2">
+                                        {{ $item->icon }}
+                                    </div>
+                                @endif
 
                                 <h5 class="fw-bold mb-2">{{ $item->judul }}</h5>
                                 <p class="text-muted small flex-grow-1 mb-3">

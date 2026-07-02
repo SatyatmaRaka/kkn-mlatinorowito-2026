@@ -71,8 +71,11 @@
                                     @if ($item->user)
                                         <span class="badge bg-success-subtle text-success border border-success-subtle">{{ $item->user->username }}</span>
                                         <div class="small text-muted">{{ $item->user->role->label() }}</div>
-                                    @else
+                                    @elseif (Auth::user()->isAdmin())
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#akun-{{ $item->id }}">Buat Akun</button>
+                                    @else
+                                        <span class="badge bg-light text-muted border">Belum ada akun</span>
+                                        <div class="small text-muted">Dibuat oleh admin</div>
                                     @endif
                                 </td>
                                 <td class="py-3 text-center">
@@ -111,7 +114,7 @@
                                 </td>
                             </tr>
 
-                            @if (! $item->user)
+                            @if (! $item->user && Auth::user()->isAdmin())
                                 <div class="modal fade" id="akun-{{ $item->id }}" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">

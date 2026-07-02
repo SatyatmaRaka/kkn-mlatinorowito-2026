@@ -21,9 +21,7 @@
                             @if ($item->foto)
                                 <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->judul }}" class="w-100 object-fit-cover" style="height: 200px;">
                             @else
-                                <div class="d-flex align-items-center justify-content-center text-white" style="height: 200px; background: linear-gradient(135deg, #1a5c99 0%, #2d7ab8 100%);">
-                                    <span class="fs-1 opacity-50">📷</span>
-                                </div>
+                                <div style="height: 200px; background: linear-gradient(135deg, #1a5c99 0%, #2d7ab8 100%);"></div>
                             @endif
                             <div class="card-body p-4 d-flex flex-column">
                                 <span class="badge bg-primary align-self-start mb-2">

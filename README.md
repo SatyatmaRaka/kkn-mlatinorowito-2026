@@ -25,10 +25,8 @@ cp .env.example .env
 php artisan key:generate
 
 # Isi ADMIN_DEFAULT_PASSWORD di .env (wajib untuk seeding)
-# Opsional MEMBER_DEFAULT_PASSWORD untuk akun demo koordinator/anggota
 # Contoh:
 # ADMIN_DEFAULT_PASSWORD=PasswordKuatMinimal12
-# MEMBER_DEFAULT_PASSWORD=PasswordAnggota12
 
 npm install
 npm run dev          # terminal 1
@@ -60,14 +58,15 @@ Setelah `db:seed`, login dengan:
 
 **Wajib** ganti password lewat menu **Panel → Pengaturan → Keamanan Akun** segera setelah login pertama (jangan pakai password seed di production).
 
-### Akun Demo Anggota (jika `MEMBER_DEFAULT_PASSWORD` diisi)
+### Akun Anggota & Koordinator
 
-| Username | Role | Keterangan |
-|----------|------|------------|
-| `koor_mlati26` | Koordinator | Terhubung ke Koordinator Desa |
-| `anggota_demo` | Anggota | Contoh akun anggota |
+Tidak ada pendaftaran mandiri. **Hanya admin** yang membuat akun login anggota:
 
-Buat akun anggota lain lewat **Panel → Anggota → Buat Akun**.
+1. **Panel → Anggota → Tambah Anggota** (data profil)
+2. Klik **Buat Akun** di baris anggota → isi username, role (Anggota/Koordinator), password
+3. Bagikan username & password ke anggota yang bersangkutan
+
+Sekretaris dapat mengelola data anggota di CMS, tetapi **tidak** dapat membuat akun login.
 
 ## Absensi QR (Cara Pakai)
 

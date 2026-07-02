@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function () {
     // Panel CMS website (admin & sekretaris)
     Route::middleware('can.manage.cms')->prefix('panel')->name('panel.')->group(function () {
         Route::resource('anggota', AnggotaController::class)->except(['show'])->parameters(['anggota' => 'anggota']);
-        Route::post('anggota/{anggota}/akun', [AnggotaController::class, 'storeAkun'])->name('anggota.akun');
         Route::resource('program-kerja', ProgramKerjaController::class)->except(['show'])->parameters(['program-kerja' => 'proker']);
         Route::resource('kegiatan', KegiatanController::class)->except(['show'])->parameters(['kegiatan' => 'kegiatan']);
         Route::get('galeri', [GaleriController::class, 'index'])->name('galeri.index');
@@ -61,6 +60,11 @@ Route::middleware('auth')->group(function () {
         Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
         Route::put('pengaturan/akun', [PengaturanController::class, 'updateAkun'])->name('pengaturan.akun');
         Route::put('pengaturan/absensi', [PengaturanController::class, 'updateAbsensi'])->name('pengaturan.absensi');
+    });
+
+    // Pembuatan akun login anggota — khusus admin
+    Route::middleware('role:admin')->prefix('panel')->name('panel.')->group(function () {
+        Route::post('anggota/{anggota}/akun', [AnggotaController::class, 'storeAkun'])->name('anggota.akun');
     });
 
     // Panel keuangan (admin, koordinator, bendahara)

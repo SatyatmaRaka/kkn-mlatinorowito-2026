@@ -44,12 +44,14 @@
                     @forelse ($kegiatan as $item)
                         <div class="col-12 col-md-4">
                             <div class="premium-card h-100 overflow-hidden">
+                            @if ($item->foto)
+                                <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->judul }}" class="w-100 object-fit-cover kegiatan-photo-placeholder">
+                            @else
                                 <div
-                                    class="kegiatan-photo-placeholder d-flex align-items-center justify-content-center text-white"
+                                    class="kegiatan-photo-placeholder"
                                     style="background: {{ $kegiatanGradients[$loop->index % count($kegiatanGradients)] }};"
-                                >
-                                    <span class="fs-1 opacity-50">­ƒôÀ</span>
-                                </div>
+                                ></div>
+                            @endif
 
                                 <div class="card-body p-4 d-flex flex-column">
                                     <span class="badge bg-primary align-self-start mb-2">
@@ -137,9 +139,7 @@
                                         alt="{{ $foto->keterangan ?? 'Foto galeri' }}"
                                         class="galeri-item-inner w-100 h-100 object-fit-cover"
                                     >
-                                    <div class="galeri-item-overlay">
-                                        <span class="fs-2 text-white" aria-hidden="true">­ƒæü´©Å</span>
-                                    </div>
+                                    <div class="galeri-item-overlay"></div>
                                 </div>
                                 @if ($foto->keterangan)
                                     <p class="small text-muted text-center mt-2 mb-0 fw-medium">{{ $foto->keterangan }}</p>
