@@ -2,27 +2,26 @@
 
 namespace App\Providers;
 
-use App\Services\PengaturanService;
+use App\Layanan\LayananPengaturan;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        View::composer(['welcome', 'components.navbar', 'components.footer'], function ($view) {
-            $view->with('pengaturan', PengaturanService::get());
+        // Kebijakan password minimal 12 karakter (huruf + angka)
+        Password::defaults(fn () => Password::min(12)->letters()->numbers());
+
+        // Bagikan pengaturan situs ke halaman publik
+        View::composer(['beranda', 'components.navbar', 'components.footer'], function ($view) {
+            $view->with('pengaturan', LayananPengaturan::get());
         });
     }
 }

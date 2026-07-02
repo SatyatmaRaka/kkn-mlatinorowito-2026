@@ -4,22 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use App\Models\Anggota;
-use App\Services\AbsensiTokenService;
-use App\Services\PengaturanService;
-use App\Support\CsvExporter;
+use App\Layanan\LayananPengaturan;
+use App\Layanan\LayananTokenAbsensi;
+use App\Penunjang\EksporCsv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * Absensi QR di posko KKN: scan, check-in, rekap, cetak QR, mode tablet.
+ */
 class AbsensiController extends Controller
 {
+    /** Form check-in setelah scan QR (validasi token harian). */
     public function checkInForm(Request $request): View|RedirectResponse
     {
         $token = $request->query('token');
 
-        if (! AbsensiTokenService::isValid($token)) {
+        if (! LayananTokenAbsensi::isValid($token)) {
             return view('absensi.invalid-token');
         }
 
@@ -37,17 +41,18 @@ class AbsensiController extends Controller
 
         $today = now()->toDateString();
         $sudahAbsen = Absensi::where('user_id', $user->id)->whereDate('tanggal', $today)->exists();
-        $windowOpen = PengaturanService::absensiWindowOpen();
-        $windowLabel = PengaturanService::absensiWindowLabel();
+        $windowOpen = LayananPengaturan::absensiWindowOpen();
+        $windowLabel = LayananPengaturan::absensiWindowLabel();
 
         return view('absensi.check-in', compact('user', 'sudahAbsen', 'windowOpen', 'windowLabel', 'token'));
     }
 
+    /** Simpan absensi setelah konfirmasi pengguna. */
     public function store(Request $request): RedirectResponse
     {
         $request->validate(['token' => 'required|string']);
 
-        if (! AbsensiTokenService::isValid($request->input('token'))) {
+        if (! LayananTokenAbsensi::isValid($request->input('token'))) {
             return back()->withErrors(['absensi' => 'Token QR tidak valid atau sudah kedaluwarsa. Scan QR hari ini di posko.']);
         }
 
@@ -57,9 +62,9 @@ class AbsensiController extends Controller
             abort(403);
         }
 
-        if (! PengaturanService::absensiWindowOpen()) {
+        if (! LayananPengaturan::absensiWindowOpen()) {
             return back()->withErrors([
-                'absensi' => 'Absensi hanya bisa dilakukan pada jam yang ditentukan ('.PengaturanService::absensiWindowLabel().').',
+                'absensi' => 'Absensi hanya bisa dilakukan pada jam yang ditentukan ('.LayananPengaturan::absensiWindowLabel().').',
             ]);
         }
 
@@ -84,6 +89,7 @@ class AbsensiController extends Controller
             ->with('success', 'Absensi berhasil dicatat. Selamat berkegiatan!');
     }
 
+    /** Riwayat absensi pribadi atau semua (koordinator). */
     public function riwayat(Request $request): View
     {
         $user = Auth::user();
@@ -100,6 +106,7 @@ class AbsensiController extends Controller
         return view('absensi.riwayat', compact('absensi', 'tanggal'));
     }
 
+    /** Rekap kehadiran harian untuk koordinator/admin. */
     public function rekap(): View
     {
         $tanggal = request()->query('tanggal', now()->toDateString());
@@ -150,28 +157,30 @@ class AbsensiController extends Controller
             $a->ip_address ?? '',
         ]);
 
-        return CsvExporter::download(
+        return EksporCsv::download(
             'rekap-absensi-'.now()->format('Y-m-d').'.csv',
             ['Tanggal', 'Nama', 'Jabatan', 'Jam Check-in', 'Metode', 'IP'],
             $rows
         );
     }
 
+    /** Halaman cetak QR absensi hari ini. */
     public function qrPrint(): View
     {
-        $tokenModel = AbsensiTokenService::getOrCreateForToday();
-        $checkInUrl = AbsensiTokenService::checkInUrl($tokenModel);
-        $windowLabel = PengaturanService::absensiWindowLabel();
+        $tokenModel = LayananTokenAbsensi::getOrCreateForToday();
+        $checkInUrl = LayananTokenAbsensi::checkInUrl($tokenModel);
+        $windowLabel = LayananPengaturan::absensiWindowLabel();
         $tanggalLabel = now()->locale('id')->translatedFormat('d F Y');
 
-        return view('admin.absensi.qr', compact('checkInUrl', 'windowLabel', 'tanggalLabel', 'tokenModel'));
+        return view('panel.absensi.qr', compact('checkInUrl', 'windowLabel', 'tanggalLabel', 'tokenModel'));
     }
 
+    /** Mode tablet — tampilan QR fullscreen di posko. */
     public function display(): View
     {
-        $tokenModel = AbsensiTokenService::getOrCreateForToday();
-        $checkInUrl = AbsensiTokenService::checkInUrl($tokenModel);
-        $windowLabel = PengaturanService::absensiWindowLabel();
+        $tokenModel = LayananTokenAbsensi::getOrCreateForToday();
+        $checkInUrl = LayananTokenAbsensi::checkInUrl($tokenModel);
+        $windowLabel = LayananPengaturan::absensiWindowLabel();
 
         return view('absensi.display', compact('checkInUrl', 'windowLabel', 'tokenModel'));
     }

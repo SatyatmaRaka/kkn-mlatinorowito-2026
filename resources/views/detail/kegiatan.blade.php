@@ -1,6 +1,7 @@
 <x-layouts.public>
     <x-slot:title>{{ $kegiatan->judul }} - KKN Mlatinorowito 2026</x-slot:title>
     <x-slot:description>{{ $kegiatan->deskripsi_singkat }}</x-slot:description>
+    <x-slot:image>{{ $ogImage ?? asset('images/logo.png') }}</x-slot:image>
     <section class="py-5 bg-light" style="padding-top: 100px !important;">
         <div class="container px-3 px-md-5">
             <a href="{{ url('/#kegiatan-galeri') }}"

@@ -4,8 +4,8 @@
             <h1 class="h4 mb-0 fw-bold text-dark">Riwayat Absensi</h1>
             <div class="d-flex gap-2 flex-wrap">
                 @if (Auth::user()->canReviewLogbook())
-                    <a href="{{ route('admin.absensi.rekap') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">Rekap Hari Ini</a>
-                    <a href="{{ route('admin.absensi.export') }}" class="btn btn-success btn-sm rounded-pill px-3"><i class="bi bi-download me-1"></i>Export CSV</a>
+                    <a href="{{ route('panel.absensi.rekap') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">Rekap Hari Ini</a>
+                    <a href="{{ route('panel.absensi.export') }}" class="btn btn-success btn-sm rounded-pill px-3"><i class="bi bi-download me-1"></i>Export CSV</a>
                 @endif
                 @if (Auth::user()->canCheckInAbsensi())
                     <a href="{{ route('absensi.scan') }}" class="btn btn-primary btn-sm rounded-pill px-3">
@@ -24,7 +24,7 @@
             </div>
             <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill">Terapkan</button>
             @if ($tanggal)
-                <a href="{{ route('admin.absensi.riwayat') }}" class="btn btn-sm btn-link">Reset</a>
+                <a href="{{ route('panel.absensi.riwayat') }}" class="btn btn-sm btn-link">Reset</a>
             @endif
         </form>
     @endif

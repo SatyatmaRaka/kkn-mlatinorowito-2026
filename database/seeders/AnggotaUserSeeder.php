@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserRole;
+use App\Enums\Jabatan;
+use App\Enums\PeranPengguna;
 use App\Models\Anggota;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -19,7 +20,7 @@ class AnggotaUserSeeder extends Seeder
             return;
         }
 
-        $koordinator = Anggota::where('jabatan', 'Koordinator Desa')->first();
+        $koordinator = Anggota::where('jabatan', Jabatan::KoordinatorDesa->value)->first();
 
         if ($koordinator && ! $koordinator->user) {
             User::updateOrCreate(
@@ -27,13 +28,13 @@ class AnggotaUserSeeder extends Seeder
                 [
                     'name' => $koordinator->nama,
                     'password' => Hash::make($password),
-                    'role' => UserRole::Koordinator,
+                    'role' => PeranPengguna::Koordinator,
                     'anggota_id' => $koordinator->id,
                 ]
             );
         }
 
-        $sampleAnggota = Anggota::where('jabatan', 'Humas')->first();
+        $sampleAnggota = Anggota::where('jabatan', Jabatan::Humas->value)->first();
 
         if ($sampleAnggota && ! $sampleAnggota->user) {
             User::updateOrCreate(
@@ -41,7 +42,7 @@ class AnggotaUserSeeder extends Seeder
                 [
                     'name' => $sampleAnggota->nama,
                     'password' => Hash::make($password),
-                    'role' => UserRole::Anggota,
+                    'role' => PeranPengguna::Anggota,
                     'anggota_id' => $sampleAnggota->id,
                 ]
             );

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Pengaturan;
-use App\Services\PengaturanService;
+use App\Layanan\LayananPengaturan;
 use Illuminate\Database\Seeder;
 
 class PengaturanSeeder extends Seeder
@@ -31,6 +31,6 @@ class PengaturanSeeder extends Seeder
             Pengaturan::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
-        PengaturanService::forget();
+        LayananPengaturan::forget();
     }
 }

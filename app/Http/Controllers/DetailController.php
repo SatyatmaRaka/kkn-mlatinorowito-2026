@@ -7,6 +7,9 @@ use App\Models\Kegiatan;
 use App\Models\ProgramKerja;
 use Illuminate\View\View;
 
+/**
+ * Halaman detail publik: profil anggota, program kerja, dan kegiatan.
+ */
 class DetailController extends Controller
 {
     public function anggota(Anggota $anggota): View
@@ -21,6 +24,10 @@ class DetailController extends Controller
 
     public function kegiatan(Kegiatan $kegiatan): View
     {
-        return view('detail.kegiatan', compact('kegiatan'));
+        $ogImage = $kegiatan->foto
+            ? asset('storage/'.$kegiatan->foto)
+            : asset('images/logo.png');
+
+        return view('detail.kegiatan', compact('kegiatan', 'ogImage'));
     }
 }

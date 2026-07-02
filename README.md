@@ -7,11 +7,13 @@ Website profil kelompok KKN Universitas Muria Kudus di Kelurahan Mlatinorowito, 
 ## Fitur
 
 - Halaman publik: beranda, tentang, anggota, program kerja, kegiatan & galeri, kontak
-- Panel admin: CRUD anggota, program kerja, kegiatan, galeri, pengaturan website & akun
-- Login admin berbasis username (single admin)
-- **Logbook KKN** per anggota (draft → submit → review koordinator)
+- **Panel** operasional: CRUD anggota, program kerja, kegiatan, galeri, pengaturan website & akun
+- Login berbasis username (admin, koordinator, anggota)
+- **Catatan Harian (Logbook) KKN** per anggota (draft → submit → review koordinator)
 - **Absensi QR** di posko (scan → login → konfirmasi kehadiran)
+- **Keuangan** pemasukan/pengeluaran dengan export CSV
 - **Role sistem**: admin, koordinator, anggota (terhubung ke data anggota)
+- **Jabatan organisasi**: Sekretaris (CMS), Bendahara (keuangan), dll.
 - Halaman arsip kegiatan publik (`/kegiatan`)
 
 ## Instalasi Lokal
@@ -56,7 +58,7 @@ Setelah `db:seed`, login dengan:
 - **Username:** `kkn_mlati26`
 - **Password:** nilai `ADMIN_DEFAULT_PASSWORD` di `.env`
 
-Segera ganti password lewat menu **Pengaturan → Keamanan Akun** setelah login pertama.
+**Wajib** ganti password lewat menu **Panel → Pengaturan → Keamanan Akun** segera setelah login pertama (jangan pakai password seed di production).
 
 ### Akun Demo Anggota (jika `MEMBER_DEFAULT_PASSWORD` diisi)
 
@@ -65,31 +67,29 @@ Segera ganti password lewat menu **Pengaturan → Keamanan Akun** setelah login 
 | `koor_mlati26` | Koordinator | Terhubung ke Koordinator Desa |
 | `anggota_demo` | Anggota | Contoh akun anggota |
 
-Buat akun anggota lain lewat **Admin → Anggota → Buat Akun**.
+Buat akun anggota lain lewat **Panel → Anggota → Buat Akun**.
 
 ## Absensi QR (Cara Pakai)
 
-1. Admin/koordinator: **Cetak QR Absensi** atau buka **Mode Tablet** di posko
+1. Admin/koordinator: **Panel → Cetak QR Absensi** atau buka **Mode Tablet** di posko
 2. QR **berubah otomatis setiap hari** — foto QR kemarin tidak bisa dipakai
 3. Anggota scan QR → login akun pribadi → **Konfirmasi Kehadiran**
-4. Absensi hanya valid dalam jam yang diatur di **Pengaturan → Jam Absensi**
-5. Koordinator pantau **Rekap Absensi** dan export CSV
+4. Absensi hanya valid dalam jam yang diatur di **Panel → Pengaturan → Jam Absensi**
+5. Koordinator pantau **Panel → Rekap Absensi** dan export CSV
 
 ```bash
 # Generate token hari ini manual (opsional, otomatis saat buka halaman QR)
 php artisan absensi:rotate-token
 ```
 
-## Logbook KKN
+## Catatan Harian (Logbook)
 
-- Anggota: **Logbook → Tulis Logbook** (draft atau kirim review)
-- Koordinator: review & setujui/tolak logbook yang masuk
+- Anggota: **Panel → Catatan Harian → Tulis** (draft atau kirim review)
+- Koordinator: review & setujui/tolak catatan yang masuk
 
-## Deploy ke Production
+## Deploy ke Production (Shared Hosting / cPanel)
 
-### cPanel (public_html + kkn_app)
-
-Struktur di server:
+### Struktur di server
 
 ```
 /home/user/
@@ -103,15 +103,27 @@ Struktur di server:
 
 `public/index.php` di repo tetap untuk development lokal. Untuk production, gunakan `deploy/index.php` yang mengarah ke folder `kkn_app/` di server.
 
-### Checklist
+### Checklist wajib
 
 1. `APP_ENV=production` dan `APP_DEBUG=false`
-2. `SESSION_ENCRYPT=true`
+2. **`SESSION_ENCRYPT=true`** — wajib di shared hosting
 3. `npm run build` — pastikan folder `public/build/` ada
 4. **Jangan** deploy file `public/hot` (penanda Vite dev server)
 5. `php artisan storage:link`
 6. `php artisan migrate --force`
-7. Rotasi `APP_KEY` dan password admin jika pernah bocor
+7. Ganti password admin default segera setelah deploy
+8. Rotasi `APP_KEY` jika pernah bocor
+9. Atur **cron job** di cPanel — lihat `deploy/cron.txt`
+
+### Cron Job (cPanel) — wajib
+
+Token QR absensi harian membutuhkan scheduler Laravel. Tambahkan cron **setiap menit**:
+
+```
+* * * * * /usr/local/bin/php /home/USERNAME/kkn_app/artisan schedule:run >> /dev/null 2>&1
+```
+
+Ganti `USERNAME` dengan username cPanel Anda. Detail ada di `deploy/cron.txt`.
 
 ## Testing
 
@@ -123,11 +135,19 @@ php artisan test
 
 | Path | Keterangan |
 |------|------------|
-| `app/Http/Controllers/Admin/` | CRUD panel admin |
-| `app/Services/PengaturanService.php` | Cache pengaturan situs |
-| `app/Support/HtmlSanitizer.php` | Sanitasi konten kegiatan (HTMLPurifier) |
-| `resources/views/welcome.blade.php` | Halaman publik utama |
-| `database/seeders/` | Data awal admin, anggota, proker, kegiatan, pengaturan |
+| `app/Http/Controllers/Panel/` | CRUD panel operasional |
+| `app/Http/Controllers/Autentikasi/` | Masuk & keluar akun |
+| `app/Layanan/` | Logika bisnis (pengaturan, token absensi) |
+| `app/Penunjang/` | Utilitas (sanitasi HTML, ekspor CSV, validasi peta) |
+| `app/Enums/PeranPengguna.php` | Enum peran: admin, koordinator, anggota |
+| `app/Enums/Jabatan.php` | Enum jabatan organisasi KKN |
+| `.github/workflows/tests.yml` | CI otomatis — jalankan test saat push/PR |
+| `resources/views/beranda/` | Partial halaman publik (hero, tentang, anggota, dll.) |
+| `resources/views/panel/` | Tampilan panel |
+| `resources/views/masuk/` | Halaman login |
+| `database/seeders/` | Data awal admin & pengaturan |
+
+**URL panel:** `/panel/...` (bukan `/admin/...`)
 
 ## Lisensi
 

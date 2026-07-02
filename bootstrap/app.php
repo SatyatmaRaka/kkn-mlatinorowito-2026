@@ -12,14 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureRole::class,
-            'can.manage.cms' => \App\Http\Middleware\EnsureCanManageCms::class,
-            'can.manage.keuangan' => \App\Http\Middleware\EnsureCanManageKeuangan::class,
+            'role' => \App\Http\Middleware\PastikanPeran::class,
+            'can.manage.cms' => \App\Http\Middleware\IzinKelolaCms::class,
+            'can.manage.keuangan' => \App\Http\Middleware\IzinKelolaKeuangan::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        // Rotasi token QR absensi setiap hari (wajib diaktifkan via cron di shared hosting)
         $schedule->command('absensi:rotate-token')->dailyAt('00:05');
     })->create();

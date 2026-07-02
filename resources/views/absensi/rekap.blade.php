@@ -7,7 +7,7 @@
                     <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control form-control-sm">
                     <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">Filter</button>
                 </form>
-                <a href="{{ route('admin.absensi.export', ['tanggal_mulai' => $tanggal, 'tanggal_selesai' => $tanggal]) }}" class="btn btn-sm btn-success rounded-pill">
+                <a href="{{ route('panel.absensi.export', ['tanggal_mulai' => $tanggal, 'tanggal_selesai' => $tanggal]) }}" class="btn btn-sm btn-success rounded-pill">
                     <i class="bi bi-download me-1"></i> Export CSV
                 </a>
             </div>

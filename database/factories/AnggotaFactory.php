@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Jabatan;
 use App\Models\Anggota;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,8 +19,18 @@ class AnggotaFactory extends Factory
             'nama' => fake()->name(),
             'nim' => fake()->numerify('##########'),
             'jurusan' => 'Sistem Informasi',
-            'jabatan' => 'Humas',
+            'jabatan' => Jabatan::Humas->value,
             'urutan' => 1,
         ];
+    }
+
+    public function sekretaris(): static
+    {
+        return $this->state(fn () => ['jabatan' => Jabatan::Sekretaris->value]);
+    }
+
+    public function bendahara(): static
+    {
+        return $this->state(fn () => ['jabatan' => Jabatan::Bendahara->value]);
     }
 }

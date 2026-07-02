@@ -24,18 +24,18 @@
             <ul class="nav flex-column gap-2">
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('dashboard') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-grid-1x2-fill fs-5"></i><span>Dashboard</span>
+                        <i class="bi bi-grid-1x2-fill fs-5"></i><span>Dasbor</span>
                     </a>
                 </li>
 
                 <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">KKN Operasional</span></li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.logbook.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.logbook.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                    <a href="{{ route('panel.catatan-harian.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.catatan-harian.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                         <i class="bi bi-journal-text fs-5"></i><span>Logbook</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.absensi.riwayat') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.absensi.riwayat') ? 'active' : '' }}" @click="sidebarOpen = false">
+                    <a href="{{ route('panel.absensi.riwayat') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.riwayat') ? 'active' : '' }}" @click="sidebarOpen = false">
                         <i class="bi bi-clock-history fs-5"></i><span>Absensi</span>
                     </a>
                 </li>
@@ -48,12 +48,12 @@
                 @endif
                 @if (Auth::user()->canReviewLogbook())
                     <li class="nav-item">
-                        <a href="{{ route('admin.absensi.rekap') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.absensi.rekap') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.absensi.rekap') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.rekap') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-clipboard-check fs-5"></i><span>Rekap Absensi</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.absensi.qr') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.absensi.qr') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.absensi.qr') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.qr') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-printer fs-5"></i><span>Cetak QR</span>
                         </a>
                     </li>
@@ -62,7 +62,7 @@
                 @if (Auth::user()->canManageKeuangan())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Keuangan</span></li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.keuangan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.keuangan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.keuangan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.keuangan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-wallet2 fs-5"></i><span>Manajemen Keuangan</span>
                         </a>
                     </li>
@@ -71,28 +71,28 @@
                 @if (Auth::user()->canManageCms())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Manajemen Website</span></li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.anggota.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.anggota.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.anggota.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-people-fill fs-5"></i><span>Anggota</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.proker.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.proker.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.program-kerja.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.program-kerja.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-kanban-fill fs-5"></i><span>Program Kerja</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.kegiatan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.kegiatan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.kegiatan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-calendar-event-fill fs-5"></i><span>Kegiatan Publik</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.galeri.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.galeri.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.galeri.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.galeri.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-images fs-5"></i><span>Galeri</span>
                         </a>
                     </li>
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Sistem</span></li>
                     <li class="nav-item">
-                        <a href="{{ route('admin.pengaturan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.pengaturan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.pengaturan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-gear-fill fs-5"></i><span>Pengaturan</span>
                         </a>
                     </li>
@@ -112,7 +112,7 @@
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-light w-100">Logout</button>
+                <button type="submit" class="btn btn-sm btn-outline-light w-100">Keluar</button>
             </form>
         </div>
     </aside>

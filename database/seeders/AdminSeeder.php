@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserRole;
+use App\Enums\PeranPengguna;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +28,7 @@ class AdminSeeder extends Seeder
             [
                 'name' => 'Admin KKN Mlatinorowito',
                 'password' => Hash::make($password),
-                'role' => UserRole::Admin,
+                'role' => PeranPengguna::Admin,
             ]
         );
     }

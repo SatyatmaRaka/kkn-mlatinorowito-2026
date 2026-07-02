@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Catatan harian KKN per anggota.
+ * Status: draft → submitted → approved/rejected
+ */
 class Logbook extends Model
 {
     use HasFactory;
@@ -59,10 +63,19 @@ class Logbook extends Model
 
     public function isEditableBy(User $user): bool
     {
+        if ($this->status === self::STATUS_APPROVED) {
+            return false;
+        }
+
         if ($user->isAdmin() || $user->isKoordinator()) {
             return true;
         }
 
         return $this->user_id === $user->id && in_array($this->status, [self::STATUS_DRAFT, self::STATUS_REJECTED], true);
+    }
+
+    public function isReviewable(): bool
+    {
+        return $this->status === self::STATUS_SUBMITTED;
     }
 }

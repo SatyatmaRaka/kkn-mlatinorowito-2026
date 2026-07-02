@@ -1,11 +1,11 @@
 @php
-    use App\Support\SocialLinks;
+    use App\Penunjang\TautanSosial;
 
     $namaKelompok = $pengaturan['nama_kelompok'] ?? 'KKN UMK Mlatinorowito 2026';
     $tagline = $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan';
     $periode = $pengaturan['periode_kkn'] ?? 'Juli - Agustus 2026';
-    $instagramUrl = SocialLinks::instagramUrl($pengaturan['instagram'] ?? null);
-    $instagramLabel = SocialLinks::instagramLabel($pengaturan['instagram'] ?? null);
+    $instagramUrl = TautanSosial::instagramUrl($pengaturan['instagram'] ?? null);
+    $instagramLabel = TautanSosial::instagramLabel($pengaturan['instagram'] ?? null);
 @endphp
 
 <footer class="text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #001a3a 100%);">
