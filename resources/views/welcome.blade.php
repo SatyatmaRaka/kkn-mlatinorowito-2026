@@ -644,13 +644,9 @@
     {{-- Section 8: Kontak & Lokasi --}}
     <section id="kontak" class="py-5 bg-light">
         @php
-            $kontakEmail = $pengaturan['email'] ?? 'kkn.mlatinorowito2026@gmail.com';
-            $kontakInstagram = $pengaturan['instagram'] ?? '@kkn_mlatinorowito2026';
-            $kontakInstagramHandle = ltrim($kontakInstagram, '@');
-            $kontakInstagramUrl = str_starts_with($kontakInstagram, 'http')
-                ? $kontakInstagram
-                : 'https://instagram.com/' . $kontakInstagramHandle;
-            $kontakInstagramLabel = str_starts_with($kontakInstagram, '@') ? $kontakInstagram : '@' . $kontakInstagramHandle;
+            $kontakInstagram = $pengaturan['instagram'] ?? '@kknumk.mlatinorowito.26';
+            $kontakInstagramUrl = 'https://www.instagram.com/kknumk.mlatinorowito.26?igsh=MXM2ZGpiNzh5NTcxbg==';
+            $kontakInstagramLabel = str_starts_with($kontakInstagram, '@') ? $kontakInstagram : '@' . ltrim($kontakInstagram, '@');
         @endphp
         <div class="container px-3 px-md-5">
             <div class="text-center mb-5">
@@ -669,16 +665,8 @@
                                     <div class="text-muted">Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus</div>
                                 </div>
                             </li>
-                            <li class="d-flex gap-3 mb-4">
-                                <span class="fs-4" aria-hidden="true">📧</span>
-                                <div>
-                                    <div class="fw-semibold mb-1">Email</div>
-                                    <a href="mailto:{{ $kontakEmail }}" class="text-decoration-none">
-                                        {{ $kontakEmail }}
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="d-flex gap-3">
+
+                            <li class="d-flex gap-3 mb-0">
                                 <span class="fs-4" aria-hidden="true">📷</span>
                                 <div>
                                     <div class="fw-semibold mb-1">Instagram</div>
