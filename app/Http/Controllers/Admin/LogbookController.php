@@ -168,7 +168,7 @@ class LogbookController extends Controller
             $query->whereDate('tanggal', '<=', $request->tanggal_selesai);
         }
 
-        $rows = $query->get()->map(fn (Logbook $l) => [
+        $rows = $query->lazy()->map(fn (Logbook $l) => [
             $l->tanggal->format('Y-m-d'),
             $l->anggota->nama,
             $l->judul,

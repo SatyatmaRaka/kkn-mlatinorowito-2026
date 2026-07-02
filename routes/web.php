@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::get('absensi/display', [AbsensiController::class, 'display'])->name('absensi.display');
     });
 
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('can.manage.cms')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('anggota', AnggotaController::class)->except(['show'])->parameters(['anggota' => 'anggota']);
         Route::post('anggota/{anggota}/akun', [AnggotaController::class, 'storeAkun'])->name('anggota.akun');
 
@@ -59,6 +59,10 @@ Route::middleware('auth')->group(function () {
         Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
         Route::put('pengaturan/akun', [PengaturanController::class, 'updateAkun'])->name('pengaturan.akun');
         Route::put('pengaturan/absensi', [PengaturanController::class, 'updateAbsensi'])->name('pengaturan.absensi');
+    });
+
+    Route::middleware('can.manage.keuangan')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('keuangan', \App\Http\Controllers\Admin\KeuanganController::class)->except(['show']);
     });
 });
 

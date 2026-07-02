@@ -31,6 +31,7 @@
                 top: 0;
                 left: 0;
                 height: 100vh;
+                overflow-y: auto;
                 z-index: 1040;
                 transition: transform 0.25s ease;
             }

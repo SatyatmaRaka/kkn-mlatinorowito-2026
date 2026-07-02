@@ -67,7 +67,7 @@ class User extends Authenticatable
 
     public function canManageCms(): bool
     {
-        return $this->isAdmin();
+        return $this->isAdmin() || ($this->anggota && $this->anggota->jabatan === 'Sekretaris');
     }
 
     public function canReviewLogbook(): bool
@@ -78,5 +78,10 @@ class User extends Authenticatable
     public function canCheckInAbsensi(): bool
     {
         return $this->anggota_id !== null && ($this->isAnggota() || $this->isKoordinator());
+    }
+
+    public function canManageKeuangan(): bool
+    {
+        return $this->isAdmin() || $this->isKoordinator() || ($this->anggota && $this->anggota->jabatan === 'Bendahara');
     }
 }

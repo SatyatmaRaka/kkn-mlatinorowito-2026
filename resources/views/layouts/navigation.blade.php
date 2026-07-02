@@ -59,6 +59,15 @@
                     </li>
                 @endif
 
+                @if (Auth::user()->canManageKeuangan())
+                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Keuangan</span></li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.keuangan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.keuangan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-wallet2 fs-5"></i><span>Manajemen Keuangan</span>
+                        </a>
+                    </li>
+                @endif
+
                 @if (Auth::user()->canManageCms())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Manajemen Website</span></li>
                     <li class="nav-item">

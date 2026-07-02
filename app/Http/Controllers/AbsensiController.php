@@ -141,7 +141,7 @@ class AbsensiController extends Controller
             $query->whereDate('tanggal', '<=', $request->tanggal_selesai);
         }
 
-        $rows = $query->get()->map(fn (Absensi $a) => [
+        $rows = $query->lazy()->map(fn (Absensi $a) => [
             $a->tanggal->format('Y-m-d'),
             $a->anggota->nama,
             $a->anggota->jabatan,

@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            'can.manage.cms' => \App\Http\Middleware\EnsureCanManageCms::class,
+            'can.manage.keuangan' => \App\Http\Middleware\EnsureCanManageKeuangan::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
