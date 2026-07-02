@@ -25,9 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::resource('anggota', AnggotaController::class)->except(['show']);
-        Route::resource('proker', ProkerController::class)->except(['show']);
-        Route::resource('kegiatan', KegiatanController::class)->except(['show']);
+        Route::resource('anggota', AnggotaController::class)->except(['show'])->parameters(['anggota' => 'anggota']);
+        Route::resource('proker', ProkerController::class)->except(['show'])->parameters(['proker' => 'proker']);
+        Route::resource('kegiatan', KegiatanController::class)->except(['show'])->parameters(['kegiatan' => 'kegiatan']);
 
         Route::get('galeri', [GaleriController::class, 'index'])->name('galeri.index');
         Route::get('galeri/create', [GaleriController::class, 'create'])->name('galeri.create');
