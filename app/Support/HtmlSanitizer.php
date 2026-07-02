@@ -22,7 +22,7 @@ class HtmlSanitizer
         $config->set('HTML.Allowed', 'p,br,strong,em,ul,ol,li,h3,h4,a[href|title],img[src|alt|width|height]');
         
         // Keamanan tambahan: cegah loading resource eksternal jika diinginkan atau skema URI yang tidak aman
-        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true, 'data' => true]);
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
 
         $purifier = new HTMLPurifier($config);
 

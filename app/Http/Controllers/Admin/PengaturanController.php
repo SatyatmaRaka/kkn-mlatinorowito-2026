@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class PengaturanController extends Controller
@@ -45,7 +46,7 @@ class PengaturanController extends Controller
         $request->validate([
             'username' => 'required|string|max:255|unique:users,username,'.Auth::id(),
             'current_password' => 'required|string|current_password',
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => ['nullable', Password::defaults(), 'confirmed'],
         ]);
 
         $user = Auth::user();

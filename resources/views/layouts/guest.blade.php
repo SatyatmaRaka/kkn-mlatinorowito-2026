@@ -26,9 +26,10 @@
             }
 
             .guest-logo {
-                width: 7rem;
-                height: 7rem;
-                object-fit: contain;
+                width: 8rem;
+                height: 8rem;
+                object-fit: cover;
+                border-radius: 50%;
             }
         </style>
     </head>

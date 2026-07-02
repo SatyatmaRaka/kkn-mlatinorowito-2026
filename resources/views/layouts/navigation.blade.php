@@ -29,7 +29,7 @@
         :class="{ 'sidebar-mobile-open': sidebarOpen }"
     >
         <div class="px-4 py-4 border-bottom border-white border-opacity-25 d-flex align-items-center gap-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo KKN" class="rounded-circle bg-white p-1" style="width: 45px; height: 45px; object-fit: contain;">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo KKN UMK Mlatinorowito 2026" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
             <a href="{{ route('dashboard') }}" class="text-white text-decoration-none">
                 <div class="fw-bold fs-6 lh-sm">KKN Mlatinorowito</div>
                 <div class="small text-white-50">2026</div>

@@ -23,8 +23,10 @@
             }
 
             .public-navbar-brand img {
-                height: 40px;
-                object-fit: contain;
+                height: 44px;
+                width: 44px;
+                object-fit: cover;
+                border-radius: 50%;
                 transition: transform 0.3s ease;
             }
             .public-navbar-brand:hover img {
