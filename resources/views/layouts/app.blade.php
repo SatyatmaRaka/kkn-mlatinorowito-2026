@@ -13,24 +13,89 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            body.admin-layout {
+                font-family: 'Figtree', sans-serif;
+                background-color: #f8f9fa;
+            }
+
+            .admin-sidebar {
+                width: 250px;
+                background-color: var(--umk-blue);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1040;
+                transition: transform 0.25s ease;
+            }
+
+            .admin-nav-link {
+                display: block;
+                padding: 0.65rem 1rem;
+                color: rgba(255, 255, 255, 0.85);
+                text-decoration: none;
+                border-radius: 0.375rem;
+                transition: background-color 0.15s ease, color 0.15s ease;
+            }
+
+            .admin-nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.12);
+                color: #fff;
+            }
+
+            .admin-nav-link.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                font-weight: 600;
+            }
+
+            .admin-main {
+                min-height: 100vh;
+            }
+
+            .admin-mobile-topbar {
+                z-index: 1030;
+                height: 56px;
+            }
+
+            @media (max-width: 991.98px) {
+                .admin-sidebar {
+                    transform: translateX(-100%);
+                }
+
+                .admin-sidebar.sidebar-mobile-open {
+                    transform: translateX(0);
+                }
+
+                .admin-main {
+                    padding-top: 56px;
+                }
+            }
+
+            @media (min-width: 992px) {
+                .admin-main {
+                    margin-left: 250px;
+                }
+            }
+        </style>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <body class="admin-layout">
+        @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+        <div class="admin-main">
+            <div class="container-fluid p-4">
+                @isset($header)
+                    <header class="mb-4">
+                        <h2 class="mb-0 fw-semibold">{{ $header }}</h2>
+                    </header>
+                @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <main>
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>
