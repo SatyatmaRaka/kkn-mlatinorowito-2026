@@ -3,4 +3,18 @@
 :root {
     --umk-blue: #003366;
     --umk-yellow: #ffd700;
+    --bs-primary: #003366;
+    --bs-primary-rgb: 0, 51, 102;
+}
+
+.btn-primary {
+    background-color: var(--umk-blue);
+    border-color: var(--umk-blue);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #002244;
+    border-color: #002244;
 }

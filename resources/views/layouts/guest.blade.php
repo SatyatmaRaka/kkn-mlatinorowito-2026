@@ -13,17 +13,38 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+        <style>
+            body.guest-layout {
+                background-color: #f8f9fa;
+                font-family: 'Figtree', sans-serif;
+            }
+
+            .guest-card {
+                border-top: 4px solid var(--umk-blue);
+            }
+
+            .guest-logo {
+                width: 5rem;
+                height: 5rem;
+                fill: var(--umk-blue);
+            }
+        </style>
+    </head>
+    <body class="guest-layout">
+        <div class="container d-flex justify-content-center align-items-center min-vh-100 py-4">
+            <div class="w-100" style="max-width: 28rem;">
+                <div class="text-center mb-4">
+                    <a href="/">
+                        <x-application-logo class="guest-logo" />
+                    </a>
+                </div>
+
+                <div class="card shadow rounded-3 guest-card">
+                    <div class="card-body p-4">
+                        {{ $slot }}
+                    </div>
+                </div>
             </div>
         </div>
     </body>
