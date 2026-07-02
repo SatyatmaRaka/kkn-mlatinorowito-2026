@@ -74,7 +74,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                    <a
+                        href="{{ route('admin.galeri.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.galeri.*') ? 'active' : '' }}"
+                        @click="sidebarOpen = false"
+                    >
                         Galeri
                     </a>
                 </li>

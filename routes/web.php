@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnggotaController;
+use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\KegiatanController;
 use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\DetailController;
@@ -27,6 +28,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('anggota', AnggotaController::class);
         Route::resource('proker', ProkerController::class);
         Route::resource('kegiatan', KegiatanController::class);
+
+        Route::get('galeri', [GaleriController::class, 'index'])->name('galeri.index');
+        Route::get('galeri/create', [GaleriController::class, 'create'])->name('galeri.create');
+        Route::post('galeri', [GaleriController::class, 'store'])->name('galeri.store');
+        Route::delete('galeri/{galeri}', [GaleriController::class, 'destroy'])->name('galeri.destroy');
     });
 });
 
