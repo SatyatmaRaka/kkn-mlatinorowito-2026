@@ -2,10 +2,7 @@
     $namaKelompok = $pengaturan['nama_kelompok'] ?? 'KKN UMK Mlatinorowito 2026';
     $tagline = $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan';
     $instagram = $pengaturan['instagram'] ?? '@kknumk.mlatinorowito.26';
-    $instagramHandle = ltrim($instagram, '@');
-    $instagramUrl = str_starts_with($instagram, 'http')
-        ? $instagram
-        : 'https://instagram.com/' . $instagramHandle;
+    $instagramUrl = 'https://www.instagram.com/kknumk.mlatinorowito.26?igsh=MXM2ZGpiNzh5NTcxbg==';
 @endphp
 
 <footer class="text-white py-5" style="background: linear-gradient(to bottom, var(--umk-blue), #020617);">
@@ -32,7 +29,7 @@
                     onmouseout="this.style.background='rgba(255,255,255,0.1)'"
                 >
                     <i class="bi bi-instagram fs-6"></i>
-                    <span class="fw-medium">{{ str_starts_with($instagram, '@') ? $instagram : '@' . $instagramHandle }}</span>
+                    <span class="fw-medium">{{ str_starts_with($instagram, '@') ? $instagram : '@' . ltrim($instagram, '@') }}</span>
                 </a>
             </div>
         </div>
