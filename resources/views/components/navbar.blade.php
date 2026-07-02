@@ -43,8 +43,9 @@
 
     <div class="container px-3 px-md-4">
         <div class="d-flex align-items-center justify-content-between w-100">
-            <a class="public-navbar-brand fs-5 fs-md-4" href="#beranda" @click="mobileOpen = false">
-                {{ $pengaturan['nama_kelompok'] ?? 'KKN Mlatinorowito 2026' }}
+            <a class="public-navbar-brand d-flex align-items-center gap-2" href="#beranda" @click="mobileOpen = false">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo KKN UMK 2026" style="height: 45px; object-fit: contain;">
+                <span class="fs-5 fs-md-4">{{ $pengaturan['nama_kelompok'] ?? 'KKN Mlatinorowito 2026' }}</span>
             </a>
 
             <button
