@@ -36,68 +36,87 @@
             </a>
         </div>
 
-        <nav class="flex-grow-1 px-3 py-3">
-            <ul class="nav flex-column gap-1">
+        <nav class="flex-grow-1 px-3 py-4">
+            <ul class="nav flex-column gap-2">
                 <li class="nav-item">
                     <a
                         href="{{ route('dashboard') }}"
-                        class="admin-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('dashboard') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        {{ __('Dashboard') }}
+                        <i class="bi bi-grid-1x2-fill fs-5"></i>
+                        <span>{{ __('Dashboard') }}</span>
                     </a>
+                </li>
+                <li class="nav-item mt-2 mb-1">
+                    <span class="text-white-50 small fw-bold px-3 text-uppercase tracking-wider">Manajemen</span>
                 </li>
                 <li class="nav-item">
                     <a
                         href="{{ route('admin.anggota.index') }}"
-                        class="admin-nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        Anggota
+                        <i class="bi bi-people-fill fs-5"></i>
+                        <span>Anggota</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a
                         href="{{ route('admin.proker.index') }}"
-                        class="admin-nav-link {{ request()->routeIs('admin.proker.*') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.proker.*') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        Program Kerja
+                        <i class="bi bi-kanban-fill fs-5"></i>
+                        <span>Program Kerja</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a
                         href="{{ route('admin.kegiatan.index') }}"
-                        class="admin-nav-link {{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        Kegiatan
+                        <i class="bi bi-calendar-event-fill fs-5"></i>
+                        <span>Kegiatan</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a
                         href="{{ route('admin.galeri.index') }}"
-                        class="admin-nav-link {{ request()->routeIs('admin.galeri.*') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.galeri.*') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        Galeri
+                        <i class="bi bi-images fs-5"></i>
+                        <span>Galeri</span>
                     </a>
+                </li>
+                <li class="nav-item mt-2 mb-1">
+                    <span class="text-white-50 small fw-bold px-3 text-uppercase tracking-wider">Sistem</span>
                 </li>
                 <li class="nav-item">
                     <a
                         href="{{ route('admin.pengaturan.index') }}"
-                        class="admin-nav-link {{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}"
+                        class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}"
                         @click="sidebarOpen = false"
                     >
-                        Pengaturan
+                        <i class="bi bi-gear-fill fs-5"></i>
+                        <span>Pengaturan</span>
                     </a>
                 </li>
             </ul>
         </nav>
 
-        <div class="px-4 py-3 border-top border-white border-opacity-25 mt-auto">
-            <div class="small text-white-50 mb-1">{{ __('Logged in as') }}</div>
-            <div class="fw-semibold mb-3 text-truncate">{{ Auth::user()->name }}</div>
+        <div class="px-4 py-4 border-top border-white border-opacity-25 mt-auto">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-person-fill fs-4 text-white"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <div class="small text-white-50 lh-1 mb-1">{{ __('Logged in as') }}</div>
+                    <div class="fw-semibold text-truncate lh-1">{{ Auth::user()->name }}</div>
+                </div>
+            </div>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
