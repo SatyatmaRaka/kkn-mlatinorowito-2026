@@ -1,4 +1,6 @@
 <x-layouts.public>
+    <x-slot:title>{{ $anggota->nama }} - Tim KKN Mlatinorowito 2026</x-slot:title>
+    <x-slot:description>{{ $anggota->nama }} merupakan {{ $anggota->jabatan }} di program studi {{ $anggota->jurusan }} UMK, tergabung dalam tim KKN Mlatinorowito 2026.</x-slot:description>
     <section class="py-5 bg-light">
         <div class="container px-3 px-md-5">
             <a href="{{ url('/#anggota') }}" class="btn btn-link text-decoration-none ps-0 mb-4">

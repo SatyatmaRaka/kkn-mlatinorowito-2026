@@ -2,13 +2,13 @@
 
 namespace App\Support;
 
+use HTMLPurifier;
+use HTMLPurifier_Config;
+
 class HtmlSanitizer
 {
-    private const ALLOWED_TAGS = '<p><br><strong><em><ul><ol><li><h3><h4><a><img>';
-
     /**
-     * Sanitize rich HTML from the editor: whitelist safe tags, strip scripts,
-     * and remove dangerous attributes (event handlers, javascript:/data: URLs).
+     * Sanitize rich HTML from the editor using HTMLPurifier library.
      */
     public static function sanitize(?string $html): ?string
     {
@@ -16,12 +16,16 @@ class HtmlSanitizer
             return $html;
         }
 
-        $clean = strip_tags($html, self::ALLOWED_TAGS);
+        $config = HTMLPurifier_Config::createDefault();
+        
+        // Konfigurasi tag dan atribut yang diizinkan (mirip dengan ALLOWED_TAGS sebelumnya)
+        $config->set('HTML.Allowed', 'p,br,strong,em,ul,ol,li,h3,h4,a[href|title],img[src|alt|width|height]');
+        
+        // Keamanan tambahan: cegah loading resource eksternal jika diinginkan atau skema URI yang tidak aman
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true, 'data' => true]);
 
-        $clean = preg_replace('/\s*on\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $clean) ?? $clean;
-        $clean = preg_replace('/\s*(href|src)\s*=\s*"(javascript:|data:)[^"]*"/i', '', $clean) ?? $clean;
-        $clean = preg_replace("/\s*(href|src)\s*=\s*'(javascript:|data:)[^']*'/i", '', $clean) ?? $clean;
+        $purifier = new HTMLPurifier($config);
 
-        return $clean;
+        return $purifier->purify($html);
     }
 }

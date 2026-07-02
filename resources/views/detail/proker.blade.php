@@ -1,4 +1,6 @@
 <x-layouts.public>
+    <x-slot:title>{{ $programKerja->judul }} - KKN Mlatinorowito 2026</x-slot:title>
+    <x-slot:description>{{ Str::limit(strip_tags($programKerja->deskripsi), 150) }}</x-slot:description>
     <section class="py-5 bg-light">
         <div class="container px-3 px-md-5">
             <a href="{{ url('/#proker') }}" class="btn btn-link text-decoration-none ps-0 mb-4">

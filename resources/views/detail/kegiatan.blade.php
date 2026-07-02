@@ -1,4 +1,6 @@
 <x-layouts.public>
+    <x-slot:title>{{ $kegiatan->judul }} - KKN Mlatinorowito 2026</x-slot:title>
+    <x-slot:description>{{ $kegiatan->deskripsi_singkat }}</x-slot:description>
     <section class="py-5 bg-light">
         <div class="container px-3 px-md-5">
             <a href="{{ url('/#kegiatan') }}" class="btn btn-link text-decoration-none ps-0 mb-4">
