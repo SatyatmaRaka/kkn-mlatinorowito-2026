@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ $title ?? 'KKN Mlatinorowito 2026' }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
         <meta name="description" content="{{ $description ?? 'Website Resmi KKN UMK Kelompok Desa Mlatinorowito tahun 2026. Temukan info program kerja, anggota tim, kegiatan harian, dan galeri dokumentasi kami.' }}">
         <meta name="keywords" content="KKN, UMK, Mlatinorowito, Kudus, Universitas Muria Kudus, KKN 2026">
 
