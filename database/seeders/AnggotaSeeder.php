@@ -13,18 +13,17 @@ class AnggotaSeeder extends Seeder
     public function run(): void
     {
         $anggota = [
-            ['nama' => 'Raka', 'jurusan' => 'Teknik Informatika', 'jabatan' => 'Koordinator Desa', 'urutan' => 1],
-            ['nama' => 'Hanna', 'jurusan' => 'Manajemen', 'jabatan' => 'Anggota', 'urutan' => 2],
-            ['nama' => 'Novita', 'jurusan' => 'Teknik Industri', 'jabatan' => 'Anggota', 'urutan' => 3],
-            ['nama' => 'Valliant', 'jurusan' => 'Manajemen', 'jabatan' => 'Anggota', 'urutan' => 4],
-            ['nama' => 'Anggit', 'jurusan' => 'Hukum', 'jabatan' => 'Anggota', 'urutan' => 5],
-            ['nama' => 'Afriza', 'jurusan' => 'Sistem Informasi', 'jabatan' => 'Anggota', 'urutan' => 6],
-            ['nama' => 'Sabti Riguna Hidayah', 'jurusan' => 'Psikologi', 'jabatan' => 'Anggota', 'urutan' => 7],
-            ['nama' => 'Naja', 'jurusan' => 'Akuntansi', 'jabatan' => 'Anggota', 'urutan' => 8],
-            ['nama' => 'Anggun Hana', 'jurusan' => 'PGSD', 'jabatan' => 'Anggota', 'urutan' => 9],
-            ['nama' => 'Citra', 'jurusan' => 'Manajemen', 'jabatan' => 'Anggota', 'urutan' => 10],
-            ['nama' => 'Fira', 'jurusan' => 'PGSD', 'jabatan' => 'Anggota', 'urutan' => 11],
-            ['nama' => '[Nama Anggota 12]', 'jurusan' => '[Jurusan]', 'jabatan' => 'Anggota', 'urutan' => 12],
+            ['nama' => 'Satyatma Raka Wiratama',         'jurusan' => 'Sistem Informasi',               'jabatan' => 'Koordinator Desa',  'urutan' => 1],
+            ['nama' => 'Mohammad Maulana Afriza',        'jurusan' => 'Teknik Industri',                'jabatan' => 'Wakil Koordinator', 'urutan' => 2],
+            ['nama' => 'Anggun',                         'jurusan' => 'Manajemen',                      'jabatan' => 'Sekretaris',        'urutan' => 3],
+            ['nama' => 'Sabti Riguna Hidayah',           'jurusan' => 'Psikologi',                      'jabatan' => 'Sekretaris',        'urutan' => 4],
+            ['nama' => 'Karimatun Naja',                 'jurusan' => 'Akuntansi',                      'jabatan' => 'Bendahara',         'urutan' => 5],
+            ['nama' => 'Valliant Prihastio',             'jurusan' => 'Manajemen',                      'jabatan' => 'Humas',             'urutan' => 6],
+            ['nama' => 'Novita Nawang Sari',             'jurusan' => 'Psikologi',                      'jabatan' => 'Humas',             'urutan' => 7],
+            ['nama' => 'Anggit Jelang Fitrio Dwi Saput', 'jurusan' => 'Ilmu Hukum',                    'jabatan' => 'PDD',               'urutan' => 8],
+            ['nama' => 'Citra Anindya Nathannasywa',     'jurusan' => 'Manajemen',                      'jabatan' => 'PDD',               'urutan' => 9],
+            ['nama' => 'Fira Naelatul Chamidah',         'jurusan' => 'Teknik Informatika',             'jabatan' => 'Perlengkapan',      'urutan' => 10],
+            ['nama' => 'Anggun Hana Charenta',           'jurusan' => 'Pendidikan Guru Sekolah Dasar',  'jabatan' => 'Perlengkapan',      'urutan' => 11],
         ];
 
         foreach ($anggota as $data) {

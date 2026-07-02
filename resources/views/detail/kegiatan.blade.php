@@ -1,10 +1,14 @@
 <x-layouts.public>
     <x-slot:title>{{ $kegiatan->judul }} - KKN Mlatinorowito 2026</x-slot:title>
     <x-slot:description>{{ $kegiatan->deskripsi_singkat }}</x-slot:description>
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-light" style="padding-top: 100px !important;">
         <div class="container px-3 px-md-5">
-            <a href="{{ url('/#kegiatan') }}" class="btn btn-link text-decoration-none ps-0 mb-4">
-                &larr; Kembali ke Kegiatan Harian
+            <a href="{{ url('/#kegiatan') }}"
+               class="d-inline-flex align-items-center gap-2 text-decoration-none mb-4 px-4 py-2 rounded-pill fw-semibold"
+               style="background:#1a2e4a; color:#fff; font-size:0.9rem; transition: background 0.2s, transform 0.15s;"
+               onmouseover="this.style.background='#0d1f33'; this.style.transform='translateX(-3px)'"
+               onmouseout="this.style.background='#1a2e4a'; this.style.transform='translateX(0)'">
+                <span style="font-size:1rem;">&#8592;</span> Kembali ke Kegiatan Harian
             </a>
 
             <div class="card border-0 shadow-sm mx-auto overflow-hidden" style="max-width: 800px;">

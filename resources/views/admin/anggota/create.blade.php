@@ -9,16 +9,17 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label for="nama" class="form-label">Nama</label>
-                    <input
-                        type="text"
-                        id="nama"
-                        name="nama"
-                        value="{{ old('nama') }}"
-                        class="form-control @error('nama') is-invalid @enderror"
-                        required
-                    >
+                    <label for="nama" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
                     @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="nim" class="form-label">NIM (Opsional)</label>
+                    <input type="text" class="form-control @error('nim') is-invalid @enderror" id="nim" name="nim" value="{{ old('nim') }}">
+                    @error('nim')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

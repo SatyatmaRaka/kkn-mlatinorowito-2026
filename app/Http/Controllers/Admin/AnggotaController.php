@@ -28,8 +28,9 @@ class AnggotaController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'nim' => 'nullable|string|max:20',
             'jurusan' => 'required|string|max:255',
-            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Anggota'])],
+            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Wakil Koordinator', 'PDD', 'Perlengkapan', 'Humas', 'Sekretaris', 'Bendahara'])],
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deskripsi' => 'nullable|string',
             'urutan' => 'required|integer|min:1',
@@ -53,8 +54,9 @@ class AnggotaController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'nim' => 'nullable|string|max:20',
             'jurusan' => 'required|string|max:255',
-            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Anggota'])],
+            'jabatan' => ['required', 'string', Rule::in(['Koordinator Desa', 'Wakil Koordinator', 'PDD', 'Perlengkapan', 'Humas', 'Sekretaris', 'Bendahara'])],
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deskripsi' => 'nullable|string',
             'urutan' => 'required|integer|min:1',

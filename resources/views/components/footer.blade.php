@@ -36,19 +36,7 @@
                     {{ $tagline }}
                 </p>
 
-                {{-- Instagram button --}}
-                <a
-                    href="{{ $instagramUrl }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="d-inline-flex align-items-center gap-2 text-white text-decoration-none px-4 py-2 rounded-pill fw-medium"
-                    style="background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); font-size: 0.875rem; transition: opacity 0.2s ease; box-shadow: 0 4px 15px rgba(253, 29, 29, 0.3);"
-                    onmouseover="this.style.opacity='0.85'"
-                    onmouseout="this.style.opacity='1'"
-                >
-                    <i class="bi bi-instagram fs-6"></i>
-                    <span>{{ $instagramLabel }}</span>
-                </a>
+
             </div>
 
             {{-- Divider on desktop --}}
@@ -58,17 +46,7 @@
 
             {{-- Info column --}}
             <div class="col-12 col-md-6">
-                <h6 class="text-uppercase fw-bold mb-4 opacity-50" style="letter-spacing: 0.12em; font-size: 0.75rem;">Tentang Kami</h6>
                 <ul class="list-unstyled mb-0">
-                    <li class="d-flex gap-3 mb-4">
-                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle" style="width:38px; height:38px; background:rgba(255,255,255,0.08);">
-                            <i class="bi bi-geo-alt-fill text-warning fs-6"></i>
-                        </div>
-                        <div>
-                            <div class="fw-semibold mb-1" style="font-size: 0.9rem;">Lokasi KKN</div>
-                            <div class="opacity-60 small">Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus</div>
-                        </div>
-                    </li>
                     <li class="d-flex gap-3 mb-4">
                         <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle" style="width:38px; height:38px; background:rgba(255,255,255,0.08);">
                             <i class="bi bi-calendar2-week-fill text-info fs-6"></i>
@@ -93,8 +71,8 @@
 
         {{-- Bottom copyright bar --}}
         <div style="height:1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);"></div>
-        <div class="py-4 text-center">
-            <p class="mb-0 small opacity-40">&copy; 2026 {{ $namaKelompok }}.</p>
+        <div class="py-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+            <p class="mb-0 small" style="opacity: 0.7;">&copy; 2026 {{ $namaKelompok }}.</p>
         </div>
     </div>
 </footer>
