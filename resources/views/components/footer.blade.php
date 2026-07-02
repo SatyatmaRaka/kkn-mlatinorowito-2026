@@ -1,7 +1,7 @@
 @php
     $namaKelompok = $pengaturan['nama_kelompok'] ?? 'KKN UMK Mlatinorowito 2026';
     $tagline = $pengaturan['tagline'] ?? 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan';
-    $instagram = $pengaturan['instagram'] ?? '@kkn_mlatinorowito2026';
+    $instagram = $pengaturan['instagram'] ?? '@kknumk.mlatinorowito.26';
     $instagramHandle = ltrim($instagram, '@');
     $instagramUrl = str_starts_with($instagram, 'http')
         ? $instagram
@@ -31,14 +31,14 @@
                     onmouseover="this.style.background='rgba(255,255,255,0.2)'"
                     onmouseout="this.style.background='rgba(255,255,255,0.1)'"
                 >
-                    <span>📸</span>
+                    <i class="bi bi-instagram fs-6"></i>
                     <span class="fw-medium">{{ str_starts_with($instagram, '@') ? $instagram : '@' . $instagramHandle }}</span>
                 </a>
             </div>
         </div>
 
         <div class="border-top border-white border-opacity-10 mt-5 pt-4 text-center">
-            <p class="mb-0 small opacity-50">&copy; 2026 {{ $namaKelompok }}. All rights reserved.</p>
+            <p class="mb-0 small opacity-50">&copy; 2026 {{ $namaKelompok }}.</p>
         </div>
     </div>
 </footer>
