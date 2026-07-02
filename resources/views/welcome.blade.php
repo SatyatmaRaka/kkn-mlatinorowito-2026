@@ -111,6 +111,86 @@
                 font-weight: 700;
                 color: #fff;
             }
+
+            .galeri-item {
+                aspect-ratio: 1 / 1;
+                overflow: hidden;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                position: relative;
+            }
+
+            .galeri-item-inner {
+                width: 100%;
+                height: 100%;
+                transition: transform 0.35s ease;
+            }
+
+            .galeri-item:hover .galeri-item-inner {
+                transform: scale(1.05);
+            }
+
+            .galeri-item-overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.45);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.35s ease;
+            }
+
+            .galeri-item:hover .galeri-item-overlay {
+                opacity: 1;
+            }
+
+            .galeri-lightbox {
+                z-index: 2000;
+            }
+
+            .galeri-lightbox-nav {
+                width: 48px;
+                height: 48px;
+                border: none;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                font-size: 1.75rem;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color 0.2s ease;
+            }
+
+            .galeri-lightbox-nav:hover {
+                background: rgba(255, 255, 255, 0.35);
+            }
+
+            .galeri-lightbox-close {
+                top: 1rem;
+                right: 1rem;
+                width: 44px;
+                height: 44px;
+                border: none;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                font-size: 1.75rem;
+                line-height: 1;
+            }
+
+            .galeri-lightbox-close:hover {
+                background: rgba(255, 255, 255, 0.35);
+            }
+
+            .kontak-map {
+                border: 0;
+                border-radius: 0.75rem;
+                width: 100%;
+                height: 350px;
+            }
     </style>
 
     {{-- Section 1: Hero / Beranda --}}
@@ -427,6 +507,185 @@
                     Kegiatan akan terus diupdate selama masa KKN berlangsung.
                 </p>
             @endforelse
+        </div>
+    </section>
+
+    {{-- Section 7: Galeri Foto --}}
+    <section id="galeri" class="py-5">
+        <div class="container px-3 px-md-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title h2 mb-0">Galeri Foto</h2>
+                <div class="section-title-accent"></div>
+            </div>
+
+            @php
+                $galeriGradients = [
+                    'linear-gradient(135deg, #003366 0%, #1a5c99 100%)',
+                    'linear-gradient(135deg, #1a5c99 0%, #2d7ab8 100%)',
+                    'linear-gradient(135deg, #2d7ab8 0%, #5ba3d9 100%)',
+                    'linear-gradient(135deg, #003366 0%, #27ae60 100%)',
+                    'linear-gradient(135deg, #8e44ad 0%, #c0392b 100%)',
+                    'linear-gradient(135deg, #e67e22 0%, #f1c40f 100%)',
+                    'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)',
+                    'linear-gradient(135deg, #c0392b 0%, #e74c3c 100%)',
+                    'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)',
+                ];
+            @endphp
+
+            <div
+                x-data="{
+                    lightboxOpen: false,
+                    currentIndex: 0,
+                    photos: @js($galeriGradients),
+                    openLightbox(index) {
+                        this.currentIndex = index;
+                        this.lightboxOpen = true;
+                        document.body.style.overflow = 'hidden';
+                    },
+                    closeLightbox() {
+                        this.lightboxOpen = false;
+                        document.body.style.overflow = '';
+                    },
+                    nextPhoto() {
+                        this.currentIndex = (this.currentIndex + 1) % this.photos.length;
+                    },
+                    prevPhoto() {
+                        this.currentIndex = (this.currentIndex - 1 + this.photos.length) % this.photos.length;
+                    }
+                }"
+                @keydown.escape.window="closeLightbox()"
+                @keydown.arrow-right.window="lightboxOpen && nextPhoto()"
+                @keydown.arrow-left.window="lightboxOpen && prevPhoto()"
+            >
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-4">
+                    @for ($i = 1; $i <= 9; $i++)
+                        @php $index = $i - 1; @endphp
+                        <div class="col">
+                            <div
+                                class="galeri-item shadow-sm"
+                                @click="openLightbox({{ $index }})"
+                                role="button"
+                                tabindex="0"
+                                @keydown.enter="openLightbox({{ $index }})"
+                            >
+                                <div
+                                    class="galeri-item-inner"
+                                    style="background: {{ $galeriGradients[$index] }};"
+                                ></div>
+                                <div class="galeri-item-overlay">
+                                    <span class="fs-2 text-white" aria-hidden="true">👁️</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endfor
+                </div>
+
+                <p class="text-center text-muted mb-0">
+                    Dokumentasi kegiatan akan segera hadir.
+                </p>
+
+                {{-- Lightbox --}}
+                <div
+                    x-show="lightboxOpen"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="galeri-lightbox position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                    style="background: rgba(0, 0, 0, 0.92);"
+                    x-cloak
+                    @click.self="closeLightbox()"
+                >
+                    <button
+                        type="button"
+                        class="galeri-lightbox-close position-absolute"
+                        @click="closeLightbox()"
+                        aria-label="Tutup"
+                    >&times;</button>
+
+                    <button
+                        type="button"
+                        class="galeri-lightbox-nav position-absolute start-0 ms-3"
+                        @click="prevPhoto()"
+                        aria-label="Foto sebelumnya"
+                    >&lsaquo;</button>
+
+                    <div
+                        class="mx-5 rounded overflow-hidden shadow-lg"
+                        style="width: min(90vw, 720px); aspect-ratio: 1 / 1;"
+                        :style="{ background: photos[currentIndex] }"
+                    ></div>
+
+                    <button
+                        type="button"
+                        class="galeri-lightbox-nav position-absolute end-0 me-3"
+                        @click="nextPhoto()"
+                        aria-label="Foto berikutnya"
+                    >&rsaquo;</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Section 8: Kontak & Lokasi --}}
+    <section id="kontak" class="py-5 bg-light">
+        <div class="container px-3 px-md-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title h2 mb-0">Kontak & Lokasi</h2>
+                <div class="section-title-accent"></div>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <div class="col-md-6">
+                    <div class="h-100 p-4 bg-white rounded shadow-sm">
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex gap-3 mb-4">
+                                <span class="fs-4" aria-hidden="true">📍</span>
+                                <div>
+                                    <div class="fw-semibold mb-1">KKN UMK 2026 - Kelurahan Mlatinorowito</div>
+                                    <div class="text-muted">Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus</div>
+                                </div>
+                            </li>
+                            <li class="d-flex gap-3 mb-4">
+                                <span class="fs-4" aria-hidden="true">📧</span>
+                                <div>
+                                    <div class="fw-semibold mb-1">Email</div>
+                                    <a href="mailto:kkn.mlatinorowito2026@gmail.com" class="text-decoration-none">
+                                        kkn.mlatinorowito2026@gmail.com
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="d-flex gap-3">
+                                <span class="fs-4" aria-hidden="true">📷</span>
+                                <div>
+                                    <div class="fw-semibold mb-1">Instagram</div>
+                                    <a
+                                        href="https://instagram.com/kkn_mlatinorowito2026"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-decoration-none"
+                                    >
+                                        @kkn_mlatinorowito2026
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <iframe
+                        class="kontak-map shadow-sm"
+                        src="https://maps.google.com/maps?q=Kelurahan%20Mlatinorowito,%20Kudus&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Peta Kelurahan Mlatinorowito, Kudus"
+                    ></iframe>
+                </div>
+            </div>
         </div>
     </section>
 </x-layouts.public>
