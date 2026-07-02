@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnggotaController;
+use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('anggota', AnggotaController::class);
+        Route::resource('proker', ProkerController::class);
     });
 });
 

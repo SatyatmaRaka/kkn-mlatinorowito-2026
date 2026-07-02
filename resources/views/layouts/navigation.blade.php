@@ -56,7 +56,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                    <a
+                        href="{{ route('admin.proker.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.proker.*') ? 'active' : '' }}"
+                        @click="sidebarOpen = false"
+                    >
                         Program Kerja
                     </a>
                 </li>
