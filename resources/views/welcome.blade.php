@@ -84,6 +84,26 @@
                 box-shadow: 0 0.75rem 1.5rem rgba(0, 51, 102, 0.12) !important;
             }
 
+            .proker-card,
+            .kegiatan-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .proker-card:hover,
+            .kegiatan-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 0.75rem 1.5rem rgba(0, 51, 102, 0.12) !important;
+            }
+
+            .proker-icon {
+                font-size: 2.5rem;
+                line-height: 1;
+            }
+
+            .kegiatan-photo-placeholder {
+                height: 200px;
+            }
+
             .avatar-circle {
                 width: 80px;
                 height: 80px;
@@ -297,6 +317,116 @@
                     </div>
                 @endforeach
             </div>
+        </div>
+    </section>
+
+    {{-- Section 5: Program Kerja --}}
+    <section id="proker" class="py-5">
+        <div class="container px-3 px-md-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title h2 mb-0">Program Kerja</h2>
+                <div class="section-title-accent"></div>
+            </div>
+
+            <div class="row g-4">
+                @foreach ($programKerja as $item)
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm proker-card position-relative">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    @if ($item->status === 'Aktif')
+                                        <span class="badge bg-success">{{ $item->status }}</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">{{ $item->status }}</span>
+                                    @endif
+                                </div>
+
+                                <div class="proker-icon mb-3 text-center pt-2">
+                                    {{ $item->icon ?? '📋' }}
+                                </div>
+
+                                <h5 class="fw-bold mb-2">{{ $item->judul }}</h5>
+                                <p class="text-muted small flex-grow-1 mb-3">
+                                    {{ Str::limit($item->deskripsi, 120) }}
+                                </p>
+
+                                <a
+                                    href="{{ route('detail.proker', $item->id) }}"
+                                    class="btn btn-sm btn-outline-primary w-100 mt-auto"
+                                >
+                                    Lihat Detail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- Section 6: Kegiatan Harian --}}
+    <section id="kegiatan" class="py-5 bg-light">
+        <div class="container px-3 px-md-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title h2 mb-0">Kegiatan Harian</h2>
+                <div class="section-title-accent"></div>
+            </div>
+
+            @php
+                $kegiatanGradients = [
+                    'linear-gradient(135deg, #003366 0%, #1a5c99 100%)',
+                    'linear-gradient(135deg, #1a5c99 0%, #2d7ab8 100%)',
+                    'linear-gradient(135deg, #2d7ab8 0%, #5ba3d9 100%)',
+                    'linear-gradient(135deg, #003366 0%, #27ae60 100%)',
+                    'linear-gradient(135deg, #8e44ad 0%, #c0392b 100%)',
+                ];
+            @endphp
+
+            @forelse ($kegiatan as $item)
+                @if ($loop->first)
+                    <div class="row g-4 mb-4">
+                @endif
+
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 border-0 shadow-sm kegiatan-card overflow-hidden">
+                        <div
+                            class="kegiatan-photo-placeholder d-flex align-items-center justify-content-center text-white"
+                            style="background: {{ $kegiatanGradients[$loop->index % count($kegiatanGradients)] }};"
+                        >
+                            <span class="fs-1 opacity-50">📷</span>
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="badge bg-primary align-self-start mb-2">
+                                {{ $item->tanggal->locale('id')->translatedFormat('d F Y') }}
+                            </span>
+
+                            <h5 class="fw-bold mb-2">{{ $item->judul }}</h5>
+                            <p class="text-muted small flex-grow-1 mb-3">
+                                {{ Str::limit($item->deskripsi_singkat, 120) }}
+                            </p>
+
+                            <a
+                                href="{{ route('detail.kegiatan', $item->id) }}"
+                                class="btn btn-sm btn-outline-primary w-100 mt-auto"
+                            >
+                                Baca Selengkapnya
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @if ($loop->last)
+                    </div>
+                    <p class="text-center text-muted mb-0">
+                        Kegiatan akan terus diupdate selama masa KKN berlangsung.
+                    </p>
+                @endif
+            @empty
+                <p class="text-center text-muted mb-0">
+                    Kegiatan akan terus diupdate selama masa KKN berlangsung.
+                </p>
+            @endforelse
         </div>
     </section>
 </x-layouts.public>

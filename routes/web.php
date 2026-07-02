@@ -10,6 +10,14 @@ Route::get('/anggota/{anggota}', function () {
     abort(404);
 })->name('detail.anggota');
 
+Route::get('/program-kerja/{programKerja}', function () {
+    abort(404);
+})->name('detail.proker');
+
+Route::get('/kegiatan/{kegiatan}', function () {
+    abort(404);
+})->name('detail.kegiatan');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
