@@ -14,11 +14,10 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['username' => 'admin'],
+            ['username' => 'kkn_mlati26'],
             [
                 'name' => 'Admin KKN Mlatinorowito',
-                'username' => 'admin',
-                'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD', 'admin123')),
+                'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD', 'MlatinorowitoHebat26!')),
             ]
         );
     }
