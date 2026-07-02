@@ -25,9 +25,9 @@
             }
 
             .guest-logo {
-                width: 5rem;
-                height: 5rem;
-                fill: var(--umk-blue);
+                width: 7rem;
+                height: 7rem;
+                object-fit: contain;
             }
         </style>
     </head>
