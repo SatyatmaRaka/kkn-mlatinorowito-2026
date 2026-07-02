@@ -1,20 +1,88 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
+/* Modern Premium Variables */
 :root {
-    --umk-blue: #003366;
-    --umk-yellow: #ffd700;
-    --bs-primary: #003366;
-    --bs-primary-rgb: 0, 51, 102;
+    --umk-blue: #0f172a; /* Deeper modern blue/slate */
+    --umk-blue-light: #1e293b;
+    --umk-blue-accent: #3b82f6;
+    --umk-yellow: #f59e0b; /* More elegant amber/yellow */
+    --umk-yellow-hover: #d97706;
+    
+    --bs-primary: #0f172a;
+    --bs-primary-rgb: 15, 23, 42;
+    --bs-font-sans-serif: 'Outfit', system-ui, -apple-system, sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-bg: #f8fafc;
 }
 
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #334155;
+}
+
+/* Glassmorphism Utilities */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Modern Card Styles */
+.premium-card {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.premium-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling */
 .btn-primary {
     background-color: var(--umk-blue);
     border-color: var(--umk-blue);
+    border-radius: 50rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-    background-color: #002244;
-    border-color: #002244;
+    background-color: var(--umk-blue-light);
+    border-color: var(--umk-blue-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+}
+
+.btn-umk-yellow {
+    background: linear-gradient(135deg, var(--umk-yellow), var(--umk-yellow-hover));
+    border: none;
+    color: #fff;
+    border-radius: 50rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-umk-yellow:hover,
+.btn-umk-yellow:focus {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4);
+}
+
+/* Typography Enhancements */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--umk-blue);
 }

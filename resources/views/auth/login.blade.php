@@ -33,5 +33,8 @@
         <x-primary-button class="btn btn-primary w-100">
             {{ __('Log in') }}
         </x-primary-button>
+        <a href="{{ url('/') }}" class="btn btn-secondary w-100 mt-2">
+            Kembali
+        </a>
     </form>
 </x-guest-layout>
