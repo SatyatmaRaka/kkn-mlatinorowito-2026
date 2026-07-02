@@ -18,7 +18,7 @@ class WelcomeController extends Controller
         $anggota = Anggota::orderBy('urutan')->get();
         $programKerja = ProgramKerja::orderBy('urutan')->get();
         $kegiatan = Kegiatan::orderBy('tanggal', 'desc')->take(3)->get();
-        $galeri = Galeri::latest()->get();
+        $galeri = Galeri::latest()->take(24)->get();
 
         return view('welcome', compact('anggota', 'programKerja', 'kegiatan', 'galeri'));
     }

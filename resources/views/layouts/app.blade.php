@@ -90,7 +90,7 @@
             <div class="container-fluid p-4">
                 @isset($header)
                     <header class="mb-4">
-                        <div class="mb-0 fw-semibold fs-4">{!! $header !!}</div>
+                        <div class="mb-0 fw-semibold fs-4">{{ $header }}</div>
                     </header>
                 @endisset
 

@@ -137,6 +137,22 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="current_password" class="form-label">Password Saat Ini</label>
+                            <input
+                                type="password"
+                                id="current_password"
+                                name="current_password"
+                                class="form-control @error('current_password') is-invalid @enderror"
+                                required
+                                autocomplete="current-password"
+                            >
+                            @error('current_password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Wajib diisi untuk memverifikasi identitas Anda.</div>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="password" class="form-label">Password Baru</label>
                             <input
                                 type="password"

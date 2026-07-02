@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
             [
                 'name' => 'Admin KKN Mlatinorowito',
                 'username' => 'admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD', 'admin123')),
             ]
         );
     }
