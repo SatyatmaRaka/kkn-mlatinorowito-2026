@@ -46,6 +46,35 @@
                         {{ __('Dashboard') }}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a
+                        href="{{ route('admin.anggota.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}"
+                        @click="sidebarOpen = false"
+                    >
+                        Anggota
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                        Program Kerja
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                        Kegiatan
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                        Galeri
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="admin-nav-link" @click="sidebarOpen = false">
+                        Pengaturan
+                    </a>
+                </li>
             </ul>
         </nav>
 

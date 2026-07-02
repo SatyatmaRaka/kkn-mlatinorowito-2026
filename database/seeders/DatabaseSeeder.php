@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             AnggotaSeeder::class,
             ProgramKerjaSeeder::class,
+            KegiatanSeeder::class,
         ]);
     }
 }
