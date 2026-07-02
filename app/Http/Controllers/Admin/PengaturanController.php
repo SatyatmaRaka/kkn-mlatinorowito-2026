@@ -39,6 +39,9 @@ class PengaturanController extends Controller
                 },
             ],
             'periode_kkn' => 'nullable|string|max:255',
+            'whatsapp' => 'nullable|string|max:30',
+            'alamat' => 'nullable|string|max:500',
+            'maps_embed_url' => 'nullable|string|max:2000',
         ]);
 
         foreach ($validated as $key => $value) {
@@ -48,6 +51,22 @@ class PengaturanController extends Controller
         PengaturanService::forget();
 
         return redirect()->route('admin.pengaturan.index')->with('success', 'Pengaturan berhasil disimpan.');
+    }
+
+    public function updateAbsensi(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'absensi_jam_mulai' => 'required|date_format:H:i',
+            'absensi_jam_selesai' => 'required|date_format:H:i|after:absensi_jam_mulai',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            Pengaturan::updateOrCreate(['key' => $key], ['value' => $value]);
+        }
+
+        PengaturanService::forget();
+
+        return redirect()->route('admin.pengaturan.index')->with('success', 'Pengaturan absensi berhasil disimpan.');
     }
 
     public function updateAkun(Request $request): RedirectResponse

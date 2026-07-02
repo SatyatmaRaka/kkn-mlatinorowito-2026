@@ -81,6 +81,21 @@
                         </div>
 
                         <div class="mb-4">
+                            <label for="whatsapp" class="form-label fw-semibold text-muted small text-uppercase">WhatsApp</label>
+                            <input type="text" id="whatsapp" name="whatsapp" value="{{ old('whatsapp', $pengaturan['whatsapp'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none" placeholder="6281234567890">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="alamat" class="form-label fw-semibold text-muted small text-uppercase">Alamat</label>
+                            <textarea id="alamat" name="alamat" rows="2" class="form-control bg-light border-0 px-3 py-2 shadow-none">{{ old('alamat', $pengaturan['alamat'] ?? '') }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="maps_embed_url" class="form-label fw-semibold text-muted small text-uppercase">Google Maps Embed URL</label>
+                            <input type="url" id="maps_embed_url" name="maps_embed_url" value="{{ old('maps_embed_url', $pengaturan['maps_embed_url'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none">
+                        </div>
+
+                        <div class="mb-4">
                             <label for="instagram" class="form-label fw-semibold text-muted small text-uppercase">Instagram</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-0 text-muted border-end-0 pe-0"><i class="bi bi-instagram"></i></span>
@@ -195,6 +210,34 @@
                         </div>
 
                         <button type="submit" class="btn btn-warning px-4 py-2 rounded-pill fw-medium w-100 text-dark">Update Akun</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-6">
+            <div class="premium-card border-0">
+                <div class="card-header bg-white py-4 px-4 border-bottom">
+                    <h2 class="h5 fw-bold mb-0"><i class="bi bi-qr-code-scan me-2 text-primary"></i>Pengaturan Absensi QR</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('admin.pengaturan.absensi') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="absensi_jam_mulai" class="form-label">Jam Mulai</label>
+                                <input type="time" id="absensi_jam_mulai" name="absensi_jam_mulai" value="{{ old('absensi_jam_mulai', $pengaturan['absensi_jam_mulai'] ?? '06:00') }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="absensi_jam_selesai" class="form-label">Jam Selesai</label>
+                                <input type="time" id="absensi_jam_selesai" name="absensi_jam_selesai" value="{{ old('absensi_jam_selesai', $pengaturan['absensi_jam_selesai'] ?? '09:00') }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <p class="small text-muted mt-3 mb-3">Anggota hanya bisa absen dalam rentang jam ini setelah scan QR di posko.</p>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Simpan Jam Absensi</button>
                     </form>
                 </div>
             </div>

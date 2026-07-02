@@ -89,6 +89,7 @@
                 <a class="public-nav-link" href="/#tentang">Tentang</a>
                 <a class="public-nav-link" href="/#anggota">Anggota</a>
                 <a class="public-nav-link" href="/#proker">Program Kerja</a>
+                <a class="public-nav-link" href="{{ route('kegiatan.index') }}">Arsip Kegiatan</a>
                 <a class="public-nav-link" href="/#kegiatan-galeri">Kegiatan & Galeri</a>
                 @auth
                     <a class="public-nav-link" href="{{ route('dashboard') }}" style="color: var(--umk-blue-accent);">Dashboard</a>
@@ -115,6 +116,7 @@
                     <a class="public-nav-link" href="/#tentang" @click="mobileOpen = false">Tentang</a>
                     <a class="public-nav-link" href="/#anggota" @click="mobileOpen = false">Anggota</a>
                     <a class="public-nav-link" href="/#proker" @click="mobileOpen = false">Program Kerja</a>
+                    <a class="public-nav-link" href="{{ route('kegiatan.index') }}" @click="mobileOpen = false">Arsip Kegiatan</a>
                     <a class="public-nav-link" href="/#kegiatan-galeri" @click="mobileOpen = false">Kegiatan & Galeri</a>
                     <hr class="my-1 border-secondary opacity-25">
                     @auth

@@ -26,6 +26,7 @@
                             <th class="py-3 fw-semibold text-muted small text-uppercase">Nama</th>
                             <th class="py-3 fw-semibold text-muted small text-uppercase">Jurusan</th>
                             <th class="py-3 fw-semibold text-muted small text-uppercase">Jabatan</th>
+                            <th class="py-3 fw-semibold text-muted small text-uppercase">Akun Login</th>
                             <th class="py-3 fw-semibold text-muted small text-uppercase text-center">Urutan</th>
                             <th class="pe-4 py-3 fw-semibold text-muted small text-uppercase text-end">Aksi</th>
                         </tr>
@@ -59,6 +60,14 @@
                                 <td class="py-3 fw-bold text-dark">{{ $item->nama }}</td>
                                 <td class="py-3">{{ $item->jurusan }}</td>
                                 <td class="py-3"><span class="badge bg-light text-dark border">{{ $item->jabatan }}</span></td>
+                                <td class="py-3">
+                                    @if ($item->user)
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">{{ $item->user->username }}</span>
+                                        <div class="small text-muted">{{ $item->user->role->label() }}</div>
+                                    @else
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#akun-{{ $item->id }}">Buat Akun</button>
+                                    @endif
+                                </td>
                                 <td class="py-3 text-center">
                                     <span class="badge bg-secondary rounded-pill px-3">{{ $item->urutan }}</span>
                                 </td>
@@ -94,9 +103,49 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            @if (! $item->user)
+                                <div class="modal fade" id="akun-{{ $item->id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" action="{{ route('admin.anggota.akun', $item) }}">
+                                                @csrf
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Buat Akun — {{ $item->nama }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Username</label>
+                                                        <input type="text" name="username" class="form-control" value="{{ Str::slug(Str::before($item->nama, ' '), '_') }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Role Sistem</label>
+                                                        <select name="role" class="form-select" required>
+                                                            <option value="anggota" selected>Anggota</option>
+                                                            <option value="koordinator" @selected(in_array($item->jabatan, ['Koordinator Desa', 'Wakil Koordinator']))>Koordinator</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Password</label>
+                                                        <input type="password" name="password" class="form-control" required>
+                                                    </div>
+                                                    <div class="mb-0">
+                                                        <label class="form-label">Konfirmasi Password</label>
+                                                        <input type="password" name="password_confirmation" class="form-control" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Simpan Akun</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="8" class="text-center text-muted py-5">
                                     <div class="d-flex flex-column align-items-center">
                                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                                             <i class="bi bi-people text-muted fs-1"></i>

@@ -84,6 +84,31 @@
         </div>
     </div>
 
+    <div class="row row-cols-1 row-cols-sm-2 g-4 mb-5">
+        <div class="col">
+            <a href="{{ route('admin.logbook.index') }}" class="text-decoration-none">
+                <div class="premium-card h-100 border-0 p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Logbook Menunggu Review</div>
+                        <div class="display-6 fw-bolder text-dark">{{ $logbookMenunggu }}</div>
+                    </div>
+                    <i class="bi bi-journal-text fs-1 text-primary opacity-50"></i>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ route('admin.absensi.riwayat') }}" class="text-decoration-none">
+                <div class="premium-card h-100 border-0 p-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Absensi Hari Ini</div>
+                        <div class="display-6 fw-bolder text-dark">{{ $absensiHariIni }}</div>
+                    </div>
+                    <i class="bi bi-qr-code-scan fs-1 text-success opacity-50"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+
     <!-- Tables & Quick Actions -->
     <div class="row g-4">
         <div class="col-lg-8">

@@ -527,6 +527,12 @@
                         </div>
                     @endforelse
                 </div>
+
+                @if ($kegiatan->isNotEmpty())
+                    <div class="text-center">
+                        <a href="{{ route('kegiatan.index') }}" class="btn btn-outline-primary rounded-pill px-4">Lihat Semua Kegiatan</a>
+                    </div>
+                @endif
             </div>
 
             <!-- Tab Content: Galeri -->
@@ -650,6 +656,10 @@
         @php
             $kontakInstagramUrl = \App\Support\SocialLinks::instagramUrl($pengaturan['instagram'] ?? null);
             $kontakInstagramLabel = \App\Support\SocialLinks::instagramLabel($pengaturan['instagram'] ?? null);
+            $kontakEmail = $pengaturan['email'] ?? null;
+            $kontakWhatsapp = $pengaturan['whatsapp'] ?? null;
+            $kontakAlamat = $pengaturan['alamat'] ?? 'Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus';
+            $mapsUrl = $pengaturan['maps_embed_url'] ?? 'https://maps.google.com/maps?q=Kelurahan%20Mlatinorowito,%20Kudus&t=&z=15&ie=UTF8&iwloc=&output=embed';
         @endphp
         <div class="container px-3 px-md-5">
             <div class="text-center mb-5">
@@ -665,9 +675,29 @@
                                 <span class="fs-4" aria-hidden="true">📍</span>
                                 <div>
                                     <div class="fw-semibold mb-1">KKN UMK 2026 - Kelurahan Mlatinorowito</div>
-                                    <div class="text-muted">Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus</div>
+                                    <div class="text-muted">{{ $kontakAlamat }}</div>
                                 </div>
                             </li>
+
+                            @if ($kontakEmail)
+                                <li class="d-flex gap-3 mb-4">
+                                    <span class="fs-4" aria-hidden="true">✉️</span>
+                                    <div>
+                                        <div class="fw-semibold mb-1">Email</div>
+                                        <a href="mailto:{{ $kontakEmail }}" class="text-decoration-none">{{ $kontakEmail }}</a>
+                                    </div>
+                                </li>
+                            @endif
+
+                            @if ($kontakWhatsapp)
+                                <li class="d-flex gap-3 mb-4">
+                                    <span class="fs-4" aria-hidden="true">💬</span>
+                                    <div>
+                                        <div class="fw-semibold mb-1">WhatsApp</div>
+                                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', $kontakWhatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">{{ $kontakWhatsapp }}</a>
+                                    </div>
+                                </li>
+                            @endif
 
                             <li class="d-flex gap-3 mb-0">
                                 <span class="fs-4" aria-hidden="true">📷</span>
@@ -690,7 +720,7 @@
                 <div class="col-md-6">
                     <iframe
                         class="kontak-map shadow-sm"
-                        src="https://maps.google.com/maps?q=Kelurahan%20Mlatinorowito,%20Kudus&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        src="{{ $mapsUrl }}"
                         allowfullscreen=""
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"

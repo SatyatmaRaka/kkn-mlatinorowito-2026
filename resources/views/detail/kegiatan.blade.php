@@ -3,7 +3,7 @@
     <x-slot:description>{{ $kegiatan->deskripsi_singkat }}</x-slot:description>
     <section class="py-5 bg-light" style="padding-top: 100px !important;">
         <div class="container px-3 px-md-5">
-            <a href="{{ url('/#kegiatan') }}"
+            <a href="{{ url('/#kegiatan-galeri') }}"
                class="d-inline-flex align-items-center gap-2 text-decoration-none mb-4 px-4 py-2 rounded-pill fw-semibold"
                style="background:#1a2e4a; color:#fff; font-size:0.9rem; transition: background 0.2s, transform 0.15s;"
                onmouseover="this.style.background='#0d1f33'; this.style.transform='translateX(-3px)'"

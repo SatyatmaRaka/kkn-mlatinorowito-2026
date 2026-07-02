@@ -9,6 +9,10 @@ Website profil kelompok KKN Universitas Muria Kudus di Kelurahan Mlatinorowito, 
 - Halaman publik: beranda, tentang, anggota, program kerja, kegiatan & galeri, kontak
 - Panel admin: CRUD anggota, program kerja, kegiatan, galeri, pengaturan website & akun
 - Login admin berbasis username (single admin)
+- **Logbook KKN** per anggota (draft → submit → review koordinator)
+- **Absensi QR** di posko (scan → login → konfirmasi kehadiran)
+- **Role sistem**: admin, koordinator, anggota (terhubung ke data anggota)
+- Halaman arsip kegiatan publik (`/kegiatan`)
 
 ## Instalasi Lokal
 
@@ -19,8 +23,10 @@ cp .env.example .env
 php artisan key:generate
 
 # Isi ADMIN_DEFAULT_PASSWORD di .env (wajib untuk seeding)
+# Opsional MEMBER_DEFAULT_PASSWORD untuk akun demo koordinator/anggota
 # Contoh:
 # ADMIN_DEFAULT_PASSWORD=PasswordKuatMinimal12
+# MEMBER_DEFAULT_PASSWORD=PasswordAnggota12
 
 npm install
 npm run dev          # terminal 1
@@ -51,6 +57,33 @@ Setelah `db:seed`, login dengan:
 - **Password:** nilai `ADMIN_DEFAULT_PASSWORD` di `.env`
 
 Segera ganti password lewat menu **Pengaturan → Keamanan Akun** setelah login pertama.
+
+### Akun Demo Anggota (jika `MEMBER_DEFAULT_PASSWORD` diisi)
+
+| Username | Role | Keterangan |
+|----------|------|------------|
+| `koor_mlati26` | Koordinator | Terhubung ke Koordinator Desa |
+| `anggota_demo` | Anggota | Contoh akun anggota |
+
+Buat akun anggota lain lewat **Admin → Anggota → Buat Akun**.
+
+## Absensi QR (Cara Pakai)
+
+1. Admin/koordinator: **Cetak QR Absensi** atau buka **Mode Tablet** di posko
+2. QR **berubah otomatis setiap hari** — foto QR kemarin tidak bisa dipakai
+3. Anggota scan QR → login akun pribadi → **Konfirmasi Kehadiran**
+4. Absensi hanya valid dalam jam yang diatur di **Pengaturan → Jam Absensi**
+5. Koordinator pantau **Rekap Absensi** dan export CSV
+
+```bash
+# Generate token hari ini manual (opsional, otomatis saat buka halaman QR)
+php artisan absensi:rotate-token
+```
+
+## Logbook KKN
+
+- Anggota: **Logbook → Tulis Logbook** (draft atau kirim review)
+- Koordinator: review & setujui/tolak logbook yang masuk
 
 ## Deploy ke Production
 

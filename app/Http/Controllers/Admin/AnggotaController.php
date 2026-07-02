@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Anggota;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class AnggotaController extends Controller
 {
     public function index(): View
     {
-        $anggota = Anggota::orderBy('urutan')->get();
+        $anggota = Anggota::with('user')->orderBy('urutan')->get();
 
         return view('admin.anggota.index', compact('anggota'));
     }
@@ -83,5 +86,28 @@ class AnggotaController extends Controller
         $anggota->delete();
 
         return redirect()->route('admin.anggota.index')->with('success', 'Anggota berhasil dihapus.');
+    }
+
+    public function storeAkun(Request $request, Anggota $anggota): RedirectResponse
+    {
+        if ($anggota->user) {
+            return back()->withErrors(['username' => 'Anggota ini sudah memiliki akun login.']);
+        }
+
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'role' => ['required', Rule::in([UserRole::Koordinator->value, UserRole::Anggota->value])],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        User::create([
+            'name' => $anggota->nama,
+            'username' => $validated['username'],
+            'password' => $validated['password'],
+            'role' => UserRole::from($validated['role']),
+            'anggota_id' => $anggota->id,
+        ]);
+
+        return back()->with('success', "Akun login untuk {$anggota->nama} berhasil dibuat.");
     }
 }
