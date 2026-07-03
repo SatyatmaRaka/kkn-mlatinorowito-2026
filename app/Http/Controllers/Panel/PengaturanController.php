@@ -42,8 +42,17 @@ class PengaturanController extends Controller
                     }
                 },
             ],
+            'tiktok' => [
+                'nullable',
+                'string',
+                'max:255',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! TautanSosial::isValidTiktokInput(is_string($value) ? $value : null)) {
+                        $fail('TikTok harus berupa username atau URL tiktok.com yang valid.');
+                    }
+                },
+            ],
             'periode_kkn' => 'nullable|string|max:255',
-            'whatsapp' => 'nullable|string|max:30',
             'alamat' => 'nullable|string|max:500',
             'maps_embed_url' => [
                 'nullable',

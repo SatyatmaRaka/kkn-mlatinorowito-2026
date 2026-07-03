@@ -6,6 +6,8 @@
     $periode = $pengaturan['periode_kkn'] ?? 'Juli - Agustus 2026';
     $instagramUrl = TautanSosial::instagramUrl($pengaturan['instagram'] ?? null);
     $instagramLabel = TautanSosial::instagramLabel($pengaturan['instagram'] ?? null);
+    $tiktokUrl = TautanSosial::tiktokUrl($pengaturan['tiktok'] ?? null);
+    $tiktokLabel = TautanSosial::tiktokLabel($pengaturan['tiktok'] ?? null);
 @endphp
 
 <footer class="text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #001a3a 0%, #003366 50%, #001a3a 100%);">
@@ -37,14 +39,24 @@
                     {{ $tagline }}
                 </p>
 
-                <a
-                    href="{{ $instagramUrl }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-white text-decoration-none small d-inline-flex align-items-center gap-2 opacity-75"
-                >
-                    <i class="bi bi-instagram"></i> {{ $instagramLabel }}
-                </a>
+                <div class="d-flex flex-wrap gap-3">
+                    <a
+                        href="{{ $instagramUrl }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-white text-decoration-none small d-inline-flex align-items-center gap-2 opacity-75"
+                    >
+                        <i class="bi bi-instagram"></i> {{ $instagramLabel }}
+                    </a>
+                    <a
+                        href="{{ $tiktokUrl }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-white text-decoration-none small d-inline-flex align-items-center gap-2 opacity-75"
+                    >
+                        <i class="bi bi-tiktok"></i> {{ $tiktokLabel }}
+                    </a>
+                </div>
             </div>
 
             {{-- Divider on desktop --}}

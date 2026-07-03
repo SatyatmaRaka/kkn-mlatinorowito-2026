@@ -53,7 +53,7 @@ class AbsensiController extends Controller
         $request->validate(['token' => 'required|string']);
 
         if (! LayananTokenAbsensi::isValid($request->input('token'))) {
-            return back()->withErrors(['absensi' => 'Token QR tidak valid atau sudah kedaluwarsa. Scan QR hari ini di posko.']);
+            return back()->withErrors(['absensi' => 'Token QR tidak valid. Scan QR resmi di posko KKN.']);
         }
 
         $user = Auth::user();
@@ -164,21 +164,30 @@ class AbsensiController extends Controller
         );
     }
 
-    /** Halaman cetak QR absensi hari ini. */
+    /** Halaman cetak QR absensi posko. */
     public function qrPrint(): View
     {
-        $tokenModel = LayananTokenAbsensi::getOrCreateForToday();
+        $tokenModel = LayananTokenAbsensi::getActive();
         $checkInUrl = LayananTokenAbsensi::checkInUrl($tokenModel);
         $windowLabel = LayananPengaturan::absensiWindowLabel();
-        $tanggalLabel = now()->locale('id')->translatedFormat('d F Y');
 
-        return view('panel.absensi.qr', compact('checkInUrl', 'windowLabel', 'tanggalLabel', 'tokenModel'));
+        return view('panel.absensi.qr', compact('checkInUrl', 'windowLabel', 'tokenModel'));
+    }
+
+    /** Buat ulang token QR (admin/koordinator, jika QR bocor). */
+    public function regenerateToken(): RedirectResponse
+    {
+        LayananTokenAbsensi::regenerate();
+
+        return redirect()
+            ->route('panel.absensi.qr')
+            ->with('success', 'Token QR baru dibuat. QR lama tidak valid — cetak atau tampilkan QR yang baru.');
     }
 
     /** Mode tablet — tampilan QR fullscreen di posko. */
     public function display(): View
     {
-        $tokenModel = LayananTokenAbsensi::getOrCreateForToday();
+        $tokenModel = LayananTokenAbsensi::getActive();
         $checkInUrl = LayananTokenAbsensi::checkInUrl($tokenModel);
         $windowLabel = LayananPengaturan::absensiWindowLabel();
 

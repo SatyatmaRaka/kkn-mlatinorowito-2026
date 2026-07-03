@@ -6,21 +6,21 @@ use App\Layanan\LayananTokenAbsensi;
 use Illuminate\Console\Command;
 
 /**
- * Perintah artisan: buat token QR absensi baru untuk hari ini.
- * Dijalankan otomatis via cron (schedule:run) setiap 00:05.
+ * Perintah artisan: buat ulang token QR absensi (manual, jika QR bocor).
  */
 class RotasiTokenAbsensi extends Command
 {
     protected $signature = 'absensi:rotate-token';
 
-    protected $description = 'Generate token absensi QR untuk hari ini';
+    protected $description = 'Buat ulang token QR absensi posko (manual)';
 
     public function handle(): int
     {
-        $token = LayananTokenAbsensi::getOrCreateForToday();
+        $token = LayananTokenAbsensi::regenerate();
 
-        $this->info('Token absensi hari ini: '.$token->token);
+        $this->info('Token absensi baru: '.$token->token);
         $this->line(LayananTokenAbsensi::checkInUrl($token));
+        $this->warn('QR lama tidak valid lagi — cetak/tampilkan QR baru di posko.');
 
         return self::SUCCESS;
     }

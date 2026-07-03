@@ -19,8 +19,8 @@ class PengaturanSeeder extends Seeder
             'tagline' => 'Berdampak dalam Membangun Desa Mandiri dan Berkelanjutan',
             'email' => 'kkn.mlatinorowito2026@gmail.com',
             'instagram' => '@kknumk.mlatinorowito.26',
+            'tiktok' => '@kknumk.mlatinorowito.26',
             'periode_kkn' => 'Juli - Agustus 2026',
-            'whatsapp' => '6281234567890',
             'alamat' => 'Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus',
             'maps_embed_url' => 'https://maps.google.com/maps?q=Kelurahan%20Mlatinorowito,%20Kudus&t=&z=15&ie=UTF8&iwloc=&output=embed',
             'absensi_jam_mulai' => '06:00',
@@ -30,6 +30,8 @@ class PengaturanSeeder extends Seeder
         foreach ($defaults as $key => $value) {
             Pengaturan::updateOrCreate(['key' => $key], ['value' => $value]);
         }
+
+        Pengaturan::where('key', 'whatsapp')->delete();
 
         LayananPengaturan::forget();
     }

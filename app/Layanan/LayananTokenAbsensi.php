@@ -6,38 +6,56 @@ use App\Models\AbsensiToken;
 use Illuminate\Support\Str;
 
 /**
- * Layanan token QR absensi harian.
- * Token berubah setiap hari agar QR kemarin tidak bisa dipakai ulang.
+ * Layanan token QR absensi posko.
+ * Satu token tetap untuk seluruh periode KKN — QR tidak perlu diganti setiap hari.
+ * Keamanan tetap dijaga: wajib login, jendela jam absensi, satu kali absen per hari.
  */
 class LayananTokenAbsensi
 {
-    /** Ambil atau buat token untuk hari ini. */
-    public static function getOrCreateForToday(): AbsensiToken
+    /** Ambil token aktif, atau buat sekali jika belum ada. */
+    public static function getActive(): AbsensiToken
     {
-        $today = today()->toDateString();
+        $existing = AbsensiToken::query()->orderBy('id')->first();
 
-        return AbsensiToken::firstOrCreate(
-            ['tanggal' => $today],
-            ['token' => Str::random(32)]
-        );
+        if ($existing) {
+            return $existing;
+        }
+
+        return AbsensiToken::create([
+            'tanggal' => today(),
+            'token' => Str::random(32),
+        ]);
     }
 
-    /** Cek apakah token masih valid untuk hari ini. */
+    /** @deprecated Gunakan getActive() — alias agar kode lama tetap jalan. */
+    public static function getOrCreateForToday(): AbsensiToken
+    {
+        return self::getActive();
+    }
+
+    /** Buat ulang token (manual, mis. jika QR bocor). */
+    public static function regenerate(): AbsensiToken
+    {
+        $active = self::getActive();
+        $active->update(['token' => Str::random(32)]);
+
+        return $active->fresh();
+    }
+
+    /** Cek apakah token cocok dengan token aktif posko. */
     public static function isValid(?string $token): bool
     {
         if (empty($token)) {
             return false;
         }
 
-        return AbsensiToken::whereDate('tanggal', today())
-            ->where('token', $token)
-            ->exists();
+        return hash_equals(self::getActive()->token, $token);
     }
 
     /** URL halaman check-in absensi beserta token. */
     public static function checkInUrl(?AbsensiToken $tokenModel = null): string
     {
-        $tokenModel ??= self::getOrCreateForToday();
+        $tokenModel ??= self::getActive();
 
         return route('absensi.check-in', ['token' => $tokenModel->token]);
     }

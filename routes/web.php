@@ -14,6 +14,7 @@ use App\Http\Controllers\Panel\KeuanganController;
 use App\Http\Controllers\Panel\LaporanController;
 use App\Http\Controllers\Panel\PengaturanController;
 use App\Http\Controllers\Panel\ProgramKerjaController;
+use App\Http\Controllers\Panel\SuratController;
 use App\Layanan\LayananTokenAbsensi;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,7 @@ Route::middleware('auth')->group(function () {
         Route::get('absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
         Route::get('absensi/export', [AbsensiController::class, 'export'])->name('absensi.export');
         Route::get('absensi/qr', [AbsensiController::class, 'qrPrint'])->name('absensi.qr');
+        Route::post('absensi/qr/regenerate', [AbsensiController::class, 'regenerateToken'])->name('absensi.qr.regenerate');
         Route::get('absensi/display', [AbsensiController::class, 'display'])->name('absensi.display');
     });
 
@@ -62,6 +64,7 @@ Route::middleware('auth')->group(function () {
         Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
         Route::put('pengaturan/akun', [PengaturanController::class, 'updateAkun'])->name('pengaturan.akun');
         Route::put('pengaturan/absensi', [PengaturanController::class, 'updateAbsensi'])->name('pengaturan.absensi');
+        Route::resource('surat', SuratController::class)->except(['show']);
     });
 
     // Pembuatan akun login anggota — khusus admin
@@ -75,15 +78,24 @@ Route::middleware('auth')->group(function () {
         Route::resource('keuangan', KeuanganController::class)->except(['show']);
     });
 
-    // Laporan & data live (polling)
+    // Data live (polling) — semua user login
     Route::prefix('panel')->name('panel.')->group(function () {
+        Route::get('api/live/dasbor', [DataLiveController::class, 'dasbor'])->name('api.live.dasbor');
+        Route::get('api/live/notifikasi', [DataLiveController::class, 'notifikasi'])->name('api.live.notifikasi');
+        Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
+    });
+
+    // Laporan operasional — admin & koordinator (middleware peran eksplisit)
+    Route::middleware('role:admin,koordinator')->prefix('panel')->name('panel.')->group(function () {
         Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
         Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');
-        Route::get('api/live/dasbor', [DataLiveController::class, 'dasbor'])->name('api.live.dasbor');
-        Route::get('api/live/notifikasi', [DataLiveController::class, 'notifikasi'])->name('api.live.notifikasi');
         Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])->name('api.live.absensi-rekap');
-        Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
+    });
+
+    // Ringkasan laporan keuangan — bendahara (via jabatan, bukan role admin/koordinator)
+    Route::middleware('can.manage.keuangan')->prefix('panel')->name('panel.')->group(function () {
+        Route::get('laporan-keuangan', [LaporanController::class, 'index'])->name('laporan.keuangan');
     });
 });
 

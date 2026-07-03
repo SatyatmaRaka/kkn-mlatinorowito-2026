@@ -67,7 +67,7 @@
                 @if (Auth::user()->canManageKeuangan() && ! Auth::user()->canReviewLogbook())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Laporan</span></li>
                     <li class="nav-item">
-                        <a href="{{ route('panel.laporan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.laporan.keuangan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.keuangan') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-file-earmark-bar-graph fs-5"></i><span>Laporan Keuangan</span>
                         </a>
                     </li>
@@ -102,6 +102,11 @@
                     <li class="nav-item">
                         <a href="{{ route('panel.galeri.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.galeri.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-images fs-5"></i><span>Galeri</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.surat.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.surat.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-envelope-paper-fill fs-5"></i><span>Surat Menyurat</span>
                         </a>
                     </li>
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Sistem</span></li>

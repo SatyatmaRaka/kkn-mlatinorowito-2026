@@ -1,12 +1,19 @@
 <x-app-layout>
     <x-slot name="header">QR Code Absensi Posko</x-slot>
 
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="premium-card border-0 p-4 p-md-5 text-center">
-                <span class="badge bg-primary mb-3">{{ $tanggalLabel }}</span>
-                <h2 class="h5 fw-bold mb-2">QR Absensi Hari Ini</h2>
-                <p class="text-muted small mb-4">Token berubah setiap hari. Cetak pagi hari atau tampilkan di tablet posko.</p>
+                <span class="badge bg-success mb-3">QR Tetap</span>
+                <h2 class="h5 fw-bold mb-2">QR Absensi Posko</h2>
+                <p class="text-muted small mb-4">QR ini tidak berubah setiap hari — cetak sekali atau tampilkan di tablet posko sepanjang KKN.</p>
 
                 <div id="qrcode" class="d-flex justify-content-center mb-3"></div>
                 <p class="small text-muted mb-1">Jam absensi: <strong>{{ $windowLabel }}</strong></p>
@@ -19,6 +26,12 @@
                     <a href="{{ route('panel.absensi.display') }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4">
                         <i class="bi bi-tablet me-1"></i> Mode Tablet
                     </a>
+                    <form action="{{ route('panel.absensi.qr.regenerate') }}" method="POST" class="d-inline" onsubmit="return confirm('Buat token QR baru? QR yang sudah dicetak/dibagikan tidak akan valid lagi.')">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger rounded-pill px-4">
+                            <i class="bi bi-arrow-repeat me-1"></i> Buat Ulang QR
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -26,14 +39,14 @@
             <div class="premium-card border-0 p-4">
                 <h2 class="h5 fw-bold mb-3">Panduan Absensi QR</h2>
                 <ol class="text-muted small mb-4 ps-3">
-                    <li class="mb-2">QR <strong>berubah otomatis setiap hari</strong> — cetak ulang atau pakai mode tablet.</li>
+                    <li class="mb-2">Cetak QR <strong>sekali</strong> atau pasang tablet dengan <em>Mode Tablet</em> di posko.</li>
                     <li class="mb-2">Setiap anggota scan QR dengan kamera HP.</li>
                     <li class="mb-2">Login dengan akun pribadi (bukan titip teman).</li>
                     <li class="mb-2">Tekan <strong>Konfirmasi Kehadiran</strong> dalam jam absensi.</li>
                     <li>Koordinator pantau rekap di menu <strong>Rekap Absensi</strong>.</li>
                 </ol>
                 <div class="alert alert-info border-0 small mb-0">
-                    <strong>Rekomendasi:</strong> Pasang tablet di posko dengan halaman <em>Mode Tablet</em> agar QR selalu terbaru tanpa cetak ulang.
+                    <strong>Keamanan:</strong> Absensi tetap hanya bisa dalam jam yang ditentukan dan satu kali per hari per anggota. Gunakan <em>Buat Ulang QR</em> hanya jika QR bocor ke luar posko.
                 </div>
             </div>
         </div>

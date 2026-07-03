@@ -60,6 +60,57 @@ class TautanSosial
         return (bool) preg_match('/^@?[\w.]+$/', $value);
     }
 
+    /** Bangun URL TikTok dari handle atau URL penuh. */
+    public static function tiktokUrl(?string $handle, string $defaultHandle = 'kknumk.mlatinorowito.26'): string
+    {
+        if (empty($handle)) {
+            return 'https://www.tiktok.com/@'.$defaultHandle;
+        }
+
+        if (str_starts_with($handle, 'http')) {
+            return self::isValidTiktokUrl($handle)
+                ? $handle
+                : 'https://www.tiktok.com/@'.$defaultHandle;
+        }
+
+        return 'https://www.tiktok.com/@'.ltrim($handle, '@');
+    }
+
+    public static function tiktokLabel(?string $handle, string $default = '@kknumk.mlatinorowito.26'): string
+    {
+        $value = $handle ?: $default;
+
+        return str_starts_with($value, '@') ? $value : '@'.ltrim($value, '@');
+    }
+
+    public static function isValidTiktokUrl(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if (! isset($parsed['host'], $parsed['scheme'])) {
+            return false;
+        }
+
+        if (! in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
+            return false;
+        }
+
+        return in_array(strtolower($parsed['host']), ['www.tiktok.com', 'tiktok.com'], true);
+    }
+
+    public static function isValidTiktokInput(?string $value): bool
+    {
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        if (str_starts_with($value, 'http')) {
+            return self::isValidTiktokUrl($value);
+        }
+
+        return (bool) preg_match('/^@?[\w.]+$/', $value);
+    }
+
     /** @return list<string> */
     public static function jabatanPimpinan(): array
     {

@@ -81,11 +81,6 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="whatsapp" class="form-label fw-semibold text-muted small text-uppercase">WhatsApp</label>
-                            <input type="text" id="whatsapp" name="whatsapp" value="{{ old('whatsapp', $pengaturan['whatsapp'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none" placeholder="6281234567890">
-                        </div>
-
-                        <div class="mb-4">
                             <label for="alamat" class="form-label fw-semibold text-muted small text-uppercase">Alamat</label>
                             <textarea id="alamat" name="alamat" rows="2" class="form-control bg-light border-0 px-3 py-2 shadow-none">{{ old('alamat', $pengaturan['alamat'] ?? '') }}</textarea>
                         </div>
@@ -109,6 +104,24 @@
                                 >
                             </div>
                             @error('instagram')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tiktok" class="form-label fw-semibold text-muted small text-uppercase">TikTok</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted border-end-0 pe-0"><i class="bi bi-tiktok"></i></span>
+                                <input
+                                    type="text"
+                                    id="tiktok"
+                                    name="tiktok"
+                                    value="{{ old('tiktok', $pengaturan['tiktok'] ?? '') }}"
+                                    class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none border-start-0 ps-2 @error('tiktok') is-invalid @enderror"
+                                    placeholder="@kknumk.mlatinorowito.26"
+                                >
+                            </div>
+                            @error('tiktok')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                         </div>

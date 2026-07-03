@@ -3,8 +3,9 @@
         @php
             $kontakInstagramUrl = \App\Penunjang\TautanSosial::instagramUrl($pengaturan['instagram'] ?? null);
             $kontakInstagramLabel = \App\Penunjang\TautanSosial::instagramLabel($pengaturan['instagram'] ?? null);
+            $kontakTiktokUrl = \App\Penunjang\TautanSosial::tiktokUrl($pengaturan['tiktok'] ?? null);
+            $kontakTiktokLabel = \App\Penunjang\TautanSosial::tiktokLabel($pengaturan['tiktok'] ?? null);
             $kontakEmail = $pengaturan['email'] ?? null;
-            $kontakWhatsapp = $pengaturan['whatsapp'] ?? null;
             $kontakAlamat = $pengaturan['alamat'] ?? 'Kelurahan Mlatinorowito, Kecamatan Kota, Kabupaten Kudus';
             $mapsUrl = \App\Penunjang\SematanPeta::safeUrl($pengaturan['maps_embed_url'] ?? null);
         @endphp
@@ -34,16 +35,7 @@
                                 </li>
                             @endif
 
-                            @if ($kontakWhatsapp)
-                                <li class="mb-4">
-                                    <div>
-                                        <div class="fw-semibold mb-1">WhatsApp</div>
-                                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', $kontakWhatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">{{ $kontakWhatsapp }}</a>
-                                    </div>
-                                </li>
-                            @endif
-
-                            <li class="mb-0">
+                            <li class="mb-4">
                                 <div>
                                     <div class="fw-semibold mb-1">Instagram</div>
                                     <a
@@ -53,6 +45,20 @@
                                         class="text-decoration-none"
                                     >
                                         {{ $kontakInstagramLabel }}
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="mb-0">
+                                <div>
+                                    <div class="fw-semibold mb-1">TikTok</div>
+                                    <a
+                                        href="{{ $kontakTiktokUrl }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-decoration-none"
+                                    >
+                                        {{ $kontakTiktokLabel }}
                                     </a>
                                 </div>
                             </li>

@@ -20,7 +20,4 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
-    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
-        // Rotasi token QR absensi setiap hari (wajib diaktifkan via cron di shared hosting)
-        $schedule->command('absensi:rotate-token')->dailyAt('00:05');
-    })->create();
+    ->create();

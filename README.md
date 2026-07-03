@@ -43,7 +43,7 @@ php artisan migrate --seed
 
 ```bash
 php artisan storage:link   # wajib agar foto upload tampil
-npm run build            # untuk production / preview build
+npm run build              # opsional, jika tidak pakai npm run dev
 ```
 
 ## Akun Admin Default
@@ -67,14 +67,15 @@ Sekretaris dapat mengelola data anggota di CMS, tetapi **tidak** dapat membuat a
 
 ## Absensi QR (Cara Pakai)
 
-1. Admin/koordinator: **Panel → Cetak QR Absensi** atau buka **Mode Tablet** di posko
-2. QR **berubah otomatis setiap hari** — foto QR kemarin tidak bisa dipakai
+1. Admin/koordinator: **Panel → Cetak QR Absensi** — cetak sekali atau buka **Mode Tablet** di posko
+2. QR **tetap sama** sepanjang periode KKN (tidak perlu diganti setiap hari)
 3. Anggota scan QR → login akun pribadi → **Konfirmasi Kehadiran**
 4. Absensi hanya valid dalam jam yang diatur di **Panel → Pengaturan → Jam Absensi**
 5. Koordinator pantau **Panel → Rekap Absensi** dan export CSV
 
+Jika QR bocor, admin/koordinator bisa klik **Buat Ulang QR** di halaman cetak QR, atau jalankan:
+
 ```bash
-# Generate token hari ini manual (opsional, otomatis saat buka halaman QR)
 php artisan absensi:rotate-token
 ```
 
@@ -82,44 +83,6 @@ php artisan absensi:rotate-token
 
 - Anggota: **Panel → Catatan Harian → Tulis** (draft atau kirim review)
 - Koordinator: review & setujui/tolak catatan yang masuk
-
-## Deploy ke Production (Shared Hosting / cPanel)
-
-### Struktur di server
-
-```
-/home/user/
-├── kkn_app/          ← seluruh proyek Laravel (di luar web root)
-└── public_html/
-    ├── index.php     ← salin dari deploy/index.php
-    ├── .htaccess     ← salin dari public/.htaccess
-    ├── build/        ← salin dari public/build/
-    └── images/       ← salin dari public/images/
-```
-
-`public/index.php` di repo tetap untuk development lokal. Untuk production, gunakan `deploy/index.php` yang mengarah ke folder `kkn_app/` di server.
-
-### Checklist wajib
-
-1. `APP_ENV=production` dan `APP_DEBUG=false`
-2. **`SESSION_ENCRYPT=true`** — wajib di shared hosting
-3. `npm run build` — pastikan folder `public/build/` ada
-4. **Jangan** deploy file `public/hot` (penanda Vite dev server)
-5. `php artisan storage:link`
-6. `php artisan migrate --force`
-7. Ganti password admin default segera setelah deploy
-8. Rotasi `APP_KEY` jika pernah bocor
-9. Atur **cron job** di cPanel — lihat `deploy/cron.txt`
-
-### Cron Job (cPanel) — wajib
-
-Token QR absensi harian membutuhkan scheduler Laravel. Tambahkan cron **setiap menit**:
-
-```
-* * * * * /usr/local/bin/php /home/USERNAME/kkn_app/artisan schedule:run >> /dev/null 2>&1
-```
-
-Ganti `USERNAME` dengan username cPanel Anda. Detail ada di `deploy/cron.txt`.
 
 ## Testing
 
