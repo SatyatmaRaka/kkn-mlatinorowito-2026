@@ -88,6 +88,7 @@
     </head>
     <body class="admin-layout">
         @include('layouts.navigation')
+        <x-notifikasi-live />
 
         <div class="admin-main">
             <div class="container-fluid p-4">

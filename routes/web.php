@@ -6,10 +6,12 @@ use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\DetailController;
 use App\Http\Controllers\Panel\AnggotaController;
 use App\Http\Controllers\Panel\CatatanHarianController;
+use App\Http\Controllers\Panel\DataLiveController;
 use App\Http\Controllers\Panel\DasborController;
 use App\Http\Controllers\Panel\GaleriController;
 use App\Http\Controllers\Panel\KegiatanController;
 use App\Http\Controllers\Panel\KeuanganController;
+use App\Http\Controllers\Panel\LaporanController;
 use App\Http\Controllers\Panel\PengaturanController;
 use App\Http\Controllers\Panel\ProgramKerjaController;
 use App\Layanan\LayananTokenAbsensi;
@@ -71,6 +73,17 @@ Route::middleware('auth')->group(function () {
     Route::middleware('can.manage.keuangan')->prefix('panel')->name('panel.')->group(function () {
         Route::get('keuangan/export', [KeuanganController::class, 'export'])->name('keuangan.export');
         Route::resource('keuangan', KeuanganController::class)->except(['show']);
+    });
+
+    // Laporan & data live (polling)
+    Route::prefix('panel')->name('panel.')->group(function () {
+        Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
+        Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');
+        Route::get('api/live/dasbor', [DataLiveController::class, 'dasbor'])->name('api.live.dasbor');
+        Route::get('api/live/notifikasi', [DataLiveController::class, 'notifikasi'])->name('api.live.notifikasi');
+        Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])->name('api.live.absensi-rekap');
+        Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
     });
 });
 

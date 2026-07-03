@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Layanan;
+
+use App\Models\Absensi;
+use App\Models\Anggota;
+use App\Models\Keuangan;
+use App\Models\Logbook;
+use Carbon\Carbon;
+
+/**
+ * Agregasi data untuk laporan & endpoint live (polling).
+ */
+class LayananRingkasan
+{
+    public static function tanggalMulai(?string $mulai): Carbon
+    {
+        return $mulai ? Carbon::parse($mulai)->startOfDay() : now()->startOfMonth();
+    }
+
+    public static function tanggalSelesai(?string $selesai): Carbon
+    {
+        return $selesai ? Carbon::parse($selesai)->endOfDay() : now()->endOfDay();
+    }
+
+    /** @return array<string, mixed> */
+    public static function ringkasanPeriode(?string $mulai = null, ?string $selesai = null): array
+    {
+        $dari = self::tanggalMulai($mulai);
+        $sampai = self::tanggalSelesai($selesai);
+
+        $pemasukan = (int) Keuangan::where('jenis', 'pemasukan')
+            ->whereBetween('tanggal', [$dari, $sampai])
+            ->sum('nominal');
+
+        $pengeluaran = (int) Keuangan::where('jenis', 'pengeluaran')
+            ->whereBetween('tanggal', [$dari, $sampai])
+            ->sum('nominal');
+
+        return [
+            'periode' => [
+                'mulai' => $dari->toDateString(),
+                'selesai' => $sampai->toDateString(),
+                'label' => $dari->locale('id')->translatedFormat('d M Y').' – '.$sampai->locale('id')->translatedFormat('d M Y'),
+            ],
+            'absensi' => [
+                'total' => Absensi::whereBetween('tanggal', [$dari, $sampai])->count(),
+                'hari_ini' => Absensi::whereDate('tanggal', today())->count(),
+                'total_anggota_aktif' => Anggota::whereHas('user')->count(),
+            ],
+            'logbook' => [
+                'draft' => Logbook::where('status', Logbook::STATUS_DRAFT)->whereBetween('tanggal', [$dari, $sampai])->count(),
+                'submitted' => Logbook::where('status', Logbook::STATUS_SUBMITTED)->whereBetween('tanggal', [$dari, $sampai])->count(),
+                'approved' => Logbook::where('status', Logbook::STATUS_APPROVED)->whereBetween('tanggal', [$dari, $sampai])->count(),
+                'rejected' => Logbook::where('status', Logbook::STATUS_REJECTED)->whereBetween('tanggal', [$dari, $sampai])->count(),
+                'menunggu_review' => Logbook::where('status', Logbook::STATUS_SUBMITTED)->count(),
+            ],
+            'keuangan' => [
+                'pemasukan' => $pemasukan,
+                'pengeluaran' => $pengeluaran,
+                'saldo' => $pemasukan - $pengeluaran,
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    public static function rekapAbsensiHarian(string $tanggal): array
+    {
+        $anggotaDenganAkun = Anggota::with('user')
+            ->whereHas('user', fn ($q) => $q->whereIn('role', ['anggota', 'koordinator']))
+            ->orderBy('urutan')
+            ->get();
+
+        $hadirIds = Absensi::whereDate('tanggal', $tanggal)->pluck('anggota_id');
+
+        $absensiHari = Absensi::with('anggota')
+            ->whereDate('tanggal', $tanggal)
+            ->orderBy('check_in_at')
+            ->get();
+
+        return [
+            'tanggal' => $tanggal,
+            'total' => $anggotaDenganAkun->count(),
+            'hadir' => $hadirIds->count(),
+            'belum' => $anggotaDenganAkun->count() - $hadirIds->count(),
+            'sudah_absen' => $absensiHari->map(fn (Absensi $a) => [
+                'nama' => $a->anggota->nama,
+                'jam' => $a->check_in_at->format('H:i'),
+            ])->values()->all(),
+            'belum_absen' => $anggotaDenganAkun
+                ->filter(fn (Anggota $a) => ! $hadirIds->contains($a->id))
+                ->map(fn (Anggota $a) => ['nama' => $a->nama, 'jabatan' => $a->jabatan])
+                ->values()
+                ->all(),
+        ];
+    }
+}

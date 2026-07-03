@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\PeranPengguna;
 use App\Http\Controllers\Controller;
 use App\Models\Logbook;
+use App\Models\User;
+use App\Notifications\NotifikasiLogbookDikirim;
 use App\Notifications\NotifikasiLogbookDireview;
 use App\Penunjang\EksporCsv;
 use Illuminate\Http\RedirectResponse;
@@ -67,7 +70,11 @@ class CatatanHarianController extends Controller
         $validated['status'] = $request->boolean('submit') ? Logbook::STATUS_SUBMITTED : Logbook::STATUS_DRAFT;
         unset($validated['submit']);
 
-        Logbook::create($validated);
+        $logbook = Logbook::create($validated);
+
+        if ($logbook->status === Logbook::STATUS_SUBMITTED) {
+            $this->beritahuReviewerLogbookBaru($logbook);
+        }
 
         return redirect()->route('panel.catatan-harian.index')->with('success', 'Logbook berhasil disimpan.');
     }
@@ -110,7 +117,14 @@ class CatatanHarianController extends Controller
 
         unset($validated['submit']);
 
+        $wasSubmitted = ($validated['status'] ?? $logbook->status) === Logbook::STATUS_SUBMITTED
+            && $logbook->status !== Logbook::STATUS_SUBMITTED;
+
         $logbook->update($validated);
+
+        if ($wasSubmitted) {
+            $this->beritahuReviewerLogbookBaru($logbook->fresh());
+        }
 
         return redirect()->route('panel.catatan-harian.index')->with('success', 'Logbook berhasil diperbarui.');
     }
@@ -198,5 +212,15 @@ class CatatanHarianController extends Controller
             ['Tanggal', 'Nama', 'Judul', 'Lokasi', 'Jam Mulai', 'Jam Selesai', 'Status', 'Catatan Reviewer'],
             $rows
         );
+    }
+
+    /** Kirim notifikasi database ke admin & koordinator. */
+    private function beritahuReviewerLogbookBaru(Logbook $logbook): void
+    {
+        $logbook->loadMissing('anggota');
+
+        User::query()
+            ->whereIn('role', [PeranPengguna::Admin, PeranPengguna::Koordinator])
+            ->each(fn ($user) => $user->notify(new NotifikasiLogbookDikirim($logbook)));
     }
 }

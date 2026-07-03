@@ -22,6 +22,18 @@
         </div>
     @endif
 
+    @if ($errors->has('username') || $errors->has('password') || $errors->has('role'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="premium-card border-0 mb-4">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -113,46 +125,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            @if (! $item->user && Auth::user()->isAdmin())
-                                <div class="modal fade" id="akun-{{ $item->id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form method="POST" action="{{ route('panel.anggota.akun', $item) }}">
-                                                @csrf
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Buat Akun — {{ $item->nama }}</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Username</label>
-                                                        <input type="text" name="username" class="form-control" value="{{ Str::slug(Str::before($item->nama, ' '), '_') }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Role Sistem</label>
-                                                        <select name="role" class="form-select" required>
-                                                            <option value="anggota" selected>Anggota</option>
-                                                            <option value="koordinator" @selected(\App\Penunjang\TautanSosial::isJabatanPimpinan($item->jabatan))>Koordinator</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Password</label>
-                                                        <input type="password" name="password" class="form-control" required>
-                                                    </div>
-                                                    <div class="mb-0">
-                                                        <label class="form-label">Konfirmasi Password</label>
-                                                        <input type="password" name="password_confirmation" class="form-control" required>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary">Simpan Akun</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
                         @empty
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-5">
@@ -171,4 +143,82 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal di luar tabel agar Bootstrap render dengan benar --}}
+    @if (Auth::user()->isAdmin())
+        @foreach ($anggota as $item)
+            @if (! $item->user)
+                <div class="modal fade" id="akun-{{ $item->id }}" tabindex="-1" aria-labelledby="akun-label-{{ $item->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ route('panel.anggota.akun', $item) }}">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="akun-label-{{ $item->id }}">Buat Akun — {{ $item->nama }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="username-{{ $item->id }}" class="form-label">Username</label>
+                                        <input
+                                            type="text"
+                                            id="username-{{ $item->id }}"
+                                            name="username"
+                                            class="form-control @error('username') is-invalid @enderror"
+                                            value="{{ old('username', Str::slug(Str::before($item->nama, ' '), '_')) }}"
+                                            required
+                                            autocomplete="off"
+                                        >
+                                        @error('username')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="role-{{ $item->id }}" class="form-label">Role Sistem</label>
+                                        <select id="role-{{ $item->id }}" name="role" class="form-select @error('role') is-invalid @enderror" required>
+                                            <option value="anggota" @selected(old('role', 'anggota') === 'anggota')>Anggota</option>
+                                            <option value="koordinator" @selected(old('role') === 'koordinator' || \App\Penunjang\TautanSosial::isJabatanPimpinan($item->jabatan))>Koordinator</option>
+                                        </select>
+                                        @error('role')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password-{{ $item->id }}" class="form-label">Password</label>
+                                        <input
+                                            type="password"
+                                            id="password-{{ $item->id }}"
+                                            name="password"
+                                            class="form-control @error('password') is-invalid @enderror"
+                                            required
+                                            autocomplete="new-password"
+                                        >
+                                        @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <div class="form-text">Minimal 12 karakter, huruf dan angka.</div>
+                                    </div>
+                                    <div class="mb-0">
+                                        <label for="password-confirm-{{ $item->id }}" class="form-label">Konfirmasi Password</label>
+                                        <input
+                                            type="password"
+                                            id="password-confirm-{{ $item->id }}"
+                                            name="password_confirmation"
+                                            class="form-control"
+                                            required
+                                            autocomplete="new-password"
+                                        >
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan Akun</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    @endif
 </x-app-layout>

@@ -90,7 +90,7 @@
                 <div class="premium-card h-100 border-0 p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <div class="text-muted small fw-bold text-uppercase mb-1">Logbook Menunggu Review</div>
-                        <div class="display-6 fw-bolder text-dark">{{ $logbookMenunggu }}</div>
+                        <div class="display-6 fw-bolder text-dark" id="live-logbook-menunggu">{{ $logbookMenunggu }}</div>
                     </div>
                     <i class="bi bi-journal-text fs-1 text-primary opacity-50"></i>
                 </div>
@@ -101,7 +101,7 @@
                 <div class="premium-card h-100 border-0 p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <div class="text-muted small fw-bold text-uppercase mb-1">Absensi Hari Ini</div>
-                        <div class="display-6 fw-bolder text-dark">{{ $absensiHariIni }}</div>
+                        <div class="display-6 fw-bolder text-dark" id="live-absensi-hari-ini">{{ $absensiHariIni }}</div>
                     </div>
                     <i class="bi bi-qr-code-scan fs-1 text-success opacity-50"></i>
                 </div>
@@ -202,4 +202,25 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        (function () {
+            const url = @json(route('panel.api.live.dasbor'));
+            async function refreshDasbor() {
+                try {
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const logbook = document.getElementById('live-logbook-menunggu');
+                    const absensi = document.getElementById('live-absensi-hari-ini');
+                    if (logbook) logbook.textContent = data.logbook_menunggu;
+                    if (absensi) absensi.textContent = data.absensi_hari_ini;
+                } catch (e) {}
+            }
+            refreshDasbor();
+            setInterval(refreshDasbor, 30000);
+        })();
+    </script>
+    @endpush
 </x-app-layout>

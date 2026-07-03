@@ -53,8 +53,22 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('panel.laporan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-file-earmark-bar-graph fs-5"></i><span>Laporan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('panel.absensi.qr') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.qr') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-printer fs-5"></i><span>Cetak QR</span>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::user()->canManageKeuangan() && ! Auth::user()->canReviewLogbook())
+                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Laporan</span></li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.laporan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-file-earmark-bar-graph fs-5"></i><span>Laporan Keuangan</span>
                         </a>
                     </li>
                 @endif

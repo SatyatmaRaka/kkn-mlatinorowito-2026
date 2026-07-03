@@ -13,15 +13,15 @@ class ProgramKerjaSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['judul' => 'Program Kerja 1', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => '📋', 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 1],
-            ['judul' => 'Program Kerja 2', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => '📋', 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 2],
-            ['judul' => 'Program Kerja 3', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => '📋', 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 3],
-            ['judul' => 'Program Kerja 4', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => '📋', 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 4],
-            ['judul' => 'Program Kerja 5', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => '📋', 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 5],
+            ['judul' => 'Program Kerja 1', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => null, 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 1],
+            ['judul' => 'Program Kerja 2', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => null, 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 2],
+            ['judul' => 'Program Kerja 3', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => null, 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 3],
+            ['judul' => 'Program Kerja 4', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => null, 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 4],
+            ['judul' => 'Program Kerja 5', 'tema' => null, 'deskripsi' => 'Akan segera diumumkan setelah diskusi kelompok final', 'icon' => null, 'pic' => null, 'status' => 'Coming Soon', 'urutan' => 5],
         ];
 
         foreach ($data as $item) {
-            ProgramKerja::updateOrCreate(['judul' => $item['judul']], $item);
+            ProgramKerja::updateOrCreate(['urutan' => $item['urutan']], $item);
         }
     }
 }

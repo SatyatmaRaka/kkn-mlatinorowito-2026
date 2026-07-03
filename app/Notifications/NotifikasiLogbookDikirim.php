@@ -6,17 +6,12 @@ use App\Models\Logbook;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-/**
- * Notifikasi in-app ke pemilik logbook saat catatan harian disetujui/ditolak.
- */
-class NotifikasiLogbookDireview extends Notification
+/** Notifikasi ke koordinator/admin saat logbook baru dikirim untuk review. */
+class NotifikasiLogbookDikirim extends Notification
 {
     use Queueable;
 
-    public function __construct(
-        public Logbook $logbook,
-        public string $statusLabel,
-    ) {}
+    public function __construct(public Logbook $logbook) {}
 
     /** @return list<string> */
     public function via(object $notifiable): array
@@ -30,12 +25,10 @@ class NotifikasiLogbookDireview extends Notification
         return [
             'logbook_id' => $this->logbook->id,
             'judul' => $this->logbook->judul,
-            'status' => $this->logbook->status,
-            'status_label' => $this->statusLabel,
-            'catatan_reviewer' => $this->logbook->catatan_reviewer,
-            'tipe' => 'logbook_direview',
+            'anggota' => $this->logbook->anggota?->nama,
+            'tipe' => 'logbook_dikirim',
+            'pesan' => ($this->logbook->anggota?->nama ?? 'Anggota').' mengirim logbook "'.$this->logbook->judul.'" untuk review.',
             'url' => route('panel.catatan-harian.index'),
-            'pesan' => 'Catatan "'.$this->logbook->judul.'" '.$this->statusLabel.'.',
         ];
     }
 }

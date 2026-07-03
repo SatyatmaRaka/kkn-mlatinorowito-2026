@@ -5,6 +5,7 @@ namespace Tests\Feature\Panel;
 use App\Models\Anggota;
 use App\Models\Logbook;
 use App\Models\User;
+use App\Notifications\NotifikasiLogbookDikirim;
 use App\Notifications\NotifikasiLogbookDireview;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -34,5 +35,25 @@ class LogbookNotificationTest extends TestCase
             ->assertRedirect();
 
         Notification::assertSentTo($anggotaUser, NotifikasiLogbookDireview::class);
+    }
+
+    public function test_reviewer_receives_notification_when_logbook_submitted(): void
+    {
+        Notification::fake();
+
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+        $koordinator = User::factory()->koordinator()->create();
+
+        $this->actingAs($anggotaUser)
+            ->post(route('panel.catatan-harian.store'), [
+                'tanggal' => now()->toDateString(),
+                'judul' => 'Logbook Baru',
+                'deskripsi' => 'Kegiatan hari ini cukup panjang untuk validasi.',
+                'submit' => 1,
+            ])
+            ->assertRedirect();
+
+        Notification::assertSentTo($koordinator, NotifikasiLogbookDikirim::class);
     }
 }

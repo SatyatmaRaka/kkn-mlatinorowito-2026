@@ -24,10 +24,6 @@ composer install
 cp .env.example .env
 php artisan key:generate
 
-# Isi ADMIN_DEFAULT_PASSWORD di .env (wajib untuk seeding)
-# Contoh:
-# ADMIN_DEFAULT_PASSWORD=PasswordKuatMinimal12
-
 npm install
 npm run dev          # terminal 1
 php artisan serve    # terminal 2
@@ -52,11 +48,12 @@ npm run build            # untuk production / preview build
 
 ## Akun Admin Default
 
-Setelah `db:seed`, login dengan:
-- **Username:** `kkn_mlati26`
-- **Password:** nilai `ADMIN_DEFAULT_PASSWORD` di `.env`
+Saat `php artisan migrate --seed`, akun admin **dibuat otomatis**:
 
-**Wajib** ganti password lewat menu **Panel → Pengaturan → Keamanan Akun** segera setelah login pertama (jangan pakai password seed di production).
+- **Username:** `kkn_mlati26`
+- **Password awal:** nilai `ADMIN_DEFAULT_PASSWORD` di `.env` (contoh bawaan: `KknMlati2026!`)
+
+Setelah login, **ganti password** lewat **Panel → Pengaturan → Keamanan Akun**.
 
 ### Akun Anggota & Koordinator
 
