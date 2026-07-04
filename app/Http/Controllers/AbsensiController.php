@@ -10,6 +10,7 @@ use App\Penunjang\EksporCsv;
 use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -79,6 +80,7 @@ class AbsensiController extends Controller
             'user_id' => $user->id,
             'anggota_id' => $user->anggota_id,
             'tanggal' => $today,
+            'status' => Absensi::STATUS_HADIR,
             'check_in_at' => now(),
             'metode' => 'qr',
             'ip_address' => $request->ip(),
@@ -88,6 +90,61 @@ class AbsensiController extends Controller
         return redirect()
             ->route('absensi.check-in', ['token' => $request->input('token')])
             ->with('success', 'Absensi berhasil dicatat. Selamat berkegiatan!');
+    }
+
+    /** Catat izin/sakit manual oleh admin/koordinator. */
+    public function catatIzinSakit(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'anggota_id' => 'required|exists:anggota,id',
+            'tanggal' => 'required|date|before_or_equal:today',
+            'status' => 'required|in:'.Absensi::STATUS_IZIN.','.Absensi::STATUS_SAKIT,
+            'keterangan' => 'required|string|max:500',
+        ]);
+
+        $anggota = Anggota::with('user')->findOrFail($validated['anggota_id']);
+
+        if (! $anggota->user) {
+            return back()->withErrors(['anggota_id' => 'Anggota tidak punya akun login.']);
+        }
+
+        if (Absensi::where('user_id', $anggota->user->id)->whereDate('tanggal', $validated['tanggal'])->exists()) {
+            return back()->withErrors([
+                'absensi' => 'Anggota ini sudah punya catatan absensi pada tanggal tersebut. Hapus catatan lama dulu jika ingin mengubah.',
+            ]);
+        }
+
+        Absensi::create([
+            'user_id' => $anggota->user->id,
+            'anggota_id' => $anggota->id,
+            'tanggal' => $validated['tanggal'],
+            'status' => $validated['status'],
+            'keterangan' => $validated['keterangan'],
+            'dicatat_oleh' => Auth::id(),
+            'check_in_at' => null,
+            'metode' => 'manual',
+        ]);
+
+        $label = $validated['status'] === Absensi::STATUS_IZIN ? 'Izin' : 'Sakit';
+
+        return redirect()
+            ->route('panel.absensi.rekap', ['tanggal' => $validated['tanggal']])
+            ->with('success', "{$label} berhasil dicatat untuk {$anggota->nama}.");
+    }
+
+    /** Hapus catatan izin/sakit manual yang salah input. */
+    public function hapusCatatan(Absensi $absensi): RedirectResponse
+    {
+        if ($absensi->metode !== 'manual') {
+            abort(403, 'Catatan hasil check-in QR tidak bisa dihapus dari sini.');
+        }
+
+        $tanggal = $absensi->tanggal->toDateString();
+        $absensi->delete();
+
+        return redirect()
+            ->route('panel.absensi.rekap', ['tanggal' => $tanggal])
+            ->with('success', 'Catatan izin/sakit berhasil dihapus.');
     }
 
     /** Riwayat absensi pribadi atau semua (koordinator). */
@@ -102,6 +159,7 @@ class AbsensiController extends Controller
             ->when($tanggal, fn ($query) => $query->whereDate('tanggal', $tanggal))
             ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
                 'metode',
+                'status',
                 fn ($sub, $term) => $sub->orWhereHas('anggota', fn ($a) => $a->where('nama', 'like', '%'.$term.'%')),
             ]))
             ->orderByDesc('tanggal')
@@ -117,7 +175,9 @@ class AbsensiController extends Controller
     {
         $tanggal = $request->query('tanggal', now()->toDateString());
         $q = FilterPencarian::kataKunci($request->query('q'));
-        $filterStatus = in_array($request->query('status'), ['hadir', 'belum'], true) ? $request->query('status') : null;
+        $filterStatus = in_array($request->query('status'), ['hadir', 'izin', 'sakit', 'belum'], true)
+            ? $request->query('status')
+            : null;
 
         $anggotaDenganAkun = Anggota::with('user')
             ->whereHas('user', fn ($query) => $query->whereIn('role', ['anggota', 'koordinator']))
@@ -127,24 +187,61 @@ class AbsensiController extends Controller
             ->orderBy('urutan')
             ->get();
 
-        $hadirIds = Absensi::whereDate('tanggal', $tanggal)->pluck('anggota_id');
+        $recordsByAnggota = Absensi::whereDate('tanggal', $tanggal)
+            ->get()
+            ->keyBy('anggota_id');
 
-        $hadir = $anggotaDenganAkun->filter(fn ($a) => $hadirIds->contains($a->id));
-        $belum = $anggotaDenganAkun->filter(fn ($a) => ! $hadirIds->contains($a->id));
+        $hadir = $this->kelompokAnggota($anggotaDenganAkun, $recordsByAnggota, Absensi::STATUS_HADIR);
+        $izin = $this->kelompokAnggota($anggotaDenganAkun, $recordsByAnggota, Absensi::STATUS_IZIN);
+        $sakit = $this->kelompokAnggota($anggotaDenganAkun, $recordsByAnggota, Absensi::STATUS_SAKIT);
+        $belum = $anggotaDenganAkun->filter(fn (Anggota $a) => ! $recordsByAnggota->has($a->id));
 
         if ($filterStatus === 'hadir') {
+            $izin = collect();
+            $sakit = collect();
+            $belum = collect();
+        } elseif ($filterStatus === 'izin') {
+            $hadir = collect();
+            $sakit = collect();
+            $belum = collect();
+        } elseif ($filterStatus === 'sakit') {
+            $hadir = collect();
+            $izin = collect();
             $belum = collect();
         } elseif ($filterStatus === 'belum') {
             $hadir = collect();
+            $izin = collect();
+            $sakit = collect();
         }
 
-        $absensiHari = Absensi::with('anggota')
+        $absensiHari = Absensi::with(['anggota', 'pencatat'])
             ->whereDate('tanggal', $tanggal)
             ->when($q, fn ($query) => $query->whereHas('anggota', fn ($a) => $a->where('nama', 'like', '%'.$q.'%')))
             ->orderBy('check_in_at')
             ->get();
 
-        return view('absensi.rekap', compact('tanggal', 'hadir', 'belum', 'absensiHari', 'anggotaDenganAkun', 'q', 'filterStatus'));
+        return view('absensi.rekap', compact(
+            'tanggal',
+            'hadir',
+            'izin',
+            'sakit',
+            'belum',
+            'absensiHari',
+            'recordsByAnggota',
+            'anggotaDenganAkun',
+            'q',
+            'filterStatus'
+        ));
+    }
+
+    /** @param  Collection<int, Absensi>  $recordsByAnggota */
+    private function kelompokAnggota(Collection $anggota, Collection $recordsByAnggota, string $status): Collection
+    {
+        return $anggota->filter(function (Anggota $a) use ($recordsByAnggota, $status) {
+            $record = $recordsByAnggota->get($a->id);
+
+            return $record && $record->status === $status;
+        });
     }
 
     public function export(Request $request): StreamedResponse
@@ -170,14 +267,16 @@ class AbsensiController extends Controller
             $a->tanggal->format('Y-m-d'),
             $a->anggota->nama,
             $a->anggota->jabatan,
-            $a->check_in_at->format('H:i:s'),
+            $a->status,
+            $a->keterangan ?? '',
+            $a->check_in_at?->format('H:i:s') ?? '-',
             $a->metode,
             $a->ip_address ?? '',
         ]);
 
         return EksporCsv::download(
             'rekap-absensi-'.now()->format('Y-m-d').'.csv',
-            ['Tanggal', 'Nama', 'Jabatan', 'Jam Check-in', 'Metode', 'IP'],
+            ['Tanggal', 'Nama', 'Jabatan', 'Status', 'Keterangan', 'Jam Check-in', 'Metode', 'IP'],
             $rows
         );
     }

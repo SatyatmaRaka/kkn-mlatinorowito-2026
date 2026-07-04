@@ -5,6 +5,8 @@ namespace Tests\Feature\Panel;
 use App\Models\Anggota;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AnggotaTest extends TestCase
@@ -134,5 +136,83 @@ class AnggotaTest extends TestCase
             ->assertForbidden();
 
         $this->assertDatabaseMissing('users', ['username' => 'anggota_baru']);
+    }
+
+    public function test_admin_can_reset_anggota_password(): void
+    {
+        $admin = User::factory()->create(['role' => \App\Enums\PeranPengguna::Admin]);
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create([
+            'anggota_id' => $anggota->id,
+            'password' => 'PasswordLama123!',
+            'wajib_ganti_password' => false,
+        ]);
+
+        $hashLama = $anggotaUser->password;
+
+        $this->actingAs($admin)
+            ->post(route('panel.anggota.reset-password', $anggota))
+            ->assertRedirect()
+            ->assertSessionHas('password_baru')
+            ->assertSessionHas('password_baru_untuk', $anggota->nama);
+
+        $anggotaUser->refresh();
+
+        $this->assertTrue($anggotaUser->wajib_ganti_password);
+        $this->assertFalse(Hash::check('PasswordLama123!', $anggotaUser->password));
+        $this->assertNotSame($hashLama, $anggotaUser->password);
+    }
+
+    public function test_reset_password_fails_when_anggota_has_no_account(): void
+    {
+        $admin = User::factory()->create(['role' => \App\Enums\PeranPengguna::Admin]);
+        $anggota = Anggota::factory()->create();
+
+        $this->actingAs($admin)
+            ->from(route('panel.anggota.index'))
+            ->post(route('panel.anggota.reset-password', $anggota))
+            ->assertRedirect()
+            ->assertSessionHasErrors('anggota');
+    }
+
+    public function test_non_admin_cannot_reset_anggota_password(): void
+    {
+        $koordinator = User::factory()->koordinator()->create();
+        $anggota = Anggota::factory()->create();
+        User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        $this->actingAs($koordinator)
+            ->post(route('panel.anggota.reset-password', $anggota))
+            ->assertForbidden();
+    }
+
+    public function test_reset_password_invalidates_database_sessions_when_driver_is_database(): void
+    {
+        config(['session.driver' => 'database']);
+
+        $admin = User::factory()->create(['role' => \App\Enums\PeranPengguna::Admin]);
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create([
+            'anggota_id' => $anggota->id,
+            'password' => 'PasswordLama123!',
+        ]);
+
+        DB::table('sessions')->insert([
+            'id' => 'test-session-id-anggota',
+            'user_id' => $anggotaUser->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'PHPUnit',
+            'payload' => base64_encode(serialize([])),
+            'last_activity' => time(),
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('panel.anggota.reset-password', $anggota))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('sessions', [
+            'id' => 'test-session-id-anggota',
+            'user_id' => $anggotaUser->id,
+        ]);
     }
 }

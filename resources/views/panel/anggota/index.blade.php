@@ -95,6 +95,19 @@
                                     @if ($item->user)
                                         <span class="badge bg-success-subtle text-success border border-success-subtle">{{ $item->user->username }}</span>
                                         <div class="small text-muted">{{ $item->user->role->label() }}</div>
+                                        @if (Auth::user()->isAdmin())
+                                            <form
+                                                action="{{ route('panel.anggota.reset-password', $item) }}"
+                                                method="POST"
+                                                class="mt-2"
+                                                onsubmit="return confirm('Reset password {{ $item->nama }}? Password lama akan langsung tidak berlaku dan anggota harus login ulang dengan password baru.')"
+                                            >
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill">
+                                                    <i class="bi bi-key-fill me-1"></i> Reset Password
+                                                </button>
+                                            </form>
+                                        @endif
                                     @elseif (Auth::user()->isAdmin())
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#akun-{{ $item->id }}">Buat Akun</button>
                                     @else
@@ -234,4 +247,61 @@
             @endif
         @endforeach
     @endif
+
+    @if (session('password_baru'))
+        <div class="modal fade" id="modal-password-baru" tabindex="-1" aria-labelledby="modal-password-baru-label" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="modal-password-baru-label">
+                            Password Baru — {{ session('password_baru_untuk') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex align-items-stretch gap-2 mb-3">
+                            <div
+                                id="password-baru-teks"
+                                class="flex-grow-1 p-3 bg-light border rounded-3 font-monospace fs-5 fw-bold text-center user-select-all"
+                            >{{ session('password_baru') }}</div>
+                            <button type="button" class="btn btn-outline-primary rounded-3 px-3" id="btn-salin-password" onclick="salinPasswordBaru()">
+                                <i class="bi bi-clipboard"></i>
+                                <span class="d-none d-sm-inline ms-1">Salin</span>
+                            </button>
+                        </div>
+                        <p id="feedback-salin-password" class="small text-success mb-2 d-none">Tersalin!</p>
+                        <div class="alert alert-warning border-0 mb-0 small">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            Password ini hanya ditampilkan sekali dan tidak disimpan di sistem. Catat atau screenshot sekarang, lalu bagikan ke anggota secara pribadi. Anggota akan diminta mengganti password ini saat login pertama.
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @push('scripts')
+        @if (session('password_baru'))
+            <script>
+                function salinPasswordBaru() {
+                    const teks = document.getElementById('password-baru-teks').textContent.trim();
+                    navigator.clipboard.writeText(teks).then(function () {
+                        const feedback = document.getElementById('feedback-salin-password');
+                        feedback.classList.remove('d-none');
+                        setTimeout(function () { feedback.classList.add('d-none'); }, 2000);
+                    });
+                }
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    const el = document.getElementById('modal-password-baru');
+                    if (el) {
+                        bootstrap.Modal.getOrCreateInstance(el).show();
+                    }
+                });
+            </script>
+        @endif
+    @endpush
 </x-app-layout>

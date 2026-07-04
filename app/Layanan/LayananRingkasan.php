@@ -76,27 +76,45 @@ class LayananRingkasan
             ->orderBy('urutan')
             ->get();
 
-        $hadirIds = Absensi::whereDate('tanggal', $tanggal)->pluck('anggota_id');
-
-        $absensiHari = Absensi::with('anggota')
+        $recordsByAnggota = Absensi::with('anggota')
             ->whereDate('tanggal', $tanggal)
-            ->orderBy('check_in_at')
-            ->get();
+            ->get()
+            ->keyBy('anggota_id');
+
+        $hadir = $recordsByAnggota->filter(fn (Absensi $a) => $a->isHadir());
+        $izin = $recordsByAnggota->filter(fn (Absensi $a) => $a->isIzin());
+        $sakit = $recordsByAnggota->filter(fn (Absensi $a) => $a->isSakit());
+
+        $belum = $anggotaDenganAkun->filter(fn (Anggota $a) => ! $recordsByAnggota->has($a->id));
 
         return [
             'tanggal' => $tanggal,
             'total' => $anggotaDenganAkun->count(),
-            'hadir' => $hadirIds->count(),
-            'belum' => $anggotaDenganAkun->count() - $hadirIds->count(),
-            'sudah_absen' => $absensiHari->map(fn (Absensi $a) => [
+            'hadir' => $hadir->count(),
+            'izin' => $izin->count(),
+            'sakit' => $sakit->count(),
+            'belum' => $belum->count(),
+            'daftar_hadir' => $hadir->map(fn (Absensi $a) => [
                 'nama' => $a->anggota->nama,
-                'jam' => $a->check_in_at->format('H:i'),
+                'jam' => $a->check_in_at?->format('H:i') ?? '-',
             ])->values()->all(),
-            'belum_absen' => $anggotaDenganAkun
-                ->filter(fn (Anggota $a) => ! $hadirIds->contains($a->id))
-                ->map(fn (Anggota $a) => ['nama' => $a->nama, 'jabatan' => $a->jabatan])
-                ->values()
-                ->all(),
+            'daftar_izin' => $izin->map(fn (Absensi $a) => [
+                'id' => $a->id,
+                'nama' => $a->anggota->nama,
+                'keterangan' => $a->keterangan ?? '',
+                'metode' => $a->metode,
+            ])->values()->all(),
+            'daftar_sakit' => $sakit->map(fn (Absensi $a) => [
+                'id' => $a->id,
+                'nama' => $a->anggota->nama,
+                'keterangan' => $a->keterangan ?? '',
+                'metode' => $a->metode,
+            ])->values()->all(),
+            'daftar_belum' => $belum->map(fn (Anggota $a) => [
+                'id' => $a->id,
+                'nama' => $a->nama,
+                'jabatan' => $a->jabatan,
+            ])->values()->all(),
         ];
     }
 }

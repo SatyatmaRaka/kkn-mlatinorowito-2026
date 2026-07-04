@@ -60,7 +60,8 @@ class DasborController extends Controller
     private function dasborKoordinator(User $user): View
     {
         $anggotaDenganAkun = Anggota::whereHas('user')->count();
-        $absensiHariIni = Absensi::whereDate('tanggal', today())->count();
+        $catatHariIni = Absensi::whereDate('tanggal', today())->distinct()->count('anggota_id');
+        $absensiHariIni = Absensi::whereDate('tanggal', today())->where('status', Absensi::STATUS_HADIR)->count();
         $isWakil = \App\Enums\Jabatan::tryFromValue($user->anggota?->jabatan) === \App\Enums\Jabatan::WakilKoordinator;
 
         return view('dasbor-koordinator', [
@@ -71,7 +72,7 @@ class DasborController extends Controller
                 : 'Memimpin operasional KKN — pantau logbook, absensi, dan laporan harian.',
             'logbookMenunggu' => Logbook::where('status', Logbook::STATUS_SUBMITTED)->count(),
             'absensiHariIni' => $absensiHariIni,
-            'belumAbsen' => max(0, $anggotaDenganAkun - $absensiHariIni),
+            'belumAbsen' => max(0, $anggotaDenganAkun - $catatHariIni),
             'logbookReview' => Logbook::with('user.anggota')
                 ->where('status', Logbook::STATUS_SUBMITTED)
                 ->orderByDesc('updated_at')

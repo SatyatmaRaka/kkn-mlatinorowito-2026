@@ -41,6 +41,7 @@
                         @if (Auth::user()->canReviewLogbook())
                             <th class="py-3">Anggota</th>
                         @endif
+                        <th class="py-3">Status</th>
                         <th class="py-3">Waktu Check-in</th>
                         <th class="pe-4 py-3">Metode</th>
                     </tr>
@@ -52,12 +53,21 @@
                             @if (Auth::user()->canReviewLogbook())
                                 <td class="py-3 fw-semibold">{{ $item->anggota->nama }}</td>
                             @endif
-                            <td class="py-3">{{ $item->check_in_at->format('H:i') }} WIB</td>
+                            <td class="py-3">
+                                @if ($item->status === \App\Models\Absensi::STATUS_HADIR)
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Hadir</span>
+                                @elseif ($item->status === \App\Models\Absensi::STATUS_IZIN)
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Izin</span>
+                                @else
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">Sakit</span>
+                                @endif
+                            </td>
+                            <td class="py-3">{{ $item->check_in_at?->format('H:i') ?? '—' }}@if ($item->check_in_at) WIB @endif</td>
                             <td class="pe-4 py-3"><span class="badge bg-light text-dark border text-uppercase">{{ $item->metode }}</span></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ Auth::user()->canReviewLogbook() ? 4 : 3 }}" class="text-center text-muted py-5">Belum ada data absensi.</td>
+                            <td colspan="{{ Auth::user()->canReviewLogbook() ? 5 : 4 }}" class="text-center text-muted py-5">Belum ada data absensi.</td>
                         </tr>
                     @endforelse
                 </tbody>

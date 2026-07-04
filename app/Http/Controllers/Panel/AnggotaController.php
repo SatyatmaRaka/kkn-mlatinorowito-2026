@@ -10,6 +10,7 @@ use App\Penunjang\AkunAnggota;
 use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -152,5 +153,33 @@ class AnggotaController extends Controller
         ]);
 
         return back()->with('success', "Akun login untuk {$anggota->nama} berhasil dibuat.");
+    }
+
+    public function resetPassword(Request $request, Anggota $anggota): RedirectResponse
+    {
+        abort_unless($request->user()?->isAdmin(), 403, 'Hanya admin yang dapat mereset password anggota.');
+
+        $anggota->loadMissing('user');
+
+        if (! $anggota->user) {
+            return back()->withErrors(['anggota' => 'Anggota ini belum memiliki akun login.']);
+        }
+
+        $passwordBaru = AkunAnggota::passwordAcak();
+
+        $anggota->user->update([
+            'password' => $passwordBaru,
+            'wajib_ganti_password' => true,
+        ]);
+
+        if (config('session.driver') === 'database') {
+            DB::table('sessions')->where('user_id', $anggota->user->id)->delete();
+        }
+        // Driver session selain database (file, redis, array, dll.) tidak bisa di-invalidate
+        // lewat tabel sessions — password baru tetap berlaku saat login berikutnya.
+
+        return back()
+            ->with('password_baru', $passwordBaru)
+            ->with('password_baru_untuk', $anggota->nama);
     }
 }

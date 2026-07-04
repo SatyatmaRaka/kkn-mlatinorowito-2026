@@ -61,6 +61,31 @@ class AkunAnggota
         return $kapital.'Mlati26!';
     }
 
+    /** Password acak 12 karakter (huruf besar/kecil, angka, simbol) — tidak berbasis nama. */
+    public static function passwordAcak(): string
+    {
+        $upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $lower = 'abcdefghjkmnpqrstuvwxyz';
+        $digits = '23456789';
+        $symbols = '!@#$%&*?';
+        $all = $upper.$lower.$digits.$symbols;
+
+        $chars = [
+            $upper[random_int(0, strlen($upper) - 1)],
+            $lower[random_int(0, strlen($lower) - 1)],
+            $digits[random_int(0, strlen($digits) - 1)],
+            $symbols[random_int(0, strlen($symbols) - 1)],
+        ];
+
+        for ($i = count($chars); $i < 12; $i++) {
+            $chars[] = $all[random_int(0, strlen($all) - 1)];
+        }
+
+        shuffle($chars);
+
+        return implode('', $chars);
+    }
+
     public static function peranDariJabatan(?string $jabatan): PeranPengguna
     {
         return Jabatan::tryFromValue($jabatan) === Jabatan::KoordinatorDesa

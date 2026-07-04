@@ -43,6 +43,8 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         Route::middleware('can.pantau.operasional')->group(function () {
             Route::get('absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
             Route::get('absensi/export', [AbsensiController::class, 'export'])->name('absensi.export');
+            Route::post('absensi/izin-sakit', [AbsensiController::class, 'catatIzinSakit'])->name('absensi.catat-izin-sakit');
+            Route::delete('absensi/{absensi}/hapus-catatan', [AbsensiController::class, 'hapusCatatan'])->name('absensi.hapus-catatan');
             Route::get('absensi/qr', [AbsensiController::class, 'qrPrint'])->name('absensi.qr');
             Route::post('absensi/qr/regenerate', [AbsensiController::class, 'regenerateToken'])->name('absensi.qr.regenerate');
             Route::get('absensi/display', [AbsensiController::class, 'display'])->name('absensi.display');
@@ -59,6 +61,7 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         // Pembuatan akun login anggota — khusus admin
         Route::middleware('role:admin')->group(function () {
             Route::post('anggota/{anggota}/akun', [AnggotaController::class, 'storeAkun'])->name('anggota.akun');
+            Route::post('anggota/{anggota}/reset-password', [AnggotaController::class, 'resetPassword'])->name('anggota.reset-password');
         });
 
         // Panel keuangan (admin, koordinator, bendahara)

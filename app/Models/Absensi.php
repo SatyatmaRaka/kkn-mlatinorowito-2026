@@ -10,12 +10,21 @@ class Absensi extends Model
 {
     use HasFactory;
 
+    public const STATUS_HADIR = 'hadir';
+
+    public const STATUS_IZIN = 'izin';
+
+    public const STATUS_SAKIT = 'sakit';
+
     protected $table = 'absensi';
 
     protected $fillable = [
         'user_id',
         'anggota_id',
         'tanggal',
+        'status',
+        'keterangan',
+        'dicatat_oleh',
         'check_in_at',
         'metode',
         'ip_address',
@@ -38,5 +47,25 @@ class Absensi extends Model
     public function anggota(): BelongsTo
     {
         return $this->belongsTo(Anggota::class);
+    }
+
+    public function pencatat(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dicatat_oleh');
+    }
+
+    public function isHadir(): bool
+    {
+        return $this->status === self::STATUS_HADIR;
+    }
+
+    public function isIzin(): bool
+    {
+        return $this->status === self::STATUS_IZIN;
+    }
+
+    public function isSakit(): bool
+    {
+        return $this->status === self::STATUS_SAKIT;
     }
 }
