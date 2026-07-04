@@ -82,7 +82,16 @@
                     </li>
                 @endif
 
-                @if (Auth::user()->canManageCms())
+                @if (Auth::user()->canKelolaSurat())
+                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Administrasi</span></li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.surat.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.surat.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-envelope-paper-fill fs-5"></i><span>Surat Menyurat</span>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::user()->canManageWebsiteKonten())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Manajemen Website</span></li>
                     <li class="nav-item">
                         <a href="{{ route('panel.anggota.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.anggota.*') ? 'active' : '' }}" @click="sidebarOpen = false">
@@ -104,11 +113,6 @@
                             <i class="bi bi-images fs-5"></i><span>Galeri</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('panel.surat.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.surat.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                            <i class="bi bi-envelope-paper-fill fs-5"></i><span>Surat Menyurat</span>
-                        </a>
-                    </li>
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Sistem</span></li>
                     <li class="nav-item">
                         <a href="{{ route('panel.pengaturan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.pengaturan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
@@ -125,7 +129,7 @@
                     <i class="bi bi-person-fill fs-4 text-white"></i>
                 </div>
                 <div class="overflow-hidden">
-                    <div class="small text-white-50 lh-1 mb-1">{{ Auth::user()->role->label() }}</div>
+                    <div class="small text-white-50 lh-1 mb-1">{{ Auth::user()->anggota?->jabatan ?? Auth::user()->role->label() }}</div>
                     <div class="fw-semibold text-truncate lh-1">{{ Auth::user()->name }}</div>
                 </div>
             </div>

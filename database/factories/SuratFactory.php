@@ -19,11 +19,14 @@ class SuratFactory extends Factory
 
         return [
             'jenis' => $jenis,
+            'kategori_tujuan' => $jenis === 'keluar' ? fake()->randomElement(['kelurahan', 'rt', 'rw', 'instansi']) : null,
             'nomor_surat' => fake()->optional()->numerify('###/KKN/VII/2026'),
             'tanggal' => fake()->dateTimeBetween('-1 month', 'now'),
             'asal_tujuan' => $jenis === 'masuk'
                 ? fake()->company()
-                : 'Kelurahan Mlatinorowito',
+                : 'Lurah Kelurahan Mlatinorowito',
+            'nomor_rt' => null,
+            'nomor_rw' => null,
             'perihal' => fake()->sentence(4),
             'keterangan' => fake()->optional()->sentence(),
             'lampiran' => null,
@@ -38,6 +41,10 @@ class SuratFactory extends Factory
 
     public function keluar(): static
     {
-        return $this->state(fn () => ['jenis' => 'keluar']);
+        return $this->state(fn () => [
+            'jenis' => 'keluar',
+            'kategori_tujuan' => 'kelurahan',
+            'asal_tujuan' => 'Lurah Kelurahan Mlatinorowito',
+        ]);
     }
 }

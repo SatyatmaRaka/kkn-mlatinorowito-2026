@@ -70,10 +70,40 @@ class User extends Authenticatable
         return $this->role === PeranPengguna::Anggota;
     }
 
-    /** Izin kelola CMS: admin atau jabatan Sekretaris. */
-    public function canManageCms(): bool
+    /** Izin kelola konten website (proker, kegiatan, galeri) — khusus admin. */
+    public function canManageWebsiteKonten(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /** Izin kelola arsip surat — admin atau Sekretaris. */
+    public function canKelolaSurat(): bool
     {
         return $this->isAdmin() || ($this->anggota && Jabatan::tryFromValue($this->anggota->jabatan)?->dapatKelolaCms());
+    }
+
+    /** Izin kelola data anggota — khusus admin. */
+    public function canManageAnggota(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /** @deprecated Gunakan canKelolaSurat(). */
+    public function canKelolaAdministrasi(): bool
+    {
+        return $this->canKelolaSurat();
+    }
+
+    /** @deprecated Gunakan canKelolaSurat(), canManageAnggota(), atau canManageWebsiteKonten(). */
+    public function canManageCms(): bool
+    {
+        return $this->canKelolaSurat() || $this->canManageWebsiteKonten() || $this->canManageAnggota();
+    }
+
+    /** Izin pengaturan sistem — khusus admin. */
+    public function canManagePengaturan(): bool
+    {
+        return $this->isAdmin();
     }
 
     /** Izin review logbook: admin atau koordinator. */

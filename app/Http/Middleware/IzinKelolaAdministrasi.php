@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Middleware: izin kelola konten website (proker, kegiatan, galeri).
- * Diizinkan: Admin saja.
+ * Middleware: izin kelola arsip surat masuk/keluar.
+ * Diizinkan: Admin atau anggota berjabatan Sekretaris.
  */
-class IzinKelolaCms
+class IzinKelolaAdministrasi
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::check() || ! Auth::user()->canManageWebsiteKonten()) {
+        if (! Auth::check() || ! Auth::user()->canKelolaSurat()) {
             abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 

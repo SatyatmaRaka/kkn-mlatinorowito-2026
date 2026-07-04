@@ -57,11 +57,26 @@ Setelah login, **ganti password** lewat **Panel → Pengaturan → Keamanan Akun
 
 ### Akun Anggota & Koordinator
 
-Tidak ada pendaftaran mandiri. **Hanya admin** yang membuat akun login anggota:
+Saat `php artisan migrate --seed`, akun untuk **11 anggota** juga dibuat otomatis:
+
+- **Username:** nama depan (lowercase), mis. `satyatma`, `maulana`, `anggun`
+- **Password:** `{NamaDepan}Mlati26!`, mis. `SatyatmaMlati26!`, `MaulanaMlati26!`
+- **Koordinator Desa** mendapat role `koordinator`; sisanya `anggota`
+
+Daftar lengkap username & password tercetak di terminal saat seed, dan disimpan di  
+`storage/app/private/akun-anggota-kredensial.txt` (tidak di-commit ke git).
+
+Untuk menambah akun manual (anggota baru):
 
 1. **Panel → Anggota → Tambah Anggota** (data profil)
-2. Klik **Buat Akun** di baris anggota → isi username, role (Anggota/Koordinator), password
-3. Bagikan username & password ke anggota yang bersangkutan
+2. Klik **Buat Akun** → isi username, role, password
+3. Bagikan kredensial ke anggota secara pribadi
+
+Atau jalankan ulang seeder akun saja (hanya yang belum punya akun):
+
+```bash
+php artisan db:seed --class=AnggotaAkunSeeder
+```
 
 Sekretaris dapat mengelola data anggota di CMS, tetapi **tidak** dapat membuat akun login.
 

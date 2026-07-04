@@ -16,9 +16,12 @@ class Surat extends Model
 
     protected $fillable = [
         'jenis',
+        'kategori_tujuan',
         'nomor_surat',
         'tanggal',
         'asal_tujuan',
+        'nomor_rt',
+        'nomor_rw',
         'perihal',
         'keterangan',
         'lampiran',
@@ -45,5 +48,19 @@ class Surat extends Model
     public function labelJenis(): string
     {
         return $this->jenis === 'masuk' ? 'Surat Masuk' : 'Surat Keluar';
+    }
+
+    public function teksPenerima(): string
+    {
+        return \App\Penunjang\PenerimaSurat::fromSurat($this);
+    }
+
+    public function labelKategoriTujuan(): ?string
+    {
+        if (! $this->kategori_tujuan) {
+            return null;
+        }
+
+        return \App\Enums\KategoriTujuanSurat::from($this->kategori_tujuan)->label();
     }
 }

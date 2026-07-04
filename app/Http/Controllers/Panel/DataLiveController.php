@@ -25,7 +25,7 @@ class DataLiveController extends Controller
             'absensi_hari_ini' => $ringkasan['absensi']['hari_ini'],
         ];
 
-        if ($user->canManageCms()) {
+        if ($user->canKelolaSurat()) {
             $data['total_anggota'] = $ringkasan['absensi']['total_anggota_aktif'];
         }
 

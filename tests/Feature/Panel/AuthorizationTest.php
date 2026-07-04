@@ -42,13 +42,58 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_sekretaris_can_access_cms(): void
+    public function test_sekretaris_cannot_access_anggota(): void
     {
         $user = User::factory()->sekretaris()->create();
 
         $this->actingAs($user)
             ->get(route('panel.anggota.index'))
+            ->assertForbidden();
+    }
+
+    public function test_sekretaris_can_access_surat(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.surat.index'))
             ->assertOk();
+    }
+
+    public function test_sekretaris_cannot_access_kegiatan(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.kegiatan.index'))
+            ->assertForbidden();
+    }
+
+    public function test_sekretaris_cannot_access_galeri(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.galeri.index'))
+            ->assertForbidden();
+    }
+
+    public function test_sekretaris_cannot_access_proker(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.program-kerja.index'))
+            ->assertForbidden();
+    }
+
+    public function test_sekretaris_cannot_access_pengaturan(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.pengaturan.index'))
+            ->assertForbidden();
     }
 
     public function test_sekretaris_cannot_access_keuangan(): void

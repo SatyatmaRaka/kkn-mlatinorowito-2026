@@ -51,7 +51,14 @@ Route::middleware('auth')->group(function () {
         Route::get('absensi/display', [AbsensiController::class, 'display'])->name('absensi.display');
     });
 
-    // Panel CMS website (admin & sekretaris)
+    // Arsip surat (admin & sekretaris)
+    Route::middleware('can.kelola.surat')->prefix('panel')->name('panel.')->group(function () {
+        Route::get('surat/{surat}/cetak', [SuratController::class, 'cetak'])->name('surat.cetak');
+        Route::get('surat/{surat}/unduh', [SuratController::class, 'unduh'])->name('surat.unduh');
+        Route::resource('surat', SuratController::class)->except(['show']);
+    });
+
+    // Panel konten website & data anggota — khusus admin
     Route::middleware('can.manage.cms')->prefix('panel')->name('panel.')->group(function () {
         Route::resource('anggota', AnggotaController::class)->except(['show'])->parameters(['anggota' => 'anggota']);
         Route::resource('program-kerja', ProgramKerjaController::class)->except(['show'])->parameters(['program-kerja' => 'proker']);
@@ -64,7 +71,6 @@ Route::middleware('auth')->group(function () {
         Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
         Route::put('pengaturan/akun', [PengaturanController::class, 'updateAkun'])->name('pengaturan.akun');
         Route::put('pengaturan/absensi', [PengaturanController::class, 'updateAbsensi'])->name('pengaturan.absensi');
-        Route::resource('surat', SuratController::class)->except(['show']);
     });
 
     // Pembuatan akun login anggota — khusus admin
