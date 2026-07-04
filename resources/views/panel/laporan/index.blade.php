@@ -55,7 +55,7 @@
             </div>
         @endif
 
-        @if (Auth::user()->canManageKeuangan())
+        @if (isset($ringkasan['keuangan']))
             <div class="col-md-6 col-xl-3">
                 <div class="premium-card border-0 p-4 h-100">
                     <div class="text-muted small text-uppercase fw-bold mb-2">Keuangan</div>

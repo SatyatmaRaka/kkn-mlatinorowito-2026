@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Middleware: izin kelola konten website (proker, kegiatan, galeri).
+ * Middleware: izin kelola konten website (anggota, program kerja, pengaturan).
  * Diizinkan: Admin saja.
  */
 class IzinKelolaCms

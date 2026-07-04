@@ -27,6 +27,8 @@ class PengaturanController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        abort_unless(Auth::user()?->canManageWebsiteKonten(), 403);
+
         $validated = $request->validate([
             'nama_dpl' => 'nullable|string|max:255',
             'nama_kelompok' => 'nullable|string|max:255',
@@ -77,6 +79,8 @@ class PengaturanController extends Controller
 
     public function updateAbsensi(Request $request): RedirectResponse
     {
+        abort_unless(Auth::user()?->canManageWebsiteKonten(), 403);
+
         $validated = $request->validate([
             'absensi_jam_mulai' => 'required|date_format:H:i',
             'absensi_jam_selesai' => 'required|date_format:H:i|after:absensi_jam_mulai',
@@ -93,17 +97,23 @@ class PengaturanController extends Controller
 
     public function updateAkun(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
         $request->validate([
-            'username' => 'required|string|max:255|unique:users,username,'.Auth::id(),
+            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
             'current_password' => 'required|string|current_password',
-            'password' => ['nullable', Password::defaults(), 'confirmed'],
+            'password' => [
+                $user->wajib_ganti_password ? 'required' : 'nullable',
+                Password::defaults(),
+                'confirmed',
+            ],
         ]);
 
-        $user = Auth::user();
         $user->username = $request->username;
 
         if ($request->filled('password')) {
             $user->password = $request->password;
+            $user->wajib_ganti_password = false;
         }
 
         $user->save();

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'password',
         'role',
         'anggota_id',
+        'wajib_ganti_password',
     ];
 
     protected $hidden = [
@@ -40,6 +41,7 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
             'role' => PeranPengguna::class,
+            'wajib_ganti_password' => 'boolean',
         ];
     }
 

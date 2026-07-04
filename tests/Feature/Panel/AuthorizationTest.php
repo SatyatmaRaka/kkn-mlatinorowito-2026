@@ -22,13 +22,25 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_anggota_cannot_access_pengaturan(): void
+    public function test_anggota_can_access_pengaturan_for_account_settings(): void
     {
         $anggota = Anggota::factory()->create(['jabatan' => Jabatan::Humas->value]);
         $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
 
         $this->actingAs($user)
             ->get(route('panel.pengaturan.index'))
+            ->assertOk();
+    }
+
+    public function test_anggota_cannot_update_website_pengaturan(): void
+    {
+        $anggota = Anggota::factory()->create(['jabatan' => Jabatan::Humas->value]);
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        $this->actingAs($user)
+            ->put(route('panel.pengaturan.update'), [
+                'nama_kelompok' => 'KKN Test 2026',
+            ])
             ->assertForbidden();
     }
 
@@ -50,12 +62,23 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_sekretaris_cannot_access_pengaturan(): void
+    public function test_sekretaris_can_access_pengaturan_for_account_settings(): void
     {
         $user = User::factory()->sekretaris()->create();
 
         $this->actingAs($user)
             ->get(route('panel.pengaturan.index'))
+            ->assertOk();
+    }
+
+    public function test_sekretaris_cannot_update_website_pengaturan(): void
+    {
+        $user = User::factory()->sekretaris()->create();
+
+        $this->actingAs($user)
+            ->put(route('panel.pengaturan.update'), [
+                'nama_kelompok' => 'KKN Test 2026',
+            ])
             ->assertForbidden();
     }
 

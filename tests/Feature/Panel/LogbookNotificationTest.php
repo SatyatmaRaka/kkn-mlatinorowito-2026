@@ -56,4 +56,24 @@ class LogbookNotificationTest extends TestCase
 
         Notification::assertSentTo($koordinator, NotifikasiLogbookDikirim::class);
     }
+
+    public function test_wakil_koordinator_by_jabatan_receives_notification_when_logbook_submitted(): void
+    {
+        Notification::fake();
+
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+        $wakilKoordinator = User::factory()->wakilKoordinator()->create();
+
+        $this->actingAs($anggotaUser)
+            ->post(route('panel.catatan-harian.store'), [
+                'tanggal' => now()->toDateString(),
+                'judul' => 'Logbook Baru',
+                'deskripsi' => 'Kegiatan hari ini cukup panjang untuk validasi.',
+                'submit' => 1,
+            ])
+            ->assertRedirect();
+
+        Notification::assertSentTo($wakilKoordinator, NotifikasiLogbookDikirim::class);
+    }
 }

@@ -16,7 +16,8 @@ class DataLiveController extends Controller
         $user = Auth::user();
         $ringkasan = LayananRingkasan::ringkasanPeriode(
             now()->startOfMonth()->toDateString(),
-            now()->toDateString()
+            now()->toDateString(),
+            $user->canManageKeuangan()
         );
 
         $data = [

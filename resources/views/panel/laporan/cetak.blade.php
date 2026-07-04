@@ -26,9 +26,11 @@
             <tr><th>Logbook Menunggu Review</th><td>{{ $ringkasan['logbook']['submitted'] }}</td></tr>
             <tr><th>Logbook Disetujui</th><td>{{ $ringkasan['logbook']['approved'] }}</td></tr>
             <tr><th>Logbook Ditolak</th><td>{{ $ringkasan['logbook']['rejected'] }}</td></tr>
-            <tr><th>Pemasukan (Rp)</th><td>{{ number_format($ringkasan['keuangan']['pemasukan'], 0, ',', '.') }}</td></tr>
-            <tr><th>Pengeluaran (Rp)</th><td>{{ number_format($ringkasan['keuangan']['pengeluaran'], 0, ',', '.') }}</td></tr>
-            <tr><th>Saldo Periode (Rp)</th><td>{{ number_format($ringkasan['keuangan']['saldo'], 0, ',', '.') }}</td></tr>
+            @isset($ringkasan['keuangan'])
+                <tr><th>Pemasukan (Rp)</th><td>{{ number_format($ringkasan['keuangan']['pemasukan'], 0, ',', '.') }}</td></tr>
+                <tr><th>Pengeluaran (Rp)</th><td>{{ number_format($ringkasan['keuangan']['pengeluaran'], 0, ',', '.') }}</td></tr>
+                <tr><th>Saldo Periode (Rp)</th><td>{{ number_format($ringkasan['keuangan']['saldo'], 0, ',', '.') }}</td></tr>
+            @endisset
         </tbody>
     </table>
 </body>

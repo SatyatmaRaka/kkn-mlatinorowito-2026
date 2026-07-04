@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'can.manage.cms' => \App\Http\Middleware\IzinKelolaCms::class,
             'can.manage.keuangan' => \App\Http\Middleware\IzinKelolaKeuangan::class,
             'can.pantau.operasional' => \App\Http\Middleware\IzinPantauOperasional::class,
+            'paksa.ganti.password' => \App\Http\Middleware\PaksaGantiPassword::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

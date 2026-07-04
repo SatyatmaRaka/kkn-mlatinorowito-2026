@@ -7,7 +7,7 @@
 
         @php
             $pageTitle = $title ?? 'KKN Mlatinorowito 2026';
-            $pageDescription = $description ?? 'Website Resmi KKN UMK Kelompok Desa Mlatinorowito tahun 2026. Temukan info program kerja, anggota tim, kegiatan harian, dan galeri dokumentasi kami.';
+            $pageDescription = $description ?? 'Website Resmi KKN UMK Kelompok Desa Mlatinorowito tahun 2026. Temukan info program kerja, anggota tim, dan informasi kelompok KKN.';
             $pageImage = $image ?? asset('images/logo.png');
             $pageUrl = $url ?? url()->current();
         @endphp

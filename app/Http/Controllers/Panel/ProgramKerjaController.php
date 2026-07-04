@@ -14,6 +14,8 @@ class ProgramKerjaController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', ProgramKerja::class);
+
         $q = FilterPencarian::kataKunci($request->query('q'));
         $status = FilterPencarian::kataKunci($request->query('status'));
 
@@ -32,11 +34,15 @@ class ProgramKerjaController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', ProgramKerja::class);
+
         return view('panel.program-kerja.create');
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', ProgramKerja::class);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'tema' => 'nullable|string|max:255',
@@ -54,11 +60,15 @@ class ProgramKerjaController extends Controller
 
     public function edit(ProgramKerja $proker): View
     {
+        $this->authorize('update', $proker);
+
         return view('panel.program-kerja.edit', ['programKerja' => $proker]);
     }
 
     public function update(Request $request, ProgramKerja $proker): RedirectResponse
     {
+        $this->authorize('update', $proker);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'tema' => 'nullable|string|max:255',
@@ -76,6 +86,8 @@ class ProgramKerjaController extends Controller
 
     public function destroy(ProgramKerja $proker): RedirectResponse
     {
+        $this->authorize('delete', $proker);
+
         $proker->delete();
 
         return redirect()->route('panel.program-kerja.index')->with('success', 'Program kerja berhasil dihapus.');

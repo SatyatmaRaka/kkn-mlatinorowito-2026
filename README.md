@@ -62,8 +62,15 @@ Saat `php artisan migrate --seed`, akun untuk **11 anggota** juga dibuat otomati
 - **Password:** `{NamaDepan}Mlati26!`, mis. `SatyatmaMlati26!`, `MaulanaMlati26!`
 - **Koordinator Desa** mendapat role `koordinator`; sisanya `anggota`
 
-Daftar lengkap username & password tercetak di terminal saat seed, dan disimpan di  
+Daftar lengkap username & password tercetak di terminal saat seed, dan disimpan di
 `storage/app/private/akun-anggota-kredensial.txt` (tidak di-commit ke git).
+
+Setelah semua password selesai dibagikan **secara pribadi** ke masing-masing anggota,
+**wajib** hapus file plaintext tersebut dari server:
+
+```bash
+php artisan kredensial:hapus
+```
 
 Untuk menambah akun manual (anggota baru):
 

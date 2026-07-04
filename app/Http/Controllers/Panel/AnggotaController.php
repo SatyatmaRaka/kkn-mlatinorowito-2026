@@ -148,6 +148,7 @@ class AnggotaController extends Controller
             'password' => $validated['password'],
             'role' => AkunAnggota::peranDariJabatan($anggota->jabatan),
             'anggota_id' => $anggota->id,
+            'wajib_ganti_password' => true,
         ]);
 
         return back()->with('success', "Akun login untuk {$anggota->nama} berhasil dibuat.");

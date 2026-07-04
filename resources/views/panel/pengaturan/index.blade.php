@@ -10,7 +10,30 @@
         </div>
     @endif
 
+    @if (session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (Auth::user()->wajib_ganti_password)
+        <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-start gap-3">
+                <i class="bi bi-shield-exclamation fs-4 flex-shrink-0"></i>
+                <div>
+                    <h2 class="h6 fw-bold mb-1">Ganti password wajib</h2>
+                    <p class="mb-0 small">
+                        Akun Anda masih memakai password awal. Isi formulir <strong>Keamanan Akun</strong> di bawah
+                        dengan password baru sebelum melanjutkan ke fitur panel lainnya.
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="row g-4 mb-4">
+        @if (Auth::user()->canManageWebsiteKonten())
         <div class="col-12 col-lg-6">
             <div class="premium-card h-100 border-0">
                 <div class="card-header bg-white py-4 px-4 border-bottom d-flex align-items-center">
@@ -149,8 +172,9 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        <div class="col-12 col-lg-6">
+        <div class="col-12 {{ Auth::user()->canManageWebsiteKonten() ? 'col-lg-6' : '' }}">
             <div class="premium-card h-100 border-0">
                 <div class="card-header bg-white py-4 px-4 border-bottom d-flex align-items-center">
                     <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
@@ -204,11 +228,16 @@
                                 name="password"
                                 class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('password') is-invalid @enderror"
                                 autocomplete="new-password"
+                                @required(Auth::user()->wajib_ganti_password)
                             >
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="form-text text-muted small mt-2">Kosongkan jika tidak ingin mengganti password.</div>
+                            @if (Auth::user()->wajib_ganti_password)
+                                <div class="form-text text-warning small mt-2"><i class="bi bi-exclamation-circle me-1"></i> Wajib diisi dengan password baru sebelum melanjutkan.</div>
+                            @else
+                                <div class="form-text text-muted small mt-2">Kosongkan jika tidak ingin mengganti password.</div>
+                            @endif
                         </div>
 
                         <div class="mb-5">
@@ -219,6 +248,7 @@
                                 name="password_confirmation"
                                 class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none"
                                 autocomplete="new-password"
+                                @required(Auth::user()->wajib_ganti_password)
                             >
                         </div>
 
@@ -229,6 +259,7 @@
         </div>
     </div>
 
+    @if (Auth::user()->canManageWebsiteKonten())
     <div class="row g-4">
         <div class="col-12 col-lg-6">
             <div class="premium-card border-0">
@@ -256,4 +287,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-app-layout>

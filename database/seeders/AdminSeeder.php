@@ -14,6 +14,8 @@ use RuntimeException;
  */
 class AdminSeeder extends Seeder
 {
+    private const PASSWORD_CONTOH = 'KknMlati2026!';
+
     public function run(): void
     {
         $password = env('ADMIN_DEFAULT_PASSWORD');
@@ -24,12 +26,20 @@ class AdminSeeder extends Seeder
             );
         }
 
+        if (app()->environment('production') && $password === self::PASSWORD_CONTOH) {
+            throw new RuntimeException(
+                'Password default contoh (KknMlati2026!) tidak boleh dipakai di production. '.
+                'Set ADMIN_DEFAULT_PASSWORD ke password kuat unik di .env sebelum menjalankan seeder.'
+            );
+        }
+
         User::updateOrCreate(
             ['username' => 'kkn_mlati26'],
             [
                 'name' => 'Admin KKN Mlatinorowito',
                 'password' => Hash::make($password),
                 'role' => PeranPengguna::Admin,
+                'wajib_ganti_password' => false,
             ]
         );
 

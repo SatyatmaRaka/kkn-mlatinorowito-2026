@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'role' => PeranPengguna::Admin,
             'remember_token' => Str::random(10),
+            'wajib_ganti_password' => false,
         ];
     }
 

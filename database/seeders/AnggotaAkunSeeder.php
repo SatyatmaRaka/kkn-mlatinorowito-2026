@@ -37,6 +37,7 @@ class AnggotaAkunSeeder extends Seeder
                 'password' => Hash::make($password),
                 'role' => AkunAnggota::peranDariJabatan($anggota->jabatan),
                 'anggota_id' => $anggota->id,
+                'wajib_ganti_password' => true,
             ]);
 
             $dipakai[] = $username;
@@ -75,6 +76,7 @@ class AnggotaAkunSeeder extends Seeder
             $this->command->newLine();
             $this->command->line('  Daftar lengkap disimpan di: storage/app/private/akun-anggota-kredensial.txt');
             $this->command->warn('  Bagikan password secara pribadi; anggota disarankan ganti setelah login pertama.');
+            $this->command->warn('  WAJIB: setelah kredensial dibagikan ke masing-masing anggota, hapus file dari server dengan: php artisan kredensial:hapus');
         }
     }
 

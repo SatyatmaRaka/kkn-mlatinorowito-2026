@@ -24,20 +24,12 @@ class LayananRingkasan
     }
 
     /** @return array<string, mixed> */
-    public static function ringkasanPeriode(?string $mulai = null, ?string $selesai = null): array
+    public static function ringkasanPeriode(?string $mulai = null, ?string $selesai = null, bool $sertakanKeuangan = true): array
     {
         $dari = self::tanggalMulai($mulai);
         $sampai = self::tanggalSelesai($selesai);
 
-        $pemasukan = (int) Keuangan::where('jenis', 'pemasukan')
-            ->whereBetween('tanggal', [$dari, $sampai])
-            ->sum('nominal');
-
-        $pengeluaran = (int) Keuangan::where('jenis', 'pengeluaran')
-            ->whereBetween('tanggal', [$dari, $sampai])
-            ->sum('nominal');
-
-        return [
+        $ringkasan = [
             'periode' => [
                 'mulai' => $dari->toDateString(),
                 'selesai' => $sampai->toDateString(),
@@ -55,12 +47,25 @@ class LayananRingkasan
                 'rejected' => Logbook::where('status', Logbook::STATUS_REJECTED)->whereBetween('tanggal', [$dari, $sampai])->count(),
                 'menunggu_review' => Logbook::where('status', Logbook::STATUS_SUBMITTED)->count(),
             ],
-            'keuangan' => [
+        ];
+
+        if ($sertakanKeuangan) {
+            $pemasukan = (int) Keuangan::where('jenis', 'pemasukan')
+                ->whereBetween('tanggal', [$dari, $sampai])
+                ->sum('nominal');
+
+            $pengeluaran = (int) Keuangan::where('jenis', 'pengeluaran')
+                ->whereBetween('tanggal', [$dari, $sampai])
+                ->sum('nominal');
+
+            $ringkasan['keuangan'] = [
                 'pemasukan' => $pemasukan,
                 'pengeluaran' => $pengeluaran,
                 'saldo' => $pemasukan - $pengeluaran,
-            ],
-        ];
+            ];
+        }
+
+        return $ringkasan;
     }
 
     /** @return array<string, mixed> */

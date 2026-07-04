@@ -1,5 +1,10 @@
 ﻿    {{-- Section 1: Hero / Beranda --}}
     <section id="beranda" class="hero-section">
+        <img
+            src="{{ asset('images/hero-kelurahan-mlatinorowito.jpg') }}"
+            alt="Kantor Kelurahan Mlatinorowito, lokasi KKN Mlatinorowito 2026"
+            class="visually-hidden"
+        >
         <div class="container px-3 px-md-5 hero-content">
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10 col-xl-8 text-center text-white">

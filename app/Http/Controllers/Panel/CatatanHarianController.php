@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\Jabatan;
 use App\Enums\PeranPengguna;
 use App\Http\Controllers\Controller;
 use App\Models\Logbook;
@@ -223,13 +224,16 @@ class CatatanHarianController extends Controller
         );
     }
 
-    /** Kirim notifikasi database ke admin & koordinator. */
+    /** Kirim notifikasi database ke semua user yang boleh review logbook. */
     private function beritahuReviewerLogbookBaru(Logbook $logbook): void
     {
         $logbook->loadMissing('anggota');
 
         User::query()
-            ->whereIn('role', [PeranPengguna::Admin, PeranPengguna::Koordinator])
+            ->where(function ($query): void {
+                $query->whereIn('role', [PeranPengguna::Admin, PeranPengguna::Koordinator])
+                    ->orWhereHas('anggota', fn ($q) => $q->whereIn('jabatan', Jabatan::pimpinanValues()));
+            })
             ->each(fn ($user) => $user->notify(new NotifikasiLogbookDikirim($logbook)));
     }
 }

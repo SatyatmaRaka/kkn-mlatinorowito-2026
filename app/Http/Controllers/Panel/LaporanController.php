@@ -20,7 +20,7 @@ class LaporanController extends Controller
         $mulai = $request->query('tanggal_mulai', now()->startOfMonth()->toDateString());
         $selesai = $request->query('tanggal_selesai', now()->toDateString());
 
-        $ringkasan = LayananRingkasan::ringkasanPeriode($mulai, $selesai);
+        $ringkasan = $this->ringkasanUntukUser($mulai, $selesai);
 
         return view('panel.laporan.index', compact('ringkasan', 'mulai', 'selesai'));
     }
@@ -32,7 +32,7 @@ class LaporanController extends Controller
         $mulai = $request->query('tanggal_mulai', now()->startOfMonth()->toDateString());
         $selesai = $request->query('tanggal_selesai', now()->toDateString());
 
-        $ringkasan = LayananRingkasan::ringkasanPeriode($mulai, $selesai);
+        $ringkasan = $this->ringkasanUntukUser($mulai, $selesai);
 
         return view('panel.laporan.cetak', compact('ringkasan', 'mulai', 'selesai'));
     }
@@ -44,7 +44,7 @@ class LaporanController extends Controller
         $mulai = $request->query('tanggal_mulai', now()->startOfMonth()->toDateString());
         $selesai = $request->query('tanggal_selesai', now()->toDateString());
 
-        $ringkasan = LayananRingkasan::ringkasanPeriode($mulai, $selesai);
+        $ringkasan = $this->ringkasanUntukUser($mulai, $selesai);
 
         $rows = collect([
             ['Periode', $ringkasan['periode']['label']],
@@ -53,10 +53,15 @@ class LaporanController extends Controller
             ['Logbook Menunggu Review', $ringkasan['logbook']['submitted']],
             ['Logbook Disetujui', $ringkasan['logbook']['approved']],
             ['Logbook Ditolak', $ringkasan['logbook']['rejected']],
-            ['Pemasukan (Rp)', $ringkasan['keuangan']['pemasukan']],
-            ['Pengeluaran (Rp)', $ringkasan['keuangan']['pengeluaran']],
-            ['Saldo Periode (Rp)', $ringkasan['keuangan']['saldo']],
         ]);
+
+        if (isset($ringkasan['keuangan'])) {
+            $rows = $rows->concat([
+                ['Pemasukan (Rp)', $ringkasan['keuangan']['pemasukan']],
+                ['Pengeluaran (Rp)', $ringkasan['keuangan']['pengeluaran']],
+                ['Saldo Periode (Rp)', $ringkasan['keuangan']['saldo']],
+            ]);
+        }
 
         return EksporCsv::download(
             'laporan-kkn-'.$mulai.'-'.$selesai.'.csv',
@@ -72,6 +77,16 @@ class LaporanController extends Controller
         return $user && (
             $user->canReviewLogbook()
             || $user->canManageKeuangan()
+        );
+    }
+
+    /** @return array<string, mixed> */
+    private function ringkasanUntukUser(string $mulai, string $selesai): array
+    {
+        return LayananRingkasan::ringkasanPeriode(
+            $mulai,
+            $selesai,
+            Auth::user()->canManageKeuangan()
         );
     }
 }
