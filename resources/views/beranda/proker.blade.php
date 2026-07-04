@@ -1,9 +1,11 @@
-﻿    {{-- Section 5: Program Kerja --}}
-    <section id="proker" class="py-5">
+    {{-- Section 5: Program Kerja --}}
+    <section id="proker" class="public-section public-section-white">
         <div class="container px-3 px-md-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title h2 mb-0">Program Kerja</h2>
+            <div class="section-header">
+                <span class="section-eyebrow">Fokus Pengabdian</span>
+                <h2 class="section-title h2">Program Kerja</h2>
                 <div class="section-title-accent"></div>
+                <p class="section-lead">Program unggulan yang dirancang untuk memberi dampak langsung kepada masyarakat Kelurahan Mlatinorowito.</p>
             </div>
 
             <div class="row g-4">
@@ -13,9 +15,9 @@
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="position-absolute top-0 end-0 m-3">
                                     @if ($item->status === 'Aktif')
-                                        <span class="badge bg-success">{{ $item->status }}</span>
+                                        <span class="badge rounded-pill bg-success">{{ $item->status }}</span>
                                     @else
-                                        <span class="badge bg-warning text-dark">{{ $item->status }}</span>
+                                        <span class="badge rounded-pill bg-warning text-dark">{{ $item->status }}</span>
                                     @endif
                                 </div>
 
@@ -26,13 +28,16 @@
                                 @endif
 
                                 <h5 class="fw-bold mb-2">{{ $item->judul }}</h5>
+                                @if ($item->tema)
+                                    <p class="text-primary small fw-medium mb-2">{{ $item->tema }}</p>
+                                @endif
                                 <p class="text-muted small flex-grow-1 mb-3">
                                     {{ Str::limit($item->deskripsi, 120) }}
                                 </p>
 
                                 <a
                                     href="{{ route('detail.proker', $item->id) }}"
-                                    class="btn btn-sm btn-outline-primary w-100 mt-auto"
+                                    class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-auto"
                                 >
                                     Lihat Detail
                                 </a>
@@ -41,9 +46,9 @@
                     </div>
                 @empty
                     <div class="col-12">
-                        <p class="text-center text-muted mb-0 py-5 bg-white rounded-4 shadow-sm border">
+                        <div class="empty-state-card">
                             Program kerja akan segera diumumkan.
-                        </p>
+                        </div>
                     </div>
                 @endforelse
             </div>

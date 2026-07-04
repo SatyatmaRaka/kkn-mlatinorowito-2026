@@ -1,12 +1,22 @@
-<div class="fixed-top pt-3 px-3 px-md-4" style="z-index: 1030; pointer-events: none;">
+<div class="public-navbar-shell px-3 px-md-4">
     <nav
         x-data="{ mobileOpen: false, scrolled: false }"
         @scroll.window="scrolled = (window.scrollY > 20)"
         class="navbar navbar-expand-lg rounded-pill mx-auto"
-        :class="{ 'glass-nav shadow-lg': scrolled, 'bg-white shadow-sm': !scrolled }"
+        :class="{ 'glass-nav public-nav-bar': scrolled, 'bg-white public-nav-bar shadow-sm': !scrolled }"
         style="transition: all 0.4s ease; max-width: 1140px; pointer-events: auto; padding: 0.5rem 1.25rem;"
     >
         <style>
+            .public-navbar-shell {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1030;
+                pointer-events: none;
+                padding-top: 0.75rem;
+            }
+
             .public-nav-link {
                 color: var(--umk-blue);
                 text-decoration: none;
