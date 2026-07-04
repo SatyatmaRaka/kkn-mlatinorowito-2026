@@ -173,7 +173,10 @@ class AnggotaController extends Controller
         ]);
 
         if (config('session.driver') === 'database') {
-            DB::table('sessions')->where('user_id', $anggota->user->id)->delete();
+            DB::table('sessions')
+                ->where('user_id', $anggota->user->id)
+                ->where('id', '!=', $request->session()->getId())
+                ->delete();
         }
         // Driver session selain database (file, redis, array, dll.) tidak bisa di-invalidate
         // lewat tabel sessions — password baru tetap berlaku saat login berikutnya.

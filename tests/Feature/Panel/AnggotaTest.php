@@ -150,11 +150,20 @@ class AnggotaTest extends TestCase
 
         $hashLama = $anggotaUser->password;
 
-        $this->actingAs($admin)
-            ->post(route('panel.anggota.reset-password', $anggota))
-            ->assertRedirect()
+        $response = $this->actingAs($admin)
+            ->post(route('panel.anggota.reset-password', $anggota));
+
+        $response->assertRedirect()
             ->assertSessionHas('password_baru')
             ->assertSessionHas('password_baru_untuk', $anggota->nama);
+
+        $passwordBaru = $response->getSession()->get('password_baru');
+
+        $this->get(route('panel.anggota.index'))
+            ->assertOk()
+            ->assertSee('modal-password-baru', false)
+            ->assertSee('Password Baru — '.$anggota->nama, false)
+            ->assertSee($passwordBaru, false);
 
         $anggotaUser->refresh();
 

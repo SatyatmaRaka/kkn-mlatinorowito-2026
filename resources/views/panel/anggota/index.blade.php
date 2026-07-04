@@ -15,6 +15,18 @@
         </div>
     @endif
 
+    @if ($errors->any() && ! $errors->has('username') && ! $errors->has('password') && ! $errors->has('anggota'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     @if ($errors->has('anggota'))
         <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ $errors->first('anggota') }}
@@ -248,15 +260,16 @@
         @endforeach
     @endif
 
+    <!-- DEBUG password_baru: {{ session('password_baru') ? 'ADA' : 'KOSONG' }} -->
     @if (session('password_baru'))
-        <div class="modal fade" id="modal-password-baru" tabindex="-1" aria-labelledby="modal-password-baru-label" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal fade show" id="modal-password-baru" tabindex="-1" aria-labelledby="modal-password-baru-label" aria-modal="true" role="dialog" data-bs-backdrop="static" style="display: block;">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title fw-bold" id="modal-password-baru-label">
                             Password Baru — {{ session('password_baru_untuk') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup" onclick="document.getElementById('modal-password-baru').remove(); document.getElementById('modal-password-baru-backdrop')?.remove();"></button>
                     </div>
                     <div class="modal-body">
                         <div class="d-flex align-items-stretch gap-2 mb-3">
@@ -276,11 +289,12 @@
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal" onclick="document.getElementById('modal-password-baru').remove(); document.getElementById('modal-password-baru-backdrop')?.remove();">Tutup</button>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="modal-backdrop fade show" id="modal-password-baru-backdrop"></div>
     @endif
 
     @push('scripts')
@@ -297,7 +311,10 @@
 
                 document.addEventListener('DOMContentLoaded', function () {
                     const el = document.getElementById('modal-password-baru');
-                    if (el) {
+                    if (! el || el.classList.contains('show')) {
+                        return;
+                    }
+                    if (window.bootstrap?.Modal) {
                         bootstrap.Modal.getOrCreateInstance(el).show();
                     }
                 });
