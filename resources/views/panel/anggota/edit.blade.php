@@ -63,6 +63,8 @@
                                 alt="{{ $anggota->nama }}"
                                 class="rounded border"
                                 style="max-width: 120px; max-height: 120px; object-fit: cover;"
+                                loading="lazy"
+                                decoding="async"
                             >
                         </div>
                     @endif

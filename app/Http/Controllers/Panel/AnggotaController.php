@@ -8,6 +8,7 @@ use App\Models\Anggota;
 use App\Models\User;
 use App\Penunjang\AkunAnggota;
 use App\Penunjang\FilterPencarian;
+use App\Penunjang\OptimasiGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,7 @@ class AnggotaController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('anggota', 'public');
+            $validated['foto'] = OptimasiGambar::simpanDenganResize($request->file('foto'), 'anggota', 800);
         }
 
         Anggota::create($validated);
@@ -92,7 +93,7 @@ class AnggotaController extends Controller
             if ($anggota->foto) {
                 Storage::disk('public')->delete($anggota->foto);
             }
-            $validated['foto'] = $request->file('foto')->store('anggota', 'public');
+            $validated['foto'] = OptimasiGambar::simpanDenganResize($request->file('foto'), 'anggota', 800);
         }
 
         $anggota->update($validated);

@@ -4,6 +4,7 @@
             src="{{ asset('images/hero-kelurahan-mlatinorowito.jpg') }}"
             alt="Kantor Kelurahan Mlatinorowito, lokasi KKN Mlatinorowito 2026"
             class="visually-hidden"
+            fetchpriority="high"
         >
         <div class="container px-3 px-md-5 hero-content">
             <div class="row justify-content-center">

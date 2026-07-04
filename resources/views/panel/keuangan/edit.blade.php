@@ -68,7 +68,7 @@
                                 <div class="mb-2">
                                     <span class="d-block text-muted small mb-1">Bukti Saat Ini:</span>
                                     <a href="{{ asset('storage/' . $keuangan->bukti) }}" target="_blank">
-                                        <img src="{{ asset('storage/' . $keuangan->bukti) }}" alt="Bukti" class="img-thumbnail" style="max-height: 100px;">
+                                        <img src="{{ asset('storage/' . $keuangan->bukti) }}" alt="Bukti" class="img-thumbnail" style="max-height: 100px;" loading="lazy" decoding="async">
                                     </a>
                                 </div>
                             @endif

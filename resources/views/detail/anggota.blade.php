@@ -24,6 +24,8 @@
                             alt="{{ $anggota->nama }}"
                             class="rounded-circle object-fit-cover mx-auto mb-4"
                             style="width: 150px; height: 150px;"
+                            loading="lazy"
+                            decoding="async"
                         >
                     @else
                         <div

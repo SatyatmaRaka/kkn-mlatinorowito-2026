@@ -22,6 +22,8 @@
                                         src="{{ asset('storage/' . $item->foto) }}"
                                         alt="{{ $item->nama }}"
                                         class="rounded-circle object-fit-cover mx-auto mb-3 avatar-circle"
+                                        loading="lazy"
+                                        decoding="async"
                                     >
                                 @else
                                     <div

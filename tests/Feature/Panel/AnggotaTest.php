@@ -163,7 +163,7 @@ class AnggotaTest extends TestCase
             ->assertOk()
             ->assertSee('modal-password-baru', false)
             ->assertSee('Password Baru — '.$anggota->nama, false)
-            ->assertSee($passwordBaru, false);
+            ->assertSee(e($passwordBaru), false);
 
         $anggotaUser->refresh();
 

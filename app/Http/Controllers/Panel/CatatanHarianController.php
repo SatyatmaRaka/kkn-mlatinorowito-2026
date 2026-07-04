@@ -11,6 +11,7 @@ use App\Notifications\NotifikasiLogbookDikirim;
 use App\Notifications\NotifikasiLogbookDireview;
 use App\Penunjang\EksporCsv;
 use App\Penunjang\FilterPencarian;
+use App\Penunjang\OptimasiGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +77,7 @@ class CatatanHarianController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('logbook', 'public');
+            $validated['foto'] = OptimasiGambar::simpanDenganResize($request->file('foto'), 'logbook', 1200);
         }
 
         $validated['user_id'] = $user->id;
@@ -119,7 +120,7 @@ class CatatanHarianController extends Controller
             if ($logbook->foto) {
                 Storage::disk('public')->delete($logbook->foto);
             }
-            $validated['foto'] = $request->file('foto')->store('logbook', 'public');
+            $validated['foto'] = OptimasiGambar::simpanDenganResize($request->file('foto'), 'logbook', 1200);
         }
 
         if ($request->boolean('submit') && in_array($logbook->status, [Logbook::STATUS_DRAFT, Logbook::STATUS_REJECTED], true)) {

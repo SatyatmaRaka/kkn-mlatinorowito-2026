@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Keuangan;
 use App\Penunjang\EksporCsv;
 use App\Penunjang\FilterPencarian;
+use App\Penunjang\OptimasiGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,7 +68,7 @@ class KeuanganController extends Controller
         ]);
 
         if ($request->hasFile('bukti')) {
-            $validated['bukti'] = $request->file('bukti')->store('keuangan', 'public');
+            $validated['bukti'] = OptimasiGambar::simpanDenganResize($request->file('bukti'), 'keuangan', 1200);
         }
 
         $validated['user_id'] = Auth::id();
@@ -100,7 +101,7 @@ class KeuanganController extends Controller
             if ($keuangan->bukti) {
                 Storage::disk('public')->delete($keuangan->bukti);
             }
-            $validated['bukti'] = $request->file('bukti')->store('keuangan', 'public');
+            $validated['bukti'] = OptimasiGambar::simpanDenganResize($request->file('bukti'), 'keuangan', 1200);
         }
 
         $validated['diubah_oleh'] = Auth::id();

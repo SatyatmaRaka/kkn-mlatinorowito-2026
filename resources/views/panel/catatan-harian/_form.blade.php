@@ -30,7 +30,7 @@
         <label for="foto" class="form-label">Foto Dokumentasi (opsional)</label>
         <input type="file" id="foto" name="foto" accept="image/*" class="form-control">
         @if (!empty($logbook?->foto))
-            <img src="{{ asset('storage/' . $logbook->foto) }}" alt="Foto logbook" class="mt-2 rounded" style="max-height: 120px;">
+            <img src="{{ asset('storage/' . $logbook->foto) }}" alt="Foto logbook" class="mt-2 rounded" style="max-height: 120px;" loading="lazy" decoding="async">
         @endif
     </div>
 </div>

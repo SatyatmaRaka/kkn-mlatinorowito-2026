@@ -90,6 +90,8 @@
                                             class="rounded-circle object-fit-cover border shadow-sm"
                                             width="45"
                                             height="45"
+                                            loading="lazy"
+                                            decoding="async"
                                         >
                                     @else
                                         <div
