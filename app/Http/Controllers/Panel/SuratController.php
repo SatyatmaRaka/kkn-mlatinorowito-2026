@@ -89,7 +89,7 @@ class SuratController extends Controller
 
     public function update(Request $request, Surat $surat): RedirectResponse
     {
-        $validated = $this->validateSurat($request);
+        $validated = $this->validateSurat($request, $surat);
 
         if ($validated['jenis'] === 'keluar') {
             $validated = PenerimaSurat::lengkapiDataKeluar($validated);
@@ -119,10 +119,6 @@ class SuratController extends Controller
 
     public function destroy(Surat $surat): RedirectResponse
     {
-        if ($surat->lampiran) {
-            Storage::disk('public')->delete($surat->lampiran);
-        }
-
         $surat->delete();
 
         return redirect()->route('panel.surat.index')->with('success', 'Surat berhasil dihapus.');
@@ -178,22 +174,30 @@ class SuratController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function validateSurat(Request $request): array
+    private function validateSurat(Request $request, ?Surat $surat = null): array
     {
         $rules = [
             'jenis' => 'required|in:masuk,keluar',
-            'nomor_surat' => 'nullable|string|max:100',
             'tanggal' => 'required|date',
             'perihal' => 'required|string|max:255',
             'keterangan' => 'nullable|string|max:2000',
         ];
 
         if ($request->input('jenis') === 'masuk') {
+            $rules['nomor_surat'] = [
+                'nullable',
+                'string',
+                'max:100',
+                Rule::unique('surat', 'nomor_surat')
+                    ->ignore($surat?->id)
+                    ->whereNull('deleted_at'),
+            ];
             $rules['asal_tujuan'] = 'required|string|max:255';
             $rules['lampiran'] = 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:5120';
         }
 
         if ($request->input('jenis') === 'keluar') {
+            $rules['nomor_surat'] = 'nullable|string|max:100';
             $rules['keterangan'] = 'required|string|max:2000';
             $rules['kategori_tujuan'] = ['required', Rule::in(KategoriTujuanSurat::values())];
             $rules['nomor_rt'] = [
@@ -216,6 +220,8 @@ class SuratController extends Controller
             ];
         }
 
-        return $request->validate($rules);
+        return $request->validate($rules, [
+            'nomor_surat.unique' => 'Nomor surat ini sudah digunakan pada arsip lain.',
+        ]);
     }
 }

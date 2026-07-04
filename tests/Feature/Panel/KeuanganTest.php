@@ -68,4 +68,23 @@ class KeuanganTest extends TestCase
             ->assertOk()
             ->assertHeader('content-type', 'text/csv; charset=UTF-8');
     }
+
+    public function test_keuangan_destroy_soft_deletes_record(): void
+    {
+        $user = User::factory()->create();
+        $keuangan = Keuangan::create([
+            'user_id' => $user->id,
+            'tanggal' => '2026-07-01',
+            'jenis' => 'pengeluaran',
+            'keterangan' => 'ATK posko',
+            'nominal' => 50000,
+        ]);
+
+        $this->actingAs($user)
+            ->delete(route('panel.keuangan.destroy', $keuangan))
+            ->assertRedirect(route('panel.keuangan.index'));
+
+        $this->assertSoftDeleted('keuangans', ['id' => $keuangan->id]);
+        $this->assertSame(0, Keuangan::count());
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Catatan harian KKN per anggota.
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Logbook extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public const STATUS_DRAFT = 'draft';
 
@@ -67,11 +68,11 @@ class Logbook extends Model
             return false;
         }
 
-        if ($user->isAdmin() || $user->isKoordinator()) {
-            return true;
+        if ($this->user_id !== $user->id) {
+            return false;
         }
 
-        return $this->user_id === $user->id && in_array($this->status, [self::STATUS_DRAFT, self::STATUS_REJECTED], true);
+        return in_array($this->status, [self::STATUS_DRAFT, self::STATUS_REJECTED], true);
     }
 
     public function isReviewable(): bool

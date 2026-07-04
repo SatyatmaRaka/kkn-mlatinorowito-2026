@@ -13,7 +13,7 @@
             <div class="premium-card border-0 p-4 p-md-5 text-center">
                 <span class="badge bg-success mb-3 d-print-none">QR Tetap</span>
                 <h2 class="h5 fw-bold mb-2">QR Absensi Posko</h2>
-                <p class="text-muted small mb-4 d-print-none">QR ini tidak berubah setiap hari — cetak sekali atau tampilkan di tablet posko sepanjang KKN.</p>
+                <p class="text-muted small mb-4 d-print-none">QR ini tidak berubah otomatis — cetak sekali atau tampilkan di tablet posko sepanjang periode KKN.</p>
 
                 <div id="qrcode" class="d-flex justify-content-center mb-3"></div>
                 <p class="small text-muted mb-1">Jam absensi: <strong>{{ $windowLabel }}</strong></p>
@@ -46,7 +46,7 @@
                     <li>Koordinator pantau rekap di menu <strong>Rekap Absensi</strong>.</li>
                 </ol>
                 <div class="alert alert-info border-0 small mb-0">
-                    <strong>Keamanan:</strong> Absensi tetap hanya bisa dalam jam yang ditentukan dan satu kali per hari per anggota. Gunakan <em>Buat Ulang QR</em> hanya jika QR bocor ke luar posko.
+                    <strong>Keamanan:</strong> Absensi tetap hanya bisa dalam jam yang ditentukan dan satu kali per hari per anggota. Gunakan <em>Buat Ulang QR</em> hanya jika QR dicurigai bocor ke luar circle KKN.
                 </div>
             </div>
         </div>

@@ -114,10 +114,6 @@ class KeuanganController extends Controller
     {
         $this->authorize('delete', $keuangan);
 
-        if ($keuangan->bukti) {
-            Storage::disk('public')->delete($keuangan->bukti);
-        }
-
         $keuangan->delete();
 
         return redirect()->route('panel.keuangan.index')->with('success', 'Catatan keuangan berhasil dihapus.');

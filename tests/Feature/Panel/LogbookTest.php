@@ -89,4 +89,60 @@ class LogbookTest extends TestCase
             ->get(route('panel.catatan-harian.edit', $logbook))
             ->assertForbidden();
     }
+
+    public function test_koordinator_cannot_edit_submitted_logbook_of_anggota(): void
+    {
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+        $koordinator = User::factory()->koordinator()->create();
+
+        $logbook = Logbook::factory()->submitted()->create([
+            'user_id' => $anggotaUser->id,
+            'anggota_id' => $anggota->id,
+        ]);
+
+        $this->actingAs($koordinator)
+            ->get(route('panel.catatan-harian.edit', $logbook))
+            ->assertForbidden();
+
+        $this->actingAs($koordinator)
+            ->put(route('panel.catatan-harian.update', $logbook), [
+                'tanggal' => '2026-07-01',
+                'judul' => 'Diubah koordinator',
+                'deskripsi' => 'Seharusnya ditolak.',
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_admin_cannot_edit_submitted_logbook_of_anggota(): void
+    {
+        $anggota = Anggota::factory()->create();
+        $anggotaUser = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+        $admin = User::factory()->create(['role' => PeranPengguna::Admin]);
+
+        $logbook = Logbook::factory()->submitted()->create([
+            'user_id' => $anggotaUser->id,
+            'anggota_id' => $anggota->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('panel.catatan-harian.edit', $logbook))
+            ->assertForbidden();
+    }
+
+    public function test_anggota_can_edit_rejected_own_logbook(): void
+    {
+        $anggota = Anggota::factory()->create();
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        $logbook = Logbook::factory()->create([
+            'user_id' => $user->id,
+            'anggota_id' => $anggota->id,
+            'status' => Logbook::STATUS_REJECTED,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('panel.catatan-harian.edit', $logbook))
+            ->assertOk();
+    }
 }

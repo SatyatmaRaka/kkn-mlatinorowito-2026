@@ -146,10 +146,6 @@ class CatatanHarianController extends Controller
     {
         $this->authorize('delete', $logbook);
 
-        if ($logbook->foto) {
-            Storage::disk('public')->delete($logbook->foto);
-        }
-
         $logbook->delete();
 
         return redirect()->route('panel.catatan-harian.index')->with('success', 'Logbook berhasil dihapus.');

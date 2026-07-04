@@ -38,9 +38,6 @@
 
                     <x-jabatan-badge :jabatan="$anggota->jabatan" />
 
-                    @if ($anggota->nim)
-                        <p class="text-muted mb-2">NIM: {{ $anggota->nim }}</p>
-                    @endif
                     <p class="text-muted mb-4">{{ $anggota->jurusan }} - Universitas Muria Kudus</p>
 
                     <div class="text-start border-top pt-4">

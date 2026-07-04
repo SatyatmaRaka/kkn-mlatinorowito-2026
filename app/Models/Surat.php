@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /** Arsip surat masuk & keluar KKN. */
 class Surat extends Model
 {
     /** @use HasFactory<\Database\Factories\SuratFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'surat';
 

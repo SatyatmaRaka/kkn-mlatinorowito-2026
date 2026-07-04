@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('can.kelola.surat')->prefix('panel')->name('panel.')->group(function () {
         Route::get('surat/{surat}/cetak', [SuratController::class, 'cetak'])->name('surat.cetak');
         Route::get('surat/{surat}/unduh', [SuratController::class, 'unduh'])->name('surat.unduh');
+        Route::post('surat/{surat}/generate-ulang', [SuratController::class, 'generateUlang'])->name('surat.generate-ulang');
         Route::resource('surat', SuratController::class)->except(['show']);
     });
 

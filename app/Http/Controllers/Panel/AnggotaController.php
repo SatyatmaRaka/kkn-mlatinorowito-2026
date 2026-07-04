@@ -20,6 +20,8 @@ class AnggotaController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', Anggota::class);
+
         $q = FilterPencarian::kataKunci($request->query('q'));
         $jabatan = $request->query('jabatan');
 
@@ -36,11 +38,15 @@ class AnggotaController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', Anggota::class);
+
         return view('panel.anggota.create');
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', Anggota::class);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'nim' => 'nullable|string|max:20',
@@ -62,11 +68,15 @@ class AnggotaController extends Controller
 
     public function edit(Anggota $anggota): View
     {
+        $this->authorize('update', $anggota);
+
         return view('panel.anggota.edit', compact('anggota'));
     }
 
     public function update(Request $request, Anggota $anggota): RedirectResponse
     {
+        $this->authorize('update', $anggota);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'nim' => 'nullable|string|max:20',
@@ -98,6 +108,8 @@ class AnggotaController extends Controller
 
     public function destroy(Anggota $anggota): RedirectResponse
     {
+        $this->authorize('delete', $anggota);
+
         if ($anggota->logbooks()->exists() || $anggota->absensi()->exists()) {
             return back()->withErrors([
                 'anggota' => 'Anggota tidak dapat dihapus karena masih memiliki riwayat logbook atau absensi.',

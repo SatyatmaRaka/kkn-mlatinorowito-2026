@@ -22,6 +22,12 @@
                     <a href="{{ route('panel.surat.cetak', $surat) }}" target="_blank" class="btn btn-outline-secondary rounded-pill px-3">
                         <i class="bi bi-eye me-1"></i> Pratinjau
                     </a>
+                    <form method="POST" action="{{ route('panel.surat.generate-ulang', $surat) }}" class="d-inline" onsubmit="return confirm('PDF lama akan diganti dengan versi baru. Lanjutkan?')">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-warning rounded-pill px-3">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Generate Ulang PDF
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
