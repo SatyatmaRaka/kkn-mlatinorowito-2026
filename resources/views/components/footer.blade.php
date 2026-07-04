@@ -29,7 +29,7 @@
             {{-- Brand column --}}
             <div class="col-12 col-md-5">
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo KKN UMK Mlatinorowito 2026" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
+                    <img src="{{ asset('images/logo-kkn.png') }}" alt="Logo KKN Mlatinorowito 2026" class="rounded-circle" style="width: 48px; height: 48px; object-fit: contain;">
                     <div>
                         <div class="fw-bold fs-5 lh-sm" style="letter-spacing: -0.02em;">{{ $namaKelompok }}</div>
                         <div class="small opacity-50">{{ $periode }}</div>

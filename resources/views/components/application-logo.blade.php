@@ -1,1 +1,1 @@
-<img src="{{ asset('images/logo.png') }}" alt="Logo KKN UMK Mlatinorowito 2026" {{ $attributes }}>
+<img src="{{ asset('images/logo-kkn.png') }}" alt="Logo KKN Mlatinorowito 2026" {{ $attributes }}>

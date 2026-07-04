@@ -8,12 +8,12 @@
         @php
             $pageTitle = $title ?? 'KKN Mlatinorowito 2026';
             $pageDescription = $description ?? 'Website Resmi KKN UMK Kelompok Desa Mlatinorowito tahun 2026. Temukan info program kerja, anggota tim, dan informasi kelompok KKN.';
-            $pageImage = $image ?? asset('images/logo.png');
+            $pageImage = $image ?? asset('images/logo-kkn.png');
             $pageUrl = $url ?? url()->current();
         @endphp
 
         <title>{{ $pageTitle }}</title>
-        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo-kkn.png') }}">
         <link rel="canonical" href="{{ $pageUrl }}">
 
         <meta name="description" content="{{ $pageDescription }}">

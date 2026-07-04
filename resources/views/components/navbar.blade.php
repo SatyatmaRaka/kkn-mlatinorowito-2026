@@ -35,7 +35,7 @@
             .public-navbar-brand img {
                 height: 44px;
                 width: 44px;
-                object-fit: cover;
+                object-fit: contain;
                 border-radius: 50%;
                 transition: transform 0.3s ease;
             }
@@ -76,7 +76,7 @@
 
         <div class="d-flex align-items-center justify-content-between w-100 position-relative">
             <a class="public-navbar-brand d-flex align-items-center" href="/#beranda" @click="mobileOpen = false">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo KKN UMK 2026">
+                <img src="{{ asset('images/logo-kkn.png') }}" alt="Logo KKN Mlatinorowito 2026">
             </a>
 
             <button

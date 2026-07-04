@@ -13,7 +13,7 @@
 
     <aside class="admin-sidebar text-white d-flex flex-column" :class="{ 'sidebar-mobile-open': sidebarOpen }">
         <div class="px-4 py-4 border-bottom border-white border-opacity-25 d-flex align-items-center gap-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
+            <img src="{{ asset('images/logo-kkn.png') }}" alt="Logo KKN Mlatinorowito 2026" class="rounded-circle" style="width: 45px; height: 45px; object-fit: contain;">
             <a href="{{ route('dashboard') }}" class="text-white text-decoration-none">
                 <div class="fw-bold fs-6 lh-sm">KKN Mlatinorowito</div>
                 <div class="small text-white-50">2026</div>
