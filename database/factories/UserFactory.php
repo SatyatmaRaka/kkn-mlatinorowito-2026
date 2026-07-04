@@ -67,4 +67,16 @@ class UserFactory extends Factory
             ];
         });
     }
+
+    public function wakilKoordinator(): static
+    {
+        return $this->state(function () {
+            $anggota = Anggota::factory()->create(['jabatan' => Jabatan::WakilKoordinator->value]);
+
+            return [
+                'role' => PeranPengguna::Anggota,
+                'anggota_id' => $anggota->id,
+            ];
+        });
+    }
 }

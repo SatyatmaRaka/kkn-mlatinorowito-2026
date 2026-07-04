@@ -115,6 +115,24 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_wakil_koordinator_can_access_rekap_absensi(): void
+    {
+        $user = User::factory()->wakilKoordinator()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.absensi.rekap'))
+            ->assertOk();
+    }
+
+    public function test_wakil_koordinator_cannot_access_keuangan(): void
+    {
+        $user = User::factory()->wakilKoordinator()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.keuangan.index'))
+            ->assertForbidden();
+    }
+
     public function test_bendahara_can_access_keuangan(): void
     {
         $user = User::factory()->bendahara()->create();

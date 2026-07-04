@@ -11,13 +11,13 @@
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="premium-card border-0 p-4 p-md-5 text-center">
-                <span class="badge bg-success mb-3">QR Tetap</span>
+                <span class="badge bg-success mb-3 d-print-none">QR Tetap</span>
                 <h2 class="h5 fw-bold mb-2">QR Absensi Posko</h2>
-                <p class="text-muted small mb-4">QR ini tidak berubah setiap hari — cetak sekali atau tampilkan di tablet posko sepanjang KKN.</p>
+                <p class="text-muted small mb-4 d-print-none">QR ini tidak berubah setiap hari — cetak sekali atau tampilkan di tablet posko sepanjang KKN.</p>
 
                 <div id="qrcode" class="d-flex justify-content-center mb-3"></div>
                 <p class="small text-muted mb-1">Jam absensi: <strong>{{ $windowLabel }}</strong></p>
-                <p class="small text-break text-muted mb-4">{{ $checkInUrl }}</p>
+                <p class="small text-break text-muted mb-4 d-print-none">{{ $checkInUrl }}</p>
 
                 <div class="d-flex gap-2 justify-content-center flex-wrap">
                     <button type="button" class="btn btn-primary rounded-pill px-4" onclick="window.print()">
@@ -55,7 +55,7 @@
     @push('styles')
         <style>
             @media print {
-                .admin-sidebar, .admin-mobile-topbar, header, .btn, .col-lg-6:last-child { display: none !important; }
+                .admin-sidebar, .admin-mobile-topbar, header, .btn, .col-lg-6:last-child, .d-print-none { display: none !important; }
                 .admin-main { margin-left: 0 !important; padding: 0 !important; }
                 .premium-card { box-shadow: none !important; border: 2px solid #000 !important; }
             }

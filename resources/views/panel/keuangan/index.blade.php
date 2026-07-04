@@ -36,6 +36,25 @@
         </div>
     </div>
 
+    <x-filter-daftar placeholder="Cari keterangan transaksi..." :reset-url="route('panel.keuangan.index')">
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Jenis</label>
+            <select name="jenis" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                <option value="pemasukan" @selected(($jenis ?? '') === 'pemasukan')>Pemasukan</option>
+                <option value="pengeluaran" @selected(($jenis ?? '') === 'pengeluaran')>Pengeluaran</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Dari</label>
+            <input type="date" name="tanggal_mulai" value="{{ $tanggalMulai ?? '' }}" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Sampai</label>
+            <input type="date" name="tanggal_selesai" value="{{ $tanggalSelesai ?? '' }}" class="form-control form-control-sm">
+        </div>
+    </x-filter-daftar>
+
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0">Riwayat Transaksi</h5>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
+use App\Penunjang\FilterPencarian;
 use App\Penunjang\SanitizerHtml;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,11 +14,18 @@ use Illuminate\View\View;
 /** CRUD dokumentasi kegiatan KKN untuk halaman publik. */
 class KegiatanController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $kegiatan = Kegiatan::orderBy('tanggal', 'desc')->get();
+        $q = FilterPencarian::kataKunci($request->query('q'));
 
-        return view('panel.kegiatan.index', compact('kegiatan'));
+        $kegiatan = Kegiatan::query()
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'judul', 'deskripsi_singkat', 'konten',
+            ]))
+            ->orderByDesc('tanggal')
+            ->get();
+
+        return view('panel.kegiatan.index', compact('kegiatan', 'q'));
     }
 
     public function create(): View

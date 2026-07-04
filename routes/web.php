@@ -42,8 +42,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('catatan-harian/{logbook}/review', [CatatanHarianController::class, 'review'])->name('catatan-harian.review');
     });
 
-    // Panel absensi admin: rekap, QR, export (admin & koordinator)
-    Route::middleware('role:admin,koordinator')->prefix('panel')->name('panel.')->group(function () {
+    // Panel absensi admin: rekap, QR, export (admin, koordinator & wakil koordinator)
+    Route::middleware('can.pantau.operasional')->prefix('panel')->name('panel.')->group(function () {
         Route::get('absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
         Route::get('absensi/export', [AbsensiController::class, 'export'])->name('absensi.export');
         Route::get('absensi/qr', [AbsensiController::class, 'qrPrint'])->name('absensi.qr');
@@ -91,8 +91,8 @@ Route::middleware('auth')->group(function () {
         Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
     });
 
-    // Laporan operasional — admin & koordinator (middleware peran eksplisit)
-    Route::middleware('role:admin,koordinator')->prefix('panel')->name('panel.')->group(function () {
+    // Laporan operasional — admin, koordinator & wakil koordinator
+    Route::middleware('can.pantau.operasional')->prefix('panel')->name('panel.')->group(function () {
         Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
         Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');

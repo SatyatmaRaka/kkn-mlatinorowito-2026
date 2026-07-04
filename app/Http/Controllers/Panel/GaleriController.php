@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Galeri;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,11 +15,16 @@ use Throwable;
 /** Upload & hapus foto galeri dokumentasi KKN. */
 class GaleriController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $galeri = Galeri::latest()->get();
+        $q = FilterPencarian::kataKunci($request->query('q'));
 
-        return view('panel.galeri.index', compact('galeri'));
+        $galeri = Galeri::query()
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, ['keterangan']))
+            ->latest()
+            ->get();
+
+        return view('panel.galeri.index', compact('galeri', 'q'));
     }
 
     public function create(): View

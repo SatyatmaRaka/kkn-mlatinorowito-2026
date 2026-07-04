@@ -9,6 +9,7 @@ use App\Models\Surat;
 use App\Penunjang\GeneratorSuratKeluar;
 use App\Penunjang\PenandatanganSurat;
 use App\Penunjang\PenerimaSurat;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,15 +24,24 @@ class SuratController extends Controller
     public function index(Request $request): View
     {
         $jenis = $request->query('jenis');
+        $kategori = $request->query('kategori_tujuan');
+        $q = FilterPencarian::kataKunci($request->query('q'));
 
         $surat = Surat::with('user')
-            ->when(in_array($jenis, ['masuk', 'keluar'], true), fn ($q) => $q->where('jenis', $jenis))
+            ->when(in_array($jenis, ['masuk', 'keluar'], true), fn ($query) => $query->where('jenis', $jenis))
+            ->when(in_array($kategori, KategoriTujuanSurat::values(), true), fn ($query) => $query->where('kategori_tujuan', $kategori))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'nomor_surat',
+                'asal_tujuan',
+                'perihal',
+                'keterangan',
+            ]))
             ->orderByDesc('tanggal')
             ->orderByDesc('created_at')
             ->paginate(20)
             ->withQueryString();
 
-        return view('panel.surat.index', compact('surat', 'jenis'));
+        return view('panel.surat.index', compact('surat', 'jenis', 'kategori', 'q'));
     }
 
     public function create(Request $request): View

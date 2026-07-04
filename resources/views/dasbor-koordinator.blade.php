@@ -1,10 +1,10 @@
 <x-app-layout>
-    <x-slot name="header">Dasbor Koordinator</x-slot>
+    <x-slot name="header">Dasbor {{ $judulPeran ?? 'Koordinator' }}</x-slot>
 
     <div class="premium-card mb-4 border-0" style="background: linear-gradient(135deg, var(--umk-blue) 0%, var(--umk-blue-accent) 100%); color: white;">
         <div class="card-body p-4 p-md-5">
             <h2 class="fw-bold text-white mb-2">Halo, {{ $user->name }}!</h2>
-            <p class="mb-0 opacity-75">Koordinator Desa — pantau logbook, absensi, dan laporan operasional KKN.</p>
+            <p class="mb-0 opacity-75">{{ $judulPeran ?? 'Koordinator Desa' }} — {{ $deskripsiPeran ?? 'Pantau logbook, absensi, dan laporan operasional KKN.' }}</p>
         </div>
     </div>
 
@@ -65,7 +65,9 @@
                     <a href="{{ route('panel.absensi.rekap') }}" class="btn btn-outline-success rounded-pill py-2"><i class="bi bi-clipboard-check me-2"></i>Rekap Absensi</a>
                     <a href="{{ route('panel.absensi.qr') }}" class="btn btn-outline-primary rounded-pill py-2"><i class="bi bi-qr-code me-2"></i>Cetak QR Absensi</a>
                     <a href="{{ route('panel.laporan.index') }}" class="btn btn-outline-secondary rounded-pill py-2"><i class="bi bi-file-earmark-bar-graph me-2"></i>Laporan KKN</a>
-                    <a href="{{ route('panel.keuangan.index') }}" class="btn btn-outline-secondary rounded-pill py-2"><i class="bi bi-wallet2 me-2"></i>Keuangan</a>
+                    @if ($user->canManageKeuangan())
+                        <a href="{{ route('panel.keuangan.index') }}" class="btn btn-outline-secondary rounded-pill py-2"><i class="bi bi-wallet2 me-2"></i>Keuangan</a>
+                    @endif
                 </div>
             </div>
         </div>

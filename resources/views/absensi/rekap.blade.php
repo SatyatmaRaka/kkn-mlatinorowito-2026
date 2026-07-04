@@ -6,16 +6,27 @@
                 <span class="badge bg-success-subtle text-success border border-success-subtle" x-data x-init="setInterval(() => $el.classList.toggle('opacity-50'), 1000)">
                     <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> Live
                 </span>
-                <form method="GET" class="d-flex gap-2">
-                    <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control form-control-sm">
-                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">Filter</button>
-                </form>
                 <a href="{{ route('panel.absensi.export', ['tanggal_mulai' => $tanggal, 'tanggal_selesai' => $tanggal]) }}" class="btn btn-sm btn-success rounded-pill">
                     <i class="bi bi-download me-1"></i> Export CSV
                 </a>
             </div>
         </div>
     </x-slot>
+
+    <x-filter-daftar placeholder="Cari nama anggota, jabatan..." :reset-url="route('panel.absensi.rekap', ['tanggal' => $tanggal])">
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Tanggal</label>
+            <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Kehadiran</label>
+            <select name="status" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                <option value="hadir" @selected(($filterStatus ?? '') === 'hadir')>Sudah Hadir</option>
+                <option value="belum" @selected(($filterStatus ?? '') === 'belum')>Belum Hadir</option>
+            </select>
+        </div>
+    </x-filter-daftar>
 
     <div
         class="row g-4 mb-4"

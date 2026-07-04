@@ -84,6 +84,14 @@
                     margin-left: 250px;
                 }
             }
+
+            .modal {
+                z-index: 1055;
+            }
+
+            .modal-backdrop {
+                z-index: 1050;
+            }
         </style>
     </head>
     <body class="admin-layout">

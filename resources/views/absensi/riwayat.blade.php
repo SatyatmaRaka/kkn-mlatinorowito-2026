@@ -17,16 +17,19 @@
     </x-slot>
 
     @if (Auth::user()->canReviewLogbook())
-        <form method="GET" class="premium-card border-0 p-3 mb-4 d-flex flex-wrap gap-2 align-items-end">
-            <div>
-                <label class="form-label small mb-1">Filter tanggal</label>
+        <x-filter-daftar placeholder="Cari nama anggota..." :reset-url="route('panel.absensi.riwayat')">
+            <div class="col-md-3 col-lg-2">
+                <label class="form-label small mb-1 fw-semibold">Tanggal</label>
                 <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control form-control-sm">
             </div>
-            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill">Terapkan</button>
-            @if ($tanggal)
-                <a href="{{ route('panel.absensi.riwayat') }}" class="btn btn-sm btn-link">Reset</a>
-            @endif
-        </form>
+        </x-filter-daftar>
+    @else
+        <x-filter-daftar placeholder="Cari..." :reset-url="route('panel.absensi.riwayat')" :show-search="false">
+            <div class="col-md-3 col-lg-2">
+                <label class="form-label small mb-1 fw-semibold">Tanggal</label>
+                <input type="date" name="tanggal" value="{{ $tanggal }}" class="form-control form-control-sm">
+            </div>
+        </x-filter-daftar>
     @endif
 
     <div class="premium-card border-0">

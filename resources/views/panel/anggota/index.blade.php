@@ -22,7 +22,7 @@
         </div>
     @endif
 
-    @if ($errors->has('username') || $errors->has('password') || $errors->has('role'))
+    @if ($errors->has('username') || $errors->has('password'))
         <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <ul class="mb-0 ps-3">
@@ -33,6 +33,18 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+
+    <x-filter-daftar placeholder="Cari nama, NIM, jurusan..." :reset-url="route('panel.anggota.index')">
+        <div class="col-md-3 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Jabatan</label>
+            <select name="jabatan" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                @foreach (\App\Enums\Jabatan::cases() as $j)
+                    <option value="{{ $j->value }}" @selected(($jabatan ?? '') === $j->value)>{{ $j->value }}</option>
+                @endforeach
+            </select>
+        </div>
+    </x-filter-daftar>
 
     <div class="premium-card border-0 mb-4">
         <div class="card-body p-0">
@@ -174,14 +186,15 @@
                                         @enderror
                                     </div>
                                     <div class="mb-3">
-                                        <label for="role-{{ $item->id }}" class="form-label">Role Sistem</label>
-                                        <select id="role-{{ $item->id }}" name="role" class="form-select @error('role') is-invalid @enderror" required>
-                                            <option value="anggota" @selected(old('role', 'anggota') === 'anggota')>Anggota</option>
-                                            <option value="koordinator" @selected(old('role') === 'koordinator' || \App\Penunjang\TautanSosial::isJabatanPimpinan($item->jabatan))>Koordinator</option>
-                                        </select>
-                                        @error('role')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <label class="form-label">Role Sistem</label>
+                                        @php
+                                            $roleOtomatis = \App\Penunjang\AkunAnggota::peranDariJabatan($item->jabatan);
+                                        @endphp
+                                        <input type="text" class="form-control" value="{{ $roleOtomatis->label() }}" readonly>
+                                        <div class="form-text">
+                                            Ditentukan otomatis dari jabatan <strong>{{ $item->jabatan }}</strong>.
+                                            Koordinator Desa → Koordinator; selain itu → Anggota.
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="password-{{ $item->id }}" class="form-label">Password</label>

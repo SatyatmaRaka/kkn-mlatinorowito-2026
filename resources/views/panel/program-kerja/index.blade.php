@@ -15,6 +15,18 @@
         </div>
     @endif
 
+    <x-filter-daftar placeholder="Cari judul, tema, PIC..." :reset-url="route('panel.program-kerja.index')">
+        <div class="col-md-3 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Status</label>
+            <select name="status" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                @foreach ($statusList ?? [] as $st)
+                    <option value="{{ $st }}" @selected(($status ?? '') === $st)>{{ $st }}</option>
+                @endforeach
+            </select>
+        </div>
+    </x-filter-daftar>
+
     <div class="premium-card border-0 mb-4">
         <div class="card-body p-0">
             <div class="table-responsive">

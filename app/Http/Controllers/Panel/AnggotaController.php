@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Panel;
 
 use App\Enums\Jabatan;
-use App\Enums\PeranPengguna;
 use App\Http\Controllers\Controller;
 use App\Models\Anggota;
 use App\Models\User;
+use App\Penunjang\AkunAnggota;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,11 +18,20 @@ use Illuminate\View\View;
 /** CRUD data anggota KKN & pembuatan akun login. */
 class AnggotaController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $anggota = Anggota::with('user')->orderBy('urutan')->get();
+        $q = FilterPencarian::kataKunci($request->query('q'));
+        $jabatan = $request->query('jabatan');
 
-        return view('panel.anggota.index', compact('anggota'));
+        $anggota = Anggota::with('user')
+            ->when($jabatan && in_array($jabatan, Jabatan::values(), true), fn ($query) => $query->where('jabatan', $jabatan))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'nama', 'nim', 'jurusan', 'jabatan', 'deskripsi',
+            ]))
+            ->orderBy('urutan')
+            ->get();
+
+        return view('panel.anggota.index', compact('anggota', 'q', 'jabatan'));
     }
 
     public function create(): View
@@ -76,6 +86,13 @@ class AnggotaController extends Controller
 
         $anggota->update($validated);
 
+        if ($anggota->user && ! $anggota->user->isAdmin()) {
+            $roleBaru = AkunAnggota::peranDariJabatan($anggota->jabatan);
+            if ($anggota->user->role !== $roleBaru) {
+                $anggota->user->update(['role' => $roleBaru]);
+            }
+        }
+
         return redirect()->route('panel.anggota.index')->with('success', 'Anggota berhasil diperbarui.');
     }
 
@@ -110,7 +127,6 @@ class AnggotaController extends Controller
 
         $validated = $request->validate([
             'username' => 'required|string|max:255|unique:users,username',
-            'role' => ['required', Rule::in([PeranPengguna::Koordinator->value, PeranPengguna::Anggota->value])],
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
@@ -118,7 +134,7 @@ class AnggotaController extends Controller
             'name' => $anggota->nama,
             'username' => $validated['username'],
             'password' => $validated['password'],
-            'role' => PeranPengguna::from($validated['role']),
+            'role' => AkunAnggota::peranDariJabatan($anggota->jabatan),
             'anggota_id' => $anggota->id,
         ]);
 

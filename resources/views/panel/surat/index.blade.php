@@ -8,13 +8,28 @@
         </div>
     @endif
 
+    <x-filter-daftar placeholder="Cari nomor, perihal, tujuan..." :reset-url="route('panel.surat.index')">
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Jenis</label>
+            <select name="jenis" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                <option value="masuk" @selected(($jenis ?? '') === 'masuk')>Masuk</option>
+                <option value="keluar" @selected(($jenis ?? '') === 'keluar')>Keluar</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <label class="form-label small mb-1 fw-semibold">Kategori Tujuan</label>
+            <select name="kategori_tujuan" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                @foreach (\App\Enums\KategoriTujuanSurat::cases() as $kat)
+                    <option value="{{ $kat->value }}" @selected(($kategori ?? '') === $kat->value)>{{ $kat->label() }}</option>
+                @endforeach
+            </select>
+        </div>
+    </x-filter-daftar>
+
     <div class="premium-card border-0 mb-4 p-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 flex-wrap">
-            <div class="btn-group" role="group">
-                <a href="{{ route('panel.surat.index') }}" class="btn btn-sm {{ empty($jenis) ? 'btn-primary' : 'btn-outline-primary' }}">Semua</a>
-                <a href="{{ route('panel.surat.index', ['jenis' => 'masuk']) }}" class="btn btn-sm {{ $jenis === 'masuk' ? 'btn-primary' : 'btn-outline-primary' }}">Masuk</a>
-                <a href="{{ route('panel.surat.index', ['jenis' => 'keluar']) }}" class="btn btn-sm {{ $jenis === 'keluar' ? 'btn-primary' : 'btn-outline-primary' }}">Keluar</a>
-            </div>
+        <div class="d-flex flex-column flex-md-row justify-content-end align-items-md-center gap-3 flex-wrap">
             <div class="d-flex gap-2 flex-wrap">
                 <a href="{{ route('panel.surat.create', ['jenis' => 'masuk']) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                     <i class="bi bi-inbox me-1"></i> Catat Masuk

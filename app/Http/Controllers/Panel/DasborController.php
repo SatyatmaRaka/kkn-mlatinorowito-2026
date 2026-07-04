@@ -81,9 +81,14 @@ class DasborController extends Controller
     {
         $anggotaDenganAkun = Anggota::whereHas('user')->count();
         $absensiHariIni = Absensi::whereDate('tanggal', today())->count();
+        $isWakil = \App\Enums\Jabatan::tryFromValue($user->anggota?->jabatan) === \App\Enums\Jabatan::WakilKoordinator;
 
         return view('dasbor-koordinator', [
             'user' => $user,
+            'judulPeran' => $isWakil ? 'Wakil Koordinator' : 'Koordinator Desa',
+            'deskripsiPeran' => $isWakil
+                ? 'Mendampingi koordinator — pantau logbook, absensi, dan laporan operasional KKN.'
+                : 'Memimpin operasional KKN — pantau logbook, absensi, dan laporan harian.',
             'logbookMenunggu' => Logbook::where('status', Logbook::STATUS_SUBMITTED)->count(),
             'absensiHariIni' => $absensiHariIni,
             'belumAbsen' => max(0, $anggotaDenganAkun - $absensiHariIni),

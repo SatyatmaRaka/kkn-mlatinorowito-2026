@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Panel;
 use App\Http\Controllers\Controller;
 use App\Models\Keuangan;
 use App\Penunjang\EksporCsv;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,20 +16,35 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /** Pencatatan pemasukan & pengeluaran dana KKN. */
 class KeuanganController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Keuangan::class);
 
-        $keuangans = Keuangan::with(['user', 'diubahOleh'])
-            ->orderBy('tanggal', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $q = FilterPencarian::kataKunci($request->query('q'));
+        $jenis = in_array($request->query('jenis'), ['pemasukan', 'pengeluaran'], true) ? $request->query('jenis') : null;
+        $tanggalMulai = $request->query('tanggal_mulai');
+        $tanggalSelesai = $request->query('tanggal_selesai');
 
-        $totalPemasukan = Keuangan::where('jenis', 'pemasukan')->sum('nominal');
-        $totalPengeluaran = Keuangan::where('jenis', 'pengeluaran')->sum('nominal');
+        $filter = function () use ($q, $jenis, $tanggalMulai, $tanggalSelesai) {
+            return Keuangan::query()
+                ->when($jenis, fn ($query) => $query->where('jenis', $jenis))
+                ->when($tanggalMulai, fn ($query) => $query->whereDate('tanggal', '>=', $tanggalMulai))
+                ->when($tanggalSelesai, fn ($query) => $query->whereDate('tanggal', '<=', $tanggalSelesai))
+                ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, ['keterangan']));
+        };
+
+        $keuangans = $filter()
+            ->with(['user', 'diubahOleh'])
+            ->orderByDesc('tanggal')
+            ->orderByDesc('created_at')
+            ->paginate(20)
+            ->withQueryString();
+
+        $totalPemasukan = $filter()->where('jenis', 'pemasukan')->sum('nominal');
+        $totalPengeluaran = $filter()->where('jenis', 'pengeluaran')->sum('nominal');
         $saldo = $totalPemasukan - $totalPengeluaran;
 
-        return view('panel.keuangan.index', compact('keuangans', 'totalPemasukan', 'totalPengeluaran', 'saldo'));
+        return view('panel.keuangan.index', compact('keuangans', 'totalPemasukan', 'totalPengeluaran', 'saldo', 'q', 'jenis', 'tanggalMulai', 'tanggalSelesai'));
     }
 
     public function create(): View

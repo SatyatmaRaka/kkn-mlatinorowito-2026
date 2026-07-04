@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProgramKerja;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,11 +12,22 @@ use Illuminate\View\View;
 /** CRUD program kerja kelompok KKN di halaman publik. */
 class ProgramKerjaController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $programKerja = ProgramKerja::orderBy('urutan')->get();
+        $q = FilterPencarian::kataKunci($request->query('q'));
+        $status = FilterPencarian::kataKunci($request->query('status'));
 
-        return view('panel.program-kerja.index', compact('programKerja'));
+        $programKerja = ProgramKerja::query()
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'judul', 'tema', 'deskripsi', 'pic', 'status',
+            ]))
+            ->orderBy('urutan')
+            ->get();
+
+        $statusList = ProgramKerja::query()->distinct()->orderBy('status')->pluck('status');
+
+        return view('panel.program-kerja.index', compact('programKerja', 'q', 'status', 'statusList'));
     }
 
     public function create(): View

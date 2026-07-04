@@ -7,6 +7,7 @@ use App\Models\Anggota;
 use App\Layanan\LayananPengaturan;
 use App\Layanan\LayananTokenAbsensi;
 use App\Penunjang\EksporCsv;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,25 +95,35 @@ class AbsensiController extends Controller
     {
         $user = Auth::user();
         $tanggal = $request->query('tanggal');
+        $q = FilterPencarian::kataKunci($request->query('q'));
 
         $absensi = Absensi::with('anggota')
-            ->when(! $user->canReviewLogbook(), fn ($q) => $q->where('user_id', $user->id))
-            ->when($tanggal, fn ($q) => $q->whereDate('tanggal', $tanggal))
+            ->when(! $user->canReviewLogbook(), fn ($query) => $query->where('user_id', $user->id))
+            ->when($tanggal, fn ($query) => $query->whereDate('tanggal', $tanggal))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'metode',
+                fn ($sub, $term) => $sub->orWhereHas('anggota', fn ($a) => $a->where('nama', 'like', '%'.$term.'%')),
+            ]))
             ->orderByDesc('tanggal')
             ->orderByDesc('check_in_at')
             ->paginate(20)
             ->withQueryString();
 
-        return view('absensi.riwayat', compact('absensi', 'tanggal'));
+        return view('absensi.riwayat', compact('absensi', 'tanggal', 'q'));
     }
 
     /** Rekap kehadiran harian untuk koordinator/admin. */
-    public function rekap(): View
+    public function rekap(Request $request): View
     {
-        $tanggal = request()->query('tanggal', now()->toDateString());
+        $tanggal = $request->query('tanggal', now()->toDateString());
+        $q = FilterPencarian::kataKunci($request->query('q'));
+        $filterStatus = in_array($request->query('status'), ['hadir', 'belum'], true) ? $request->query('status') : null;
 
         $anggotaDenganAkun = Anggota::with('user')
-            ->whereHas('user', fn ($q) => $q->whereIn('role', ['anggota', 'koordinator']))
+            ->whereHas('user', fn ($query) => $query->whereIn('role', ['anggota', 'koordinator']))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'nama', 'jabatan', 'jurusan',
+            ]))
             ->orderBy('urutan')
             ->get();
 
@@ -121,12 +132,19 @@ class AbsensiController extends Controller
         $hadir = $anggotaDenganAkun->filter(fn ($a) => $hadirIds->contains($a->id));
         $belum = $anggotaDenganAkun->filter(fn ($a) => ! $hadirIds->contains($a->id));
 
+        if ($filterStatus === 'hadir') {
+            $belum = collect();
+        } elseif ($filterStatus === 'belum') {
+            $hadir = collect();
+        }
+
         $absensiHari = Absensi::with('anggota')
             ->whereDate('tanggal', $tanggal)
+            ->when($q, fn ($query) => $query->whereHas('anggota', fn ($a) => $a->where('nama', 'like', '%'.$q.'%')))
             ->orderBy('check_in_at')
             ->get();
 
-        return view('absensi.rekap', compact('tanggal', 'hadir', 'belum', 'absensiHari', 'anggotaDenganAkun'));
+        return view('absensi.rekap', compact('tanggal', 'hadir', 'belum', 'absensiHari', 'anggotaDenganAkun', 'q', 'filterStatus'));
     }
 
     public function export(Request $request): StreamedResponse

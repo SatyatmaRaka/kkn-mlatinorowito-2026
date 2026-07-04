@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'can.kelola.administrasi' => \App\Http\Middleware\IzinKelolaAdministrasi::class,
             'can.kelola.surat' => \App\Http\Middleware\IzinKelolaAdministrasi::class,
             'can.manage.keuangan' => \App\Http\Middleware\IzinKelolaKeuangan::class,
+            'can.pantau.operasional' => \App\Http\Middleware\IzinPantauOperasional::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

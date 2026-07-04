@@ -36,10 +36,16 @@ enum Jabatan: string
         return in_array($this, [self::KoordinatorDesa, self::WakilKoordinator], true);
     }
 
-    /** Sekretaris mengelola CMS website. */
-    public function dapatKelolaCms(): bool
+    /** Sekretaris mengelola arsip surat. */
+    public function dapatKelolaSurat(): bool
     {
         return $this === self::Sekretaris;
+    }
+
+    /** @deprecated Gunakan dapatKelolaSurat(). */
+    public function dapatKelolaCms(): bool
+    {
+        return $this->dapatKelolaSurat();
     }
 
     /** Bendahara mengelola keuangan (selain admin/koordinator). */

@@ -15,6 +15,8 @@
         </div>
     @endif
 
+    <x-filter-daftar placeholder="Cari keterangan foto..." :reset-url="route('panel.galeri.index')" />
+
     @if ($galeri->isEmpty())
         <div class="premium-card border-0 mb-4">
             <div class="card-body p-5 text-center">

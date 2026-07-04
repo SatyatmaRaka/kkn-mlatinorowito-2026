@@ -58,6 +58,26 @@ class DashboardTest extends TestCase
             ->assertSee('Saldo Kas');
     }
 
+    public function test_wakil_koordinator_sees_pantau_dashboard(): void
+    {
+        $user = User::factory()->wakilKoordinator()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Dasbor Wakil Koordinator')
+            ->assertSee('Logbook Menunggu Review');
+    }
+
+    public function test_wakil_koordinator_can_access_rekap_absensi(): void
+    {
+        $user = User::factory()->wakilKoordinator()->create();
+
+        $this->actingAs($user)
+            ->get(route('panel.absensi.rekap'))
+            ->assertOk();
+    }
+
     public function test_humas_sees_divisi_dashboard(): void
     {
         $user = User::factory()->anggota()->create([

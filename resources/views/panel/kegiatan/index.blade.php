@@ -15,6 +15,8 @@
         </div>
     @endif
 
+    <x-filter-daftar placeholder="Cari judul kegiatan..." :reset-url="route('panel.kegiatan.index')" />
+
     <div class="premium-card border-0 mb-4">
         <div class="card-body p-0">
             <div class="table-responsive">

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\NotifikasiLogbookDikirim;
 use App\Notifications\NotifikasiLogbookDireview;
 use App\Penunjang\EksporCsv;
+use App\Penunjang\FilterPencarian;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,19 +23,31 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class CatatanHarianController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = Auth::user();
+        $q = FilterPencarian::kataKunci($request->query('q'));
+        $status = in_array($request->query('status'), ['draft', 'submitted', 'approved', 'rejected'], true)
+            ? $request->query('status')
+            : null;
 
         $logbooks = Logbook::with(['anggota', 'user'])
-            ->when(! $user->canReviewLogbook(), fn ($q) => $q->where('user_id', $user->id))
+            ->when(! $user->canReviewLogbook(), fn ($query) => $query->where('user_id', $user->id))
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->when($q, fn ($query) => FilterPencarian::terapkan($query, $q, [
+                'judul',
+                'deskripsi',
+                'lokasi',
+                fn ($sub, $term) => $sub->orWhereHas('anggota', fn ($a) => $a->where('nama', 'like', '%'.$term.'%')),
+            ]))
             ->orderByDesc('tanggal')
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $notifikasiReview = $user->unreadNotifications;
 
-        return view('panel.catatan-harian.index', compact('logbooks', 'notifikasiReview'));
+        return view('panel.catatan-harian.index', compact('logbooks', 'notifikasiReview', 'q', 'status'));
     }
 
     public function create(): View

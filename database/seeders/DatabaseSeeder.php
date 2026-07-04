@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AnggotaAkunSeeder::class,
             ProgramKerjaSeeder::class,
             KegiatanSeeder::class,
+            DummyDataSeeder::class,
         ]);
     }
 }

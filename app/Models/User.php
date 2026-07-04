@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Jabatan;
+use App\Enums\Jabatan as JabatanOrganisasi;
 use App\Enums\PeranPengguna;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +12,10 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * Model akun login sistem KKN.
- * Terhubung ke data anggota via anggota_id untuk absensi & logbook.
+ *
+ * Izin dihitung dari kombinasi:
+ * - role (admin / koordinator / anggota)
+ * - jabatan organisasi lewat relasi anggota (Sekretaris, Bendahara, Wakil Koordinator, dll.)
  */
 class User extends Authenticatable
 {
@@ -55,6 +58,12 @@ class User extends Authenticatable
         return $this->hasMany(Absensi::class);
     }
 
+    /** Jabatan organisasi dari profil anggota terkait. */
+    public function jabatanOrganisasi(): ?JabatanOrganisasi
+    {
+        return JabatanOrganisasi::tryFromValue($this->anggota?->jabatan);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === PeranPengguna::Admin;
@@ -76,10 +85,10 @@ class User extends Authenticatable
         return $this->isAdmin();
     }
 
-    /** Izin kelola arsip surat — admin atau Sekretaris. */
+    /** Izin kelola arsip surat — admin atau jabatan Sekretaris. */
     public function canKelolaSurat(): bool
     {
-        return $this->isAdmin() || ($this->anggota && Jabatan::tryFromValue($this->anggota->jabatan)?->dapatKelolaCms());
+        return $this->isAdmin() || ($this->jabatanOrganisasi()?->dapatKelolaSurat() ?? false);
     }
 
     /** Izin kelola data anggota — khusus admin. */
@@ -88,28 +97,29 @@ class User extends Authenticatable
         return $this->isAdmin();
     }
 
-    /** @deprecated Gunakan canKelolaSurat(). */
-    public function canKelolaAdministrasi(): bool
-    {
-        return $this->canKelolaSurat();
-    }
-
-    /** @deprecated Gunakan canKelolaSurat(), canManageAnggota(), atau canManageWebsiteKonten(). */
-    public function canManageCms(): bool
-    {
-        return $this->canKelolaSurat() || $this->canManageWebsiteKonten() || $this->canManageAnggota();
-    }
-
     /** Izin pengaturan sistem — khusus admin. */
     public function canManagePengaturan(): bool
     {
         return $this->isAdmin();
     }
 
-    /** Izin review logbook: admin atau koordinator. */
+    /**
+     * Izin review logbook & pantau absensi.
+     * Admin, role koordinator, atau jabatan pimpinan (Koordinator Desa / Wakil Koordinator).
+     */
     public function canReviewLogbook(): bool
     {
-        return $this->isAdmin() || $this->isKoordinator();
+        if ($this->isAdmin() || $this->isKoordinator()) {
+            return true;
+        }
+
+        return $this->jabatanOrganisasi()?->isPimpinan() ?? false;
+    }
+
+    /** Alias eksplisit untuk middleware pantau operasional. */
+    public function canPantauOperasional(): bool
+    {
+        return $this->canReviewLogbook();
     }
 
     /** Izin check-in absensi QR: anggota/koordinator yang terhubung ke data anggota. */
@@ -121,6 +131,8 @@ class User extends Authenticatable
     /** Izin kelola keuangan: admin, koordinator, atau jabatan Bendahara. */
     public function canManageKeuangan(): bool
     {
-        return $this->isAdmin() || $this->isKoordinator() || ($this->anggota && Jabatan::tryFromValue($this->anggota->jabatan)?->dapatKelolaKeuangan());
+        return $this->isAdmin()
+            || $this->isKoordinator()
+            || ($this->jabatanOrganisasi()?->dapatKelolaKeuangan() ?? false);
     }
 }
