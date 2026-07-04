@@ -21,7 +21,7 @@ class BersihkanDataModul extends Command
 
     public function handle(): int
     {
-        if (! $this->option('force') && ! $this->confirm('Hapus semua data logbook, absensi, keuangan, dan program kerja?')) {
+        if (! $this->option('force') && ! $this->confirm('PERMANEN — data logbook, absensi, keuangan, dan program kerja akan dihapus total dan TIDAK BISA dipulihkan (bukan soft delete). Lanjutkan?')) {
             $this->warn('Dibatalkan.');
 
             return self::FAILURE;

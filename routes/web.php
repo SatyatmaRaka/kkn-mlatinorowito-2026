@@ -22,7 +22,7 @@ Route::get('/program-kerja/{programKerja}', [DetailController::class, 'proker'])
 // --- Absensi QR (publik dengan token harian) ---
 Route::get('/absensi/check-in', [AbsensiController::class, 'checkInForm'])->name('absensi.check-in');
 Route::get('/absensi/scan', fn () => redirect()->to(LayananTokenAbsensi::checkInUrl()))->name('absensi.scan');
-Route::post('/absensi/check-in', [AbsensiController::class, 'store'])->middleware('auth')->name('absensi.store');
+Route::post('/absensi/check-in', [AbsensiController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('absensi.store');
 
 Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
     Route::get('/dashboard', [DasborController::class, 'index'])->name('dashboard');
@@ -68,16 +68,20 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         });
 
         // Data live (polling) — semua user login
-        Route::get('api/live/dasbor', [DataLiveController::class, 'dasbor'])->name('api.live.dasbor');
-        Route::get('api/live/notifikasi', [DataLiveController::class, 'notifikasi'])->name('api.live.notifikasi');
-        Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
+        Route::middleware('throttle:60,1')->group(function () {
+            Route::get('api/live/dasbor', [DataLiveController::class, 'dasbor'])->name('api.live.dasbor');
+            Route::get('api/live/notifikasi', [DataLiveController::class, 'notifikasi'])->name('api.live.notifikasi');
+            Route::post('api/notifikasi/baca', [DataLiveController::class, 'tandaiDibaca'])->name('api.notifikasi.baca');
+        });
 
         // Laporan operasional — admin, koordinator & wakil koordinator
         Route::middleware('can.pantau.operasional')->group(function () {
             Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
             Route::get('laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
             Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');
-            Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])->name('api.live.absensi-rekap');
+            Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])
+                ->middleware('throttle:60,1')
+                ->name('api.live.absensi-rekap');
         });
 
         // Ringkasan laporan keuangan — bendahara (via jabatan, bukan role admin/koordinator)
