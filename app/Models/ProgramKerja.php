@@ -12,4 +12,9 @@ class ProgramKerja extends Model
     protected $table = 'program_kerja';
 
     protected $fillable = ['judul', 'tema', 'deskripsi', 'icon', 'pic', 'status', 'urutan'];
+
+    public function scopeAktif($query)
+    {
+        return $query->where('status', 'Aktif');
+    }
 }

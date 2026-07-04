@@ -25,15 +25,15 @@ class DashboardTest extends TestCase
             ->assertSee('Ringkasan Dasbor');
     }
 
-    public function test_sekretaris_sees_sekretaris_dashboard(): void
+    public function test_sekretaris_sees_divisi_dashboard(): void
     {
         $user = User::factory()->sekretaris()->create();
 
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Dasbor Sekretaris')
-            ->assertSee('Surat Masuk');
+            ->assertSee('Dashboard Sekretaris')
+            ->assertSee('Tugas Divisi Sekretaris');
     }
 
     public function test_koordinator_sees_koordinator_dashboard(): void

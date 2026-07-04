@@ -41,7 +41,7 @@
                     </div>
                 @empty
                     <div class="col-12">
-                        <p class="text-center text-muted mb-0">
+                        <p class="text-center text-muted mb-0 py-5 bg-white rounded-4 shadow-sm border">
                             Program kerja akan segera diumumkan.
                         </p>
                     </div>

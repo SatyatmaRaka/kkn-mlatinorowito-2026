@@ -21,11 +21,10 @@ class UserAuthorizationTest extends TestCase
         $this->assertSame(Jabatan::Sekretaris, $user->jabatanOrganisasi());
     }
 
-    public function test_sekretaris_bisa_kelola_surat(): void
+    public function test_sekretaris_tidak_bisa_kelola_cms(): void
     {
         $user = User::factory()->sekretaris()->create();
 
-        $this->assertTrue($user->canKelolaSurat());
         $this->assertFalse($user->canManageWebsiteKonten());
         $this->assertFalse($user->canManageKeuangan());
     }
@@ -62,7 +61,6 @@ class UserAuthorizationTest extends TestCase
         $user = User::factory()->create(['role' => PeranPengguna::Admin]);
 
         $this->assertTrue($user->canManageWebsiteKonten());
-        $this->assertTrue($user->canKelolaSurat());
         $this->assertTrue($user->canManageAnggota());
         $this->assertTrue($user->canReviewLogbook());
         $this->assertTrue($user->canManageKeuangan());

@@ -22,16 +22,6 @@ class AuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_anggota_cannot_access_kegiatan_cms(): void
-    {
-        $anggota = Anggota::factory()->create(['jabatan' => Jabatan::Humas->value]);
-        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
-
-        $this->actingAs($user)
-            ->get(route('panel.kegiatan.index'))
-            ->assertForbidden();
-    }
-
     public function test_anggota_cannot_access_pengaturan(): void
     {
         $anggota = Anggota::factory()->create(['jabatan' => Jabatan::Humas->value]);
@@ -48,33 +38,6 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($user)
             ->get(route('panel.anggota.index'))
-            ->assertForbidden();
-    }
-
-    public function test_sekretaris_can_access_surat(): void
-    {
-        $user = User::factory()->sekretaris()->create();
-
-        $this->actingAs($user)
-            ->get(route('panel.surat.index'))
-            ->assertOk();
-    }
-
-    public function test_sekretaris_cannot_access_kegiatan(): void
-    {
-        $user = User::factory()->sekretaris()->create();
-
-        $this->actingAs($user)
-            ->get(route('panel.kegiatan.index'))
-            ->assertForbidden();
-    }
-
-    public function test_sekretaris_cannot_access_galeri(): void
-    {
-        $user = User::factory()->sekretaris()->create();
-
-        $this->actingAs($user)
-            ->get(route('panel.galeri.index'))
             ->assertForbidden();
     }
 

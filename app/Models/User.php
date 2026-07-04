@@ -79,16 +79,10 @@ class User extends Authenticatable
         return $this->role === PeranPengguna::Anggota;
     }
 
-    /** Izin kelola konten website (proker, kegiatan, galeri) — khusus admin. */
+    /** Izin kelola konten website (proker, anggota) — khusus admin. */
     public function canManageWebsiteKonten(): bool
     {
         return $this->isAdmin();
-    }
-
-    /** Izin kelola arsip surat — admin atau jabatan Sekretaris. */
-    public function canKelolaSurat(): bool
-    {
-        return $this->isAdmin() || ($this->jabatanOrganisasi()?->dapatKelolaSurat() ?? false);
     }
 
     /** Izin kelola data anggota — khusus admin. */

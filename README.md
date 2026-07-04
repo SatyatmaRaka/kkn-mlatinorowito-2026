@@ -6,15 +6,14 @@ Website profil kelompok KKN Universitas Muria Kudus di Kelurahan Mlatinorowito, 
 
 ## Fitur
 
-- Halaman publik: beranda, tentang, anggota, program kerja, kegiatan & galeri, kontak
-- **Panel** operasional: CRUD anggota, program kerja, kegiatan, galeri, pengaturan website & akun
+- Halaman publik: beranda, tentang, anggota, program kerja, kontak
+- **Panel** operasional: CRUD anggota, program kerja, pengaturan website & akun
 - Login berbasis username (admin, koordinator, anggota)
 - **Catatan Harian (Logbook) KKN** per anggota (draft → submit → review koordinator)
 - **Absensi QR** di posko (scan → login → konfirmasi kehadiran)
 - **Keuangan** pemasukan/pengeluaran dengan export CSV
 - **Role sistem**: admin, koordinator, anggota (terhubung ke data anggota)
-- **Jabatan organisasi**: Sekretaris (CMS), Bendahara (keuangan), dll.
-- Halaman arsip kegiatan publik (`/kegiatan`)
+- **Jabatan organisasi**: Bendahara (keuangan), Koordinator/Wakil (pantau operasional), dll.
 
 ## Instalasi Lokal
 

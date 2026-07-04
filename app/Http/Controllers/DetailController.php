@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anggota;
-use App\Models\Kegiatan;
 use App\Models\ProgramKerja;
 use Illuminate\View\View;
 
 /**
- * Halaman detail publik: profil anggota, program kerja, dan kegiatan.
+ * Halaman detail publik: profil anggota dan program kerja.
  */
 class DetailController extends Controller
 {
@@ -20,14 +19,5 @@ class DetailController extends Controller
     public function proker(ProgramKerja $programKerja): View
     {
         return view('detail.proker', compact('programKerja'));
-    }
-
-    public function kegiatan(Kegiatan $kegiatan): View
-    {
-        $ogImage = $kegiatan->foto
-            ? asset('storage/'.$kegiatan->foto)
-            : asset('images/logo.png');
-
-        return view('detail.kegiatan', compact('kegiatan', 'ogImage'));
     }
 }

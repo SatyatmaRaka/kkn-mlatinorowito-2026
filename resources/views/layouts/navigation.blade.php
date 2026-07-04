@@ -82,15 +82,6 @@
                     </li>
                 @endif
 
-                @if (Auth::user()->canKelolaSurat())
-                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Administrasi</span></li>
-                    <li class="nav-item">
-                        <a href="{{ route('panel.surat.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.surat.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                            <i class="bi bi-envelope-paper-fill fs-5"></i><span>Surat Menyurat</span>
-                        </a>
-                    </li>
-                @endif
-
                 @if (Auth::user()->canManageWebsiteKonten())
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Manajemen Website</span></li>
                     <li class="nav-item">
@@ -101,16 +92,6 @@
                     <li class="nav-item">
                         <a href="{{ route('panel.program-kerja.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.program-kerja.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-kanban-fill fs-5"></i><span>Program Kerja</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('panel.kegiatan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.kegiatan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                            <i class="bi bi-calendar-event-fill fs-5"></i><span>Kegiatan Publik</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('panel.galeri.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.galeri.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                            <i class="bi bi-images fs-5"></i><span>Galeri</span>
                         </a>
                     </li>
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Sistem</span></li>

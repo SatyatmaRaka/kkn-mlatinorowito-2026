@@ -36,16 +36,10 @@ enum Jabatan: string
         return in_array($this, [self::KoordinatorDesa, self::WakilKoordinator], true);
     }
 
-    /** Sekretaris mengelola arsip surat. */
-    public function dapatKelolaSurat(): bool
-    {
-        return $this === self::Sekretaris;
-    }
-
-    /** @deprecated Gunakan dapatKelolaSurat(). */
+    /** @deprecated Tidak dipakai — CMS hanya admin. */
     public function dapatKelolaCms(): bool
     {
-        return $this->dapatKelolaSurat();
+        return false;
     }
 
     /** Bendahara mengelola keuangan (selain admin/koordinator). */
@@ -83,9 +77,9 @@ enum Jabatan: string
             ],
             self::Sekretaris => [
                 'judul' => 'Sekretaris',
-                'deskripsi' => 'Mengelola administrasi, arsip surat, dan konten website KKN.',
-                'tugas' => ['Arsip surat masuk & keluar', 'Kelola data anggota & kegiatan publik', 'Update informasi website'],
-                'ikon' => 'bi-envelope-paper-fill',
+                'deskripsi' => 'Mendukung administrasi dan dokumentasi kegiatan kelompok KKN.',
+                'tugas' => ['Catat logbook harian', 'Absensi di posko sesuai jadwal', 'Dukung administrasi kelompok'],
+                'ikon' => 'bi-journal-text',
                 'warna' => 'info',
             ],
             self::Bendahara => [

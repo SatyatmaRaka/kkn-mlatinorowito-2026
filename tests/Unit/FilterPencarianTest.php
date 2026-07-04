@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\Surat;
+use App\Models\Logbook;
+use App\Models\User;
 use App\Penunjang\FilterPencarian;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,14 +20,15 @@ class FilterPencarianTest extends TestCase
 
     public function test_terapkan_mencari_di_kolom(): void
     {
-        Surat::factory()->masuk()->create(['perihal' => 'Undangan rapat koordinasi']);
-        Surat::factory()->masuk()->create(['perihal' => 'Lainnya']);
+        $user = User::factory()->create();
+        Logbook::factory()->create(['user_id' => $user->id, 'judul' => 'Undangan rapat koordinasi']);
+        Logbook::factory()->create(['user_id' => $user->id, 'judul' => 'Lainnya']);
 
-        $hasil = Surat::query()
-            ->when(true, fn ($q) => FilterPencarian::terapkan($q, 'rapat', ['perihal']))
+        $hasil = Logbook::query()
+            ->when(true, fn ($q) => FilterPencarian::terapkan($q, 'rapat', ['judul']))
             ->get();
 
         $this->assertCount(1, $hasil);
-        $this->assertSame('Undangan rapat koordinasi', $hasil->first()->perihal);
+        $this->assertSame('Undangan rapat koordinasi', $hasil->first()->judul);
     }
 }

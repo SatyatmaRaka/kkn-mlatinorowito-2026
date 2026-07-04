@@ -2,26 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Enums\KategoriTujuanSurat;
 use App\Layanan\LayananTokenAbsensi;
 use App\Models\Absensi;
 use App\Models\Anggota;
-use App\Models\Galeri;
 use App\Models\Keuangan;
-use App\Models\Kegiatan;
 use App\Models\Logbook;
 use App\Models\ProgramKerja;
-use App\Models\Surat;
 use App\Models\User;
-use App\Penunjang\GeneratorSuratKeluar;
-use App\Penunjang\PenerimaSurat;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 /**
- * Data dummy lengkap untuk pengujian lokal — logbook, absensi, keuangan, surat, galeri, dll.
+ * Data dummy lengkap untuk pengujian lokal — logbook, absensi, keuangan, dll.
  * Aman dijalankan setelah DatabaseSeeder: php artisan db:seed --class=DummyDataSeeder
  */
 class DummyDataSeeder extends Seeder
@@ -31,12 +24,9 @@ class DummyDataSeeder extends Seeder
         $this->bersihkanDataOperasional();
         $this->seedAnggotaDetail();
         $this->seedProgramKerja();
-        $this->seedKegiatan();
-        $this->seedGaleri();
         $this->seedLogbook();
         $this->seedAbsensi();
         $this->seedKeuangan();
-        $this->seedSurat();
         LayananTokenAbsensi::getActive();
 
         if ($this->command) {
@@ -44,30 +34,15 @@ class DummyDataSeeder extends Seeder
             $this->command->line('  Logbook    : '.Logbook::count());
             $this->command->line('  Absensi    : '.Absensi::count());
             $this->command->line('  Keuangan   : '.Keuangan::count());
-            $this->command->line('  Surat      : '.Surat::count());
-            $this->command->line('  Galeri     : '.Galeri::count());
         }
     }
 
     private function bersihkanDataOperasional(): void
     {
-        Surat::query()->each(function (Surat $surat) {
-            if ($surat->lampiran) {
-                Storage::disk('public')->delete($surat->lampiran);
-            }
-        });
-
-        Galeri::query()->each(function (Galeri $item) {
-            if ($item->foto && str_starts_with($item->foto, 'galeri/')) {
-                Storage::disk('public')->delete($item->foto);
-            }
-        });
-
         Logbook::query()->delete();
         Absensi::query()->delete();
         Keuangan::query()->delete();
-        Surat::query()->delete();
-        Galeri::query()->delete();
+        DB::table('notifications')->delete();
     }
 
     private function seedAnggotaDetail(): void
@@ -96,7 +71,7 @@ class DummyDataSeeder extends Seeder
                 'deskripsi' => 'Pendampingan posyandu, edukasi gizi, dan pemeriksaan kesehatan dasar warga.',
                 'icon' => 'bi-heart-pulse',
                 'pic' => 'PDD',
-                'status' => 'Berjalan',
+                'status' => 'Aktif',
             ],
             [
                 'urutan' => 2,
@@ -105,7 +80,7 @@ class DummyDataSeeder extends Seeder
                 'deskripsi' => 'Pelatihan penggunaan smartphone, e-banking, dan literasi media sosial untuk RT/RW.',
                 'icon' => 'bi-phone',
                 'pic' => 'Humas',
-                'status' => 'Berjalan',
+                'status' => 'Aktif',
             ],
             [
                 'urutan' => 3,
@@ -114,7 +89,7 @@ class DummyDataSeeder extends Seeder
                 'deskripsi' => 'Sosialisasi pemilahan sampah dan pilot bank sampah di tingkat RW.',
                 'icon' => 'bi-recycle',
                 'pic' => 'PDD',
-                'status' => 'Perencanaan',
+                'status' => 'Coming Soon',
             ],
             [
                 'urutan' => 4,
@@ -123,7 +98,7 @@ class DummyDataSeeder extends Seeder
                 'deskripsi' => 'Mapping potensi wisata, branding UMKM lokal, dan konten promosi digital.',
                 'icon' => 'bi-camera',
                 'pic' => 'Humas',
-                'status' => 'Perencanaan',
+                'status' => 'Coming Soon',
             ],
             [
                 'urutan' => 5,
@@ -132,73 +107,12 @@ class DummyDataSeeder extends Seeder
                 'deskripsi' => 'Inventarisasi UMKM di kelurahan dan pendampingan pencatatan keuangan sederhana.',
                 'icon' => 'bi-shop',
                 'pic' => 'PDD',
-                'status' => 'Berjalan',
+                'status' => 'Aktif',
             ],
         ];
 
         foreach ($data as $item) {
             ProgramKerja::updateOrCreate(['urutan' => $item['urutan']], $item);
-        }
-    }
-
-    private function seedKegiatan(): void
-    {
-        $data = [
-            [
-                'judul' => 'Pembukaan KKN & Sosialisasi ke Kelurahan',
-                'tanggal' => now()->subDays(5),
-                'deskripsi_singkat' => 'Perkenalan kelompok KKN kepada lurah dan perangkat kelurahan Mlatinorowito.',
-                'konten' => '<p>Tim KKN UMK Mlatinorowito 2026 melakukan courtesy visit ke Kelurahan Mlatinorowito. Kegiatan diawali sambutan lurah, presentasi program kerja, dan kesepakatan jadwal koordinasi mingguan.</p>',
-            ],
-            [
-                'judul' => 'Survei Awal & Focus Group Discussion RT/RW',
-                'tanggal' => now()->subDays(3),
-                'deskripsi_singkat' => 'Survei kebutuhan warga dan FGD bersama ketua RT/RW.',
-                'konten' => '<p>Anggota KKN menyebar kuesioner sederhana dan mengadakan diskusi kelompok terfokus di tiga RW prioritas untuk memetakan permasalahan utama warga.</p>',
-            ],
-            [
-                'judul' => 'Pelatihan Literasi Digital di Balai RW 05',
-                'tanggal' => now()->subDay(),
-                'deskripsi_singkat' => 'Pelatihan dasar smartphone dan keamanan digital untuk ibu-ibu PKK.',
-                'konten' => '<p>Divisi Humas dan PDD mengadakan pelatihan literasi digital. Peserta belajar membuat akun email, menggunakan QRIS, dan mengenali modus penipuan online.</p>',
-            ],
-            [
-                'judul' => 'Posyandu Bersama & Edukasi Gizi',
-                'tanggal' => now(),
-                'deskripsi_singkat' => 'Pendampingan posyandu dan penyuluhan gizi seimbang untuk balita.',
-                'konten' => '<p>Kegiatan posyandu kolaboratif dengan kader posyandu setempat. Tim KKN membantu pencatatan dan edukasi pemberian makanan sehat.</p>',
-            ],
-        ];
-
-        foreach ($data as $item) {
-            Kegiatan::updateOrCreate(['judul' => $item['judul']], $item);
-        }
-    }
-
-    private function seedGaleri(): void
-    {
-        Storage::disk('public')->makeDirectory('galeri');
-        $sumber = public_path('images/logo.png');
-
-        if (! is_file($sumber)) {
-            return;
-        }
-
-        $keterangan = [
-            'Dokumentasi pembukaan KKN di Kelurahan Mlatinorowito',
-            'FGD bersama ketua RT/RW',
-            'Pelatihan literasi digital warga',
-            'Kegiatan posyandu bersama kader setempat',
-            'Tim KKN UMK Mlatinorowito 2026',
-        ];
-
-        foreach ($keterangan as $i => $teks) {
-            $path = 'galeri/dummy-'.($i + 1).'.png';
-            if (! Storage::disk('public')->exists($path)) {
-                File::copy($sumber, Storage::disk('public')->path($path));
-            }
-
-            Galeri::create(['foto' => $path, 'keterangan' => $teks]);
         }
     }
 
@@ -262,12 +176,10 @@ class DummyDataSeeder extends Seeder
             $tanggal = now()->subDays($day)->toDateString();
 
             foreach ($users as $index => $user) {
-                // Hari ini: 2 orang belum absen (untuk demo rekap)
                 if ($day === 0 && $index >= $users->count() - 2) {
                     continue;
                 }
 
-                // Random skip 1 hari lalu untuk variasi
                 if ($day === 1 && $index === 3) {
                     continue;
                 }
@@ -311,96 +223,6 @@ class DummyDataSeeder extends Seeder
                 'keterangan' => $row['keterangan'],
                 'nominal' => $row['nominal'],
             ]);
-        }
-    }
-
-    private function seedSurat(): void
-    {
-        $sekretaris = User::query()->whereHas('anggota', fn ($q) => $q->where('jabatan', 'Sekretaris'))->first();
-
-        if (! $sekretaris) {
-            return;
-        }
-
-        Surat::create([
-            'jenis' => 'masuk',
-            'tanggal' => now()->subDays(4),
-            'asal_tujuan' => 'Kelurahan Mlatinorowito',
-            'perihal' => 'Undangan Rapat Koordinasi KKN',
-            'keterangan' => 'Surat undangan rapat koordinasi mingguan KKN dengan perangkat kelurahan.',
-            'nomor_surat' => '045/Kel-Mlati/VII/2026',
-            'user_id' => $sekretaris->id,
-        ]);
-
-        Surat::create([
-            'jenis' => 'masuk',
-            'tanggal' => now()->subDays(2),
-            'asal_tujuan' => 'PKK Kelurahan Mlatinorowito',
-            'perihal' => 'Permintaan Kerjasama Posyandu',
-            'keterangan' => 'Surat permintaan kerjasama pelaksanaan posyandu kolaboratif.',
-            'nomor_surat' => '012/PKK/VII/2026',
-            'user_id' => $sekretaris->id,
-        ]);
-
-        $keluar = [
-            [
-                'kategori_tujuan' => KategoriTujuanSurat::Kelurahan->value,
-                'tanggal' => now()->subDays(3),
-                'perihal' => 'Permohonan Izin Kegiatan KKN',
-                'keterangan' => "Melalui surat ini kami sampaikan permohonan izin pelaksanaan kegiatan KKN di wilayah Kelurahan Mlatinorowito.\n\nKegiatan meliputi pendampingan posyandu, literasi digital, dan program pemberdayaan masyarakat sesuai program kerja yang telah disosialisasikan.",
-                'nomor_rt' => null,
-                'nomor_rw' => null,
-            ],
-            [
-                'kategori_tujuan' => KategoriTujuanSurat::Rt->value,
-                'nomor_rt' => '03',
-                'nomor_rw' => '05',
-                'tanggal' => now()->subDays(2),
-                'perihal' => 'Undangan Sosialisasi Bank Sampah',
-                'keterangan' => 'Kami mengundang Bapak/Ibu warga RT 03 RW 05 untuk hadir pada sosialisasi program bank sampah kelurahan yang akan dilaksanakan di balai RW.',
-            ],
-            [
-                'kategori_tujuan' => KategoriTujuanSurat::Rw->value,
-                'nomor_rt' => null,
-                'nomor_rw' => '02',
-                'tanggal' => now()->subDay(),
-                'perihal' => 'Koordinasi Jadwal Pelatihan Digital',
-                'keterangan' => 'Bersama surat ini kami mohon kesediaan Bapak/Ibu Ketua RW 02 untuk mengoordinasikan jadwal pelatihan literasi digital bagi warga.',
-            ],
-            [
-                'kategori_tujuan' => KategoriTujuanSurat::Instansi->value,
-                'asal_tujuan' => 'Dinas Kesehatan Kabupaten Kudus',
-                'tanggal' => now(),
-                'perihal' => 'Permohonan Pendampingan Posyandu',
-                'keterangan' => 'Kami memohon pendampingan teknis dari Dinas Kesehatan dalam pelaksanaan kegiatan posyandu kolaboratif di Kelurahan Mlatinorowito.',
-                'nomor_rt' => null,
-                'nomor_rw' => null,
-            ],
-        ];
-
-        foreach ($keluar as $i => $row) {
-            $data = [
-                'jenis' => 'keluar',
-                'kategori_tujuan' => $row['kategori_tujuan'],
-                'nomor_rt' => $row['nomor_rt'] ?? null,
-                'nomor_rw' => $row['nomor_rw'] ?? null,
-                'tanggal' => $row['tanggal'],
-                'perihal' => $row['perihal'],
-                'keterangan' => $row['keterangan'],
-                'user_id' => $sekretaris->id,
-            ];
-
-            $data = PenerimaSurat::lengkapiDataKeluar($data);
-            $data['nomor_surat'] = sprintf('%03d/KKN-MLATI/VII/2026', $i + 1);
-
-            $surat = Surat::create($data);
-
-            try {
-                $path = GeneratorSuratKeluar::generate($surat, $sekretaris);
-                $surat->update(['lampiran' => $path]);
-            } catch (\Throwable) {
-                // PDF opsional saat seed — data surat tetap tersimpan
-            }
         }
     }
 }
