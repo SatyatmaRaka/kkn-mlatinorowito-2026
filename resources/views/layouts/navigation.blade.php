@@ -46,6 +46,16 @@
                         </a>
                     </li>
                 @endif
+                <li class="nav-item">
+                    <a href="{{ route('panel.buku-tamu.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.buku-tamu.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <i class="bi bi-book fs-5"></i><span>Buku Tamu</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('panel.kegiatan-pelaksanaan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.kegiatan-pelaksanaan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <i class="bi bi-calendar-event fs-5"></i><span>Kegiatan Pelaksanaan</span>
+                    </a>
+                </li>
                 @if (Auth::user()->canReviewLogbook())
                     <li class="nav-item">
                         <a href="{{ route('panel.absensi.rekap') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.rekap') ? 'active' : '' }}" @click="sidebarOpen = false">
@@ -60,6 +70,16 @@
                     <li class="nav-item">
                         <a href="{{ route('panel.laporan.daftar-hadir-mingguan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.daftar-hadir-mingguan*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-calendar-week fs-5"></i><span>Daftar Hadir Mingguan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.laporan.logbook-harian') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.logbook-harian*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-journal-check fs-5"></i><span>Logbook Harian</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.laporan.rekap-keaktifan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.rekap-keaktifan*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-bar-chart-line fs-5"></i><span>Rekap Keaktifan</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -97,6 +117,11 @@
                     <li class="nav-item">
                         <a href="{{ route('panel.program-kerja.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.program-kerja.*') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-kanban-fill fs-5"></i><span>Program Kerja</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.ukm.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.ukm.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-shop fs-5"></i><span>Pemetaan UKM</span>
                         </a>
                     </li>
                     <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Sistem</span></li>

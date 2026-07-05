@@ -7,6 +7,7 @@ use App\Enums\PeranPengguna;
 use App\Models\Absensi;
 use App\Models\Anggota;
 use App\Models\Keuangan;
+use App\Models\Logbook;
 use App\Models\Pengaturan;
 use App\Models\User;
 use App\Layanan\LayananPengaturan;
@@ -236,5 +237,83 @@ class LaporanTest extends TestCase
             ->get(route('panel.laporan.daftar-hadir-mingguan', ['minggu' => 99]))
             ->assertRedirect(route('panel.laporan.daftar-hadir-mingguan', ['minggu' => 1]))
             ->assertSessionHas('warning');
+    }
+
+    public function test_logbook_harian_hanya_menampilkan_approved(): void
+    {
+        $anggota = Anggota::factory()->create(['nama' => 'Anggota Logbook']);
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        Logbook::factory()->create([
+            'user_id' => $user->id,
+            'anggota_id' => $anggota->id,
+            'tanggal' => '2026-07-01',
+            'judul' => 'Kegiatan Disetujui',
+            'status' => Logbook::STATUS_APPROVED,
+            'jam_mulai' => '08:00',
+            'jam_selesai' => '10:00',
+        ]);
+
+        Logbook::factory()->create([
+            'user_id' => $user->id,
+            'anggota_id' => $anggota->id,
+            'tanggal' => '2026-07-02',
+            'judul' => 'Kegiatan Draft',
+            'status' => Logbook::STATUS_DRAFT,
+        ]);
+
+        $admin = User::factory()->create(['role' => PeranPengguna::Admin]);
+
+        $this->actingAs($admin)
+            ->get(route('panel.laporan.logbook-harian', ['dari' => '2026-07-01', 'sampai' => '2026-07-31']))
+            ->assertOk()
+            ->assertSee('Kegiatan Disetujui')
+            ->assertDontSee('Kegiatan Draft');
+    }
+
+    public function test_anggota_cannot_view_logbook_harian_dan_rekap_keaktifan(): void
+    {
+        $anggota = Anggota::factory()->create();
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        $this->actingAs($user)
+            ->get(route('panel.laporan.logbook-harian'))
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->get(route('panel.laporan.rekap-keaktifan'))
+            ->assertForbidden();
+    }
+
+    public function test_rekap_keaktifan_menghitung_total_jam_benar(): void
+    {
+        $anggota = Anggota::factory()->create(['nama' => 'Aktif Tes', 'urutan' => 1]);
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        Logbook::factory()->create([
+            'user_id' => $user->id,
+            'anggota_id' => $anggota->id,
+            'tanggal' => '2026-07-01',
+            'status' => Logbook::STATUS_APPROVED,
+            'jam_mulai' => '08:00',
+            'jam_selesai' => '10:00',
+        ]);
+
+        Logbook::factory()->create([
+            'user_id' => $user->id,
+            'anggota_id' => $anggota->id,
+            'tanggal' => '2026-07-02',
+            'status' => Logbook::STATUS_APPROVED,
+            'jam_mulai' => '09:00',
+            'jam_selesai' => '12:00',
+        ]);
+
+        $admin = User::factory()->create(['role' => PeranPengguna::Admin]);
+
+        $this->actingAs($admin)
+            ->get(route('panel.laporan.rekap-keaktifan'))
+            ->assertOk()
+            ->assertSee('Aktif Tes')
+            ->assertSee('5,00');
     }
 }

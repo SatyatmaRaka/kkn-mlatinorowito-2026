@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Layanan\LayananRingkasan;
 use App\Penunjang\DaftarHadirMingguan;
 use App\Penunjang\EksporCsv;
+use App\Penunjang\LogbookLaporan;
 use App\Penunjang\PembagiMingguKkn;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -134,6 +135,56 @@ class LaporanController extends Controller
             'daftar' => $daftar,
             'peringatan' => null,
         ];
+    }
+
+    public function logbookHarian(Request $request): View
+    {
+        abort_unless($this->bolehAksesLaporan(), 403);
+
+        [$defaultDari, $defaultSampai] = LogbookLaporan::rentangDefault();
+        $dari = $request->query('dari', $defaultDari);
+        $sampai = $request->query('sampai', $defaultSampai);
+        $anggotaId = $request->filled('anggota_id') ? (int) $request->query('anggota_id') : null;
+
+        $data = LogbookLaporan::dataLogbookHarian($dari, $sampai, $anggotaId);
+
+        return view('panel.laporan.logbook-harian', $data);
+    }
+
+    public function logbookHarianPdf(Request $request)
+    {
+        abort_unless($this->bolehAksesLaporan(), 403);
+
+        [$defaultDari, $defaultSampai] = LogbookLaporan::rentangDefault();
+        $dari = $request->query('dari', $defaultDari);
+        $sampai = $request->query('sampai', $defaultSampai);
+        $anggotaId = $request->filled('anggota_id') ? (int) $request->query('anggota_id') : null;
+
+        $data = LogbookLaporan::dataLogbookHarian($dari, $sampai, $anggotaId);
+
+        return Pdf::loadView('panel.laporan.logbook-harian', array_merge($data, ['untukPdf' => true]))
+            ->setPaper('a4', 'landscape')
+            ->download("logbook-harian-{$dari}-{$sampai}.pdf");
+    }
+
+    public function rekapKeaktifan(Request $request): View
+    {
+        abort_unless($this->bolehAksesLaporan(), 403);
+
+        $data = LogbookLaporan::dataRekapKeaktifan();
+
+        return view('panel.laporan.rekap-keaktifan', $data);
+    }
+
+    public function rekapKeaktifanPdf(Request $request)
+    {
+        abort_unless($this->bolehAksesLaporan(), 403);
+
+        $data = LogbookLaporan::dataRekapKeaktifan();
+
+        return Pdf::loadView('panel.laporan.rekap-keaktifan', array_merge($data, ['untukPdf' => true]))
+            ->setPaper('a4', 'portrait')
+            ->download('rekap-keaktifan-'.now()->format('Y-m-d').'.pdf');
     }
 
     private function bolehAksesLaporan(): bool

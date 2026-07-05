@@ -11,6 +11,9 @@ use App\Http\Controllers\Panel\KeuanganController;
 use App\Http\Controllers\Panel\LaporanController;
 use App\Http\Controllers\Panel\PengaturanController;
 use App\Http\Controllers\Panel\ProgramKerjaController;
+use App\Http\Controllers\Panel\BukuTamuController;
+use App\Http\Controllers\Panel\KegiatanPelaksanaanController;
+use App\Http\Controllers\Panel\UkmController;
 use App\Layanan\LayananTokenAbsensi;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +40,18 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
             Route::get('catatan-harian/export', [CatatanHarianController::class, 'export'])->name('catatan-harian.export');
             Route::resource('catatan-harian', CatatanHarianController::class)->except(['show'])->parameters(['catatan-harian' => 'logbook']);
             Route::patch('catatan-harian/{logbook}/review', [CatatanHarianController::class, 'review'])->name('catatan-harian.review');
+
+            Route::get('buku-tamu/export', [BukuTamuController::class, 'export'])->name('buku-tamu.export');
+            Route::get('buku-tamu/cetak', [BukuTamuController::class, 'cetak'])->name('buku-tamu.cetak');
+            Route::resource('buku-tamu', BukuTamuController::class)->except(['show'])->parameters(['buku-tamu' => 'bukuTamu']);
+
+            Route::get('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/cetak-masyarakat', [KegiatanPelaksanaanController::class, 'cetakMasyarakat'])->name('kegiatan-pelaksanaan.cetak-masyarakat');
+            Route::get('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/cetak-tim', [KegiatanPelaksanaanController::class, 'cetakTim'])->name('kegiatan-pelaksanaan.cetak-tim');
+            Route::post('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/peserta', [KegiatanPelaksanaanController::class, 'tambahPeserta'])->name('kegiatan-pelaksanaan.peserta.store');
+            Route::delete('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/peserta/{peserta}', [KegiatanPelaksanaanController::class, 'hapusPeserta'])->name('kegiatan-pelaksanaan.peserta.destroy');
+            Route::post('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/tugas', [KegiatanPelaksanaanController::class, 'tambahTugas'])->name('kegiatan-pelaksanaan.tugas.store');
+            Route::delete('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/tugas/{tugas}', [KegiatanPelaksanaanController::class, 'hapusTugas'])->name('kegiatan-pelaksanaan.tugas.destroy');
+            Route::resource('kegiatan-pelaksanaan', KegiatanPelaksanaanController::class)->parameters(['kegiatan-pelaksanaan' => 'kegiatanPelaksanaan']);
         });
 
         // Panel absensi admin: rekap, QR, export (admin, koordinator & wakil koordinator)
@@ -54,6 +69,9 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         Route::middleware('can.manage.cms')->group(function () {
             Route::resource('anggota', AnggotaController::class)->except(['show'])->parameters(['anggota' => 'anggota']);
             Route::resource('program-kerja', ProgramKerjaController::class)->except(['show'])->parameters(['program-kerja' => 'proker']);
+            Route::get('ukm/export', [UkmController::class, 'export'])->name('ukm.export');
+            Route::get('ukm/cetak', [UkmController::class, 'cetak'])->name('ukm.cetak');
+            Route::resource('ukm', UkmController::class)->except(['show']);
             Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
             Route::put('pengaturan/absensi', [PengaturanController::class, 'updateAbsensi'])->name('pengaturan.absensi');
         });
@@ -84,6 +102,10 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
             Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');
             Route::get('laporan/daftar-hadir-mingguan', [LaporanController::class, 'daftarHadirMingguan'])->name('laporan.daftar-hadir-mingguan');
             Route::get('laporan/daftar-hadir-mingguan/pdf', [LaporanController::class, 'daftarHadirMingguanPdf'])->name('laporan.daftar-hadir-mingguan-pdf');
+            Route::get('laporan/logbook-harian', [LaporanController::class, 'logbookHarian'])->name('laporan.logbook-harian');
+            Route::get('laporan/logbook-harian/pdf', [LaporanController::class, 'logbookHarianPdf'])->name('laporan.logbook-harian-pdf');
+            Route::get('laporan/rekap-keaktifan', [LaporanController::class, 'rekapKeaktifan'])->name('laporan.rekap-keaktifan');
+            Route::get('laporan/rekap-keaktifan/pdf', [LaporanController::class, 'rekapKeaktifanPdf'])->name('laporan.rekap-keaktifan-pdf');
             Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])
                 ->middleware('throttle:60,1')
                 ->name('api.live.absensi-rekap');
