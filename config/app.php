@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Password Awal Admin (Seeder)
+    |--------------------------------------------------------------------------
+    |
+    | Dipakai AdminSeeder saat migrate:fresh --seed. Harus di-set di .env
+    | sebagai ADMIN_DEFAULT_PASSWORD sebelum config:cache di production.
+    |
+    */
+
+    'admin_default_password' => env('ADMIN_DEFAULT_PASSWORD'),
+
 ];
