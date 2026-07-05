@@ -262,7 +262,6 @@
         @endforeach
     @endif
 
-    <!-- DEBUG password_baru: {{ session('password_baru') ? 'ADA' : 'KOSONG' }} -->
     @if (session('password_baru'))
         <div class="modal fade show" id="modal-password-baru" tabindex="-1" aria-labelledby="modal-password-baru-label" aria-modal="true" role="dialog" data-bs-backdrop="static" style="display: block;">
             <div class="modal-dialog modal-dialog-centered">
