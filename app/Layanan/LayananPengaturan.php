@@ -25,6 +25,12 @@ class LayananPengaturan
         'maps_embed_url',
         'absensi_jam_mulai',
         'absensi_jam_selesai',
+        'nidn_dpl',
+        'desa',
+        'kecamatan',
+        'kabupaten',
+        'tanggal_mulai_kkn',
+        'tanggal_selesai_kkn',
     ];
 
     private const CACHE_KEY = 'pengaturan.public';

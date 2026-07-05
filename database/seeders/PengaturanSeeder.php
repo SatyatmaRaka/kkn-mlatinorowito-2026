@@ -25,6 +25,12 @@ class PengaturanSeeder extends Seeder
             'maps_embed_url' => 'https://maps.google.com/maps?q=Kelurahan%20Mlatinorowito,%20Kudus&t=&z=15&ie=UTF8&iwloc=&output=embed',
             'absensi_jam_mulai' => '06:00',
             'absensi_jam_selesai' => '09:00',
+            'nidn_dpl' => '0000000000',
+            'desa' => 'Mlatinorowito',
+            'kecamatan' => 'Kota',
+            'kabupaten' => 'Kudus',
+            'tanggal_mulai_kkn' => '2026-07-01',
+            'tanggal_selesai_kkn' => '2026-08-04',
         ];
 
         foreach ($defaults as $key => $value) {

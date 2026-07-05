@@ -108,6 +108,43 @@
                             <textarea id="alamat" name="alamat" rows="2" class="form-control bg-light border-0 px-3 py-2 shadow-none">{{ old('alamat', $pengaturan['alamat'] ?? '') }}</textarea>
                         </div>
 
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="desa" class="form-label fw-semibold text-muted small text-uppercase">Desa / Kelurahan</label>
+                                <input type="text" id="desa" name="desa" value="{{ old('desa', $pengaturan['desa'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('desa') is-invalid @enderror">
+                                @error('desa')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="kecamatan" class="form-label fw-semibold text-muted small text-uppercase">Kecamatan</label>
+                                <input type="text" id="kecamatan" name="kecamatan" value="{{ old('kecamatan', $pengaturan['kecamatan'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('kecamatan') is-invalid @enderror">
+                                @error('kecamatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="kabupaten" class="form-label fw-semibold text-muted small text-uppercase">Kabupaten</label>
+                                <input type="text" id="kabupaten" name="kabupaten" value="{{ old('kabupaten', $pengaturan['kabupaten'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('kabupaten') is-invalid @enderror">
+                                @error('kabupaten')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="nidn_dpl" class="form-label fw-semibold text-muted small text-uppercase">NIDN DPL</label>
+                            <input type="text" id="nidn_dpl" name="nidn_dpl" value="{{ old('nidn_dpl', $pengaturan['nidn_dpl'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('nidn_dpl') is-invalid @enderror" placeholder="0000000000">
+                            @error('nidn_dpl')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="tanggal_mulai_kkn" class="form-label fw-semibold text-muted small text-uppercase">Tanggal Mulai KKN</label>
+                                <input type="date" id="tanggal_mulai_kkn" name="tanggal_mulai_kkn" value="{{ old('tanggal_mulai_kkn', $pengaturan['tanggal_mulai_kkn'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('tanggal_mulai_kkn') is-invalid @enderror">
+                                @error('tanggal_mulai_kkn')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tanggal_selesai_kkn" class="form-label fw-semibold text-muted small text-uppercase">Tanggal Selesai KKN</label>
+                                <input type="date" id="tanggal_selesai_kkn" name="tanggal_selesai_kkn" value="{{ old('tanggal_selesai_kkn', $pengaturan['tanggal_selesai_kkn'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none @error('tanggal_selesai_kkn') is-invalid @enderror">
+                                @error('tanggal_selesai_kkn')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+
                         <div class="mb-4">
                             <label for="maps_embed_url" class="form-label fw-semibold text-muted small text-uppercase">Google Maps Embed URL</label>
                             <input type="url" id="maps_embed_url" name="maps_embed_url" value="{{ old('maps_embed_url', $pengaturan['maps_embed_url'] ?? '') }}" class="form-control form-control-lg bg-light border-0 px-3 py-2 fs-6 shadow-none">

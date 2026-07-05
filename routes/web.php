@@ -82,6 +82,8 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
             Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
             Route::get('laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
             Route::get('laporan/export', [LaporanController::class, 'exportRingkasan'])->name('laporan.export');
+            Route::get('laporan/daftar-hadir-mingguan', [LaporanController::class, 'daftarHadirMingguan'])->name('laporan.daftar-hadir-mingguan');
+            Route::get('laporan/daftar-hadir-mingguan/pdf', [LaporanController::class, 'daftarHadirMingguanPdf'])->name('laporan.daftar-hadir-mingguan-pdf');
             Route::get('api/live/absensi-rekap', [DataLiveController::class, 'absensiRekap'])
                 ->middleware('throttle:60,1')
                 ->name('api.live.absensi-rekap');

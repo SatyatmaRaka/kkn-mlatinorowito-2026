@@ -56,6 +56,12 @@ class PengaturanController extends Controller
             ],
             'periode_kkn' => 'nullable|string|max:255',
             'alamat' => 'nullable|string|max:500',
+            'nidn_dpl' => 'nullable|string|max:50',
+            'desa' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'kabupaten' => 'nullable|string|max:255',
+            'tanggal_mulai_kkn' => 'nullable|date',
+            'tanggal_selesai_kkn' => 'nullable|date|after_or_equal:tanggal_mulai_kkn',
             'maps_embed_url' => [
                 'nullable',
                 'string',

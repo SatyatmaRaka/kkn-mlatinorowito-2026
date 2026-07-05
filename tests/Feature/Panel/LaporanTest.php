@@ -2,10 +2,14 @@
 
 namespace Tests\Feature\Panel;
 
+use App\Enums\Jabatan;
 use App\Enums\PeranPengguna;
+use App\Models\Absensi;
 use App\Models\Anggota;
 use App\Models\Keuangan;
+use App\Models\Pengaturan;
 use App\Models\User;
+use App\Layanan\LayananPengaturan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,6 +22,20 @@ class LaporanTest extends TestCase
         parent::setUp();
 
         $this->seedKeuanganContoh();
+        $this->seedPeriodeKkn();
+    }
+
+    private function seedPeriodeKkn(): void
+    {
+        Pengaturan::updateOrCreate(['key' => 'tanggal_mulai_kkn'], ['value' => '2026-07-01']);
+        Pengaturan::updateOrCreate(['key' => 'tanggal_selesai_kkn'], ['value' => '2026-07-14']);
+        Pengaturan::updateOrCreate(['key' => 'desa'], ['value' => 'Mlatinorowito']);
+        Pengaturan::updateOrCreate(['key' => 'kecamatan'], ['value' => 'Kota']);
+        Pengaturan::updateOrCreate(['key' => 'kabupaten'], ['value' => 'Kudus']);
+        Pengaturan::updateOrCreate(['key' => 'nama_dpl'], ['value' => 'Dr. Contoh DPL']);
+        Pengaturan::updateOrCreate(['key' => 'nidn_dpl'], ['value' => '1234567890']);
+
+        LayananPengaturan::forget();
     }
 
     private function seedKeuanganContoh(): void
@@ -134,5 +152,89 @@ class LaporanTest extends TestCase
             ->getJson(route('panel.api.live.dasbor'))
             ->assertOk()
             ->assertJsonMissing(['saldo_bulan_ini']);
+    }
+
+    public function test_koordinator_can_view_daftar_hadir_mingguan(): void
+    {
+        $koordinator = User::factory()->koordinator()->create();
+
+        $this->actingAs($koordinator)
+            ->get(route('panel.laporan.daftar-hadir-mingguan'))
+            ->assertOk()
+            ->assertSee('Daftar Hadir Harian Tim KKN', false)
+            ->assertSee('Mlatinorowito');
+    }
+
+    public function test_daftar_hadir_mingguan_menampilkan_simbol_absensi(): void
+    {
+        Anggota::factory()->create([
+            'nama' => 'Kordes Tes',
+            'nim' => '1111111111',
+            'jabatan' => Jabatan::KoordinatorDesa->value,
+            'urutan' => 1,
+        ]);
+
+        $hadir = Anggota::factory()->create(['nama' => 'Anggota Hadir', 'nim' => '2222222222', 'urutan' => 2]);
+        $izin = Anggota::factory()->create(['nama' => 'Anggota Izin', 'nim' => '3333333333', 'urutan' => 3]);
+        $kosong = Anggota::factory()->create(['nama' => 'Anggota Kosong', 'nim' => '4444444444', 'urutan' => 4]);
+
+        $hadirUser = User::factory()->anggota()->create(['anggota_id' => $hadir->id]);
+        $izinUser = User::factory()->anggota()->create(['anggota_id' => $izin->id]);
+        User::factory()->anggota()->create(['anggota_id' => $kosong->id]);
+
+        Absensi::create([
+            'user_id' => $hadirUser->id,
+            'anggota_id' => $hadir->id,
+            'tanggal' => '2026-07-01',
+            'status' => Absensi::STATUS_HADIR,
+            'check_in_at' => now(),
+            'metode' => 'qr',
+        ]);
+
+        Absensi::create([
+            'user_id' => $izinUser->id,
+            'anggota_id' => $izin->id,
+            'tanggal' => '2026-07-02',
+            'status' => Absensi::STATUS_IZIN,
+            'keterangan' => 'Acara keluarga',
+            'dicatat_oleh' => User::factory()->koordinator()->create()->id,
+            'metode' => 'manual',
+        ]);
+
+        $admin = User::factory()->create(['role' => PeranPengguna::Admin]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('panel.laporan.daftar-hadir-mingguan', ['minggu' => 1]));
+
+        $response->assertOk()
+            ->assertSee('Anggota Hadir')
+            ->assertSee('Anggota Izin')
+            ->assertSee('Anggota Kosong')
+            ->assertSee('02/07: Acara keluarga');
+
+        $html = $response->getContent();
+        $this->assertMatchesRegularExpression('/Anggota Hadir[\s\S]*?<td class="simbol">H<\/td>/', $html);
+        $this->assertMatchesRegularExpression('/Anggota Izin[\s\S]*?<td class="simbol">I<\/td>/', $html);
+        $this->assertMatchesRegularExpression('/Anggota Kosong[\s\S]*?<td class="simbol">-<\/td>/', $html);
+    }
+
+    public function test_anggota_cannot_view_daftar_hadir_mingguan(): void
+    {
+        $anggota = Anggota::factory()->create();
+        $user = User::factory()->anggota()->create(['anggota_id' => $anggota->id]);
+
+        $this->actingAs($user)
+            ->get(route('panel.laporan.daftar-hadir-mingguan'))
+            ->assertForbidden();
+    }
+
+    public function test_minggu_di_luar_rentang_tidak_menyebabkan_error(): void
+    {
+        $admin = User::factory()->create(['role' => PeranPengguna::Admin]);
+
+        $this->actingAs($admin)
+            ->get(route('panel.laporan.daftar-hadir-mingguan', ['minggu' => 99]))
+            ->assertRedirect(route('panel.laporan.daftar-hadir-mingguan', ['minggu' => 1]))
+            ->assertSessionHas('warning');
     }
 }

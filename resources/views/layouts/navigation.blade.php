@@ -53,8 +53,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('panel.laporan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <a href="{{ route('panel.laporan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.index', 'panel.laporan.cetak', 'panel.laporan.export') ? 'active' : '' }}" @click="sidebarOpen = false">
                             <i class="bi bi-file-earmark-bar-graph fs-5"></i><span>Laporan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('panel.laporan.daftar-hadir-mingguan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.laporan.daftar-hadir-mingguan*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                            <i class="bi bi-calendar-week fs-5"></i><span>Daftar Hadir Mingguan</span>
                         </a>
                     </li>
                     <li class="nav-item">
