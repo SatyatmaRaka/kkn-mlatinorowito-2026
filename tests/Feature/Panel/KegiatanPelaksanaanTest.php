@@ -118,4 +118,82 @@ class KegiatanPelaksanaanTest extends TestCase
             ->assertSee('Peserta X')
             ->assertSee('class="ttd"', false);
     }
+
+    public function test_field_lampiran3_tersimpan_saat_store_dan_update(): void
+    {
+        $koordinator = User::factory()->koordinator()->create();
+
+        $this->actingAs($koordinator)
+            ->post(route('panel.kegiatan-pelaksanaan.store'), [
+                'nama_kegiatan' => 'Workshop UMKM',
+                'tema_kegiatan' => 'Pemberdayaan Ekonomi',
+                'tanggal' => '2026-07-10',
+                'tempat' => 'Balai Desa',
+                'latar_belakang' => 'UMKM belum terorganisir',
+                'kondisi_mendukung' => 'Dukungan BumDes',
+                'manfaat_tujuan' => 'Meningkatkan omzet',
+                'sumber_dana_masyarakat' => 100000,
+                'sumber_dana_mahasiswa' => 50000,
+                'sumber_dana_donatur' => 25000,
+                'sumber_dana_donatur_keterangan' => 'CSR PT ABC',
+                'waktu_mulai' => '08:00',
+                'waktu_selesai' => '12:00',
+            ])
+            ->assertRedirect();
+
+        $kegiatan = KegiatanPelaksanaan::first();
+        $this->assertNotNull($kegiatan);
+        $this->assertSame('Pemberdayaan Ekonomi', $kegiatan->tema_kegiatan);
+        $this->assertSame(175000, $kegiatan->total_anggaran);
+
+        $this->actingAs($koordinator)
+            ->put(route('panel.kegiatan-pelaksanaan.update', $kegiatan), [
+                'nama_kegiatan' => 'Workshop UMKM Diperbarui',
+                'tema_kegiatan' => 'Pemberdayaan Ekonomi v2',
+                'tanggal' => '2026-07-11',
+                'tempat' => 'Balai Desa',
+                'latar_belakang' => 'Diperbarui',
+                'kondisi_mendukung' => 'Diperbarui',
+                'manfaat_tujuan' => 'Diperbarui',
+                'sumber_dana_masyarakat' => 200000,
+                'sumber_dana_mahasiswa' => 0,
+                'sumber_dana_donatur' => 0,
+                'waktu_mulai' => '09:00',
+                'waktu_selesai' => '13:00',
+            ])
+            ->assertRedirect();
+
+        $kegiatan->refresh();
+        $this->assertSame('Workshop UMKM Diperbarui', $kegiatan->nama_kegiatan);
+        $this->assertSame(200000, $kegiatan->total_anggaran);
+    }
+
+    public function test_halaman_cetak_operasional_menampilkan_data_lampiran3(): void
+    {
+        $admin = User::factory()->create();
+        $kegiatan = KegiatanPelaksanaan::create([
+            'nama_kegiatan' => 'Pelatihan Komputer',
+            'tema_kegiatan' => 'Literasi Digital',
+            'tanggal' => '2026-07-05',
+            'tempat' => 'Balai Desa',
+            'latar_belakang' => 'Minimnya literasi digital warga',
+            'kondisi_mendukung' => 'Ada komputer di posko',
+            'manfaat_tujuan' => 'Meningkatkan kemampuan digital',
+            'sumber_dana_masyarakat' => 50000,
+            'sumber_dana_mahasiswa' => 75000,
+            'sumber_dana_donatur' => 25000,
+            'sumber_dana_donatur_keterangan' => 'Donasi alumni',
+            'waktu_mulai' => '08:00',
+            'waktu_selesai' => '12:00',
+            'dibuat_oleh' => $admin->id,
+        ]);
+        $kegiatan->pesertaMasyarakat()->create(['nama' => 'Warga A', 'alamat' => 'RT 1']);
+
+        $this->actingAs($admin)
+            ->get(route('panel.kegiatan-pelaksanaan.cetak-operasional', $kegiatan))
+            ->assertOk()
+            ->assertSee('Literasi Digital')
+            ->assertSee('Warga A')
+            ->assertSee('150.000');
+    }
 }

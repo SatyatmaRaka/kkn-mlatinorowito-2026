@@ -6,6 +6,7 @@
                 <span>{{ $kegiatan->nama_kegiatan }}</span>
             </div>
             <div class="d-flex gap-2">
+                <a href="{{ route('panel.kegiatan-pelaksanaan.cetak-operasional', $kegiatan) }}" target="_blank" class="btn btn-sm btn-outline-secondary">Cetak Operasional</a>
                 <a href="{{ route('panel.kegiatan-pelaksanaan.cetak-masyarakat', $kegiatan) }}" target="_blank" class="btn btn-sm btn-outline-secondary">Cetak Peserta</a>
                 <a href="{{ route('panel.kegiatan-pelaksanaan.cetak-tim', $kegiatan) }}" target="_blank" class="btn btn-sm btn-outline-secondary">Cetak Tim</a>
                 @can('update', $kegiatan)<a href="{{ route('panel.kegiatan-pelaksanaan.edit', $kegiatan) }}" class="btn btn-sm btn-primary">Edit</a>@endcan
@@ -16,8 +17,15 @@
     @if ($errors->any())<div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
 
     <div class="premium-card border-0 mb-4 p-4">
+        <p><strong>Tema:</strong> {{ $kegiatan->tema_kegiatan ?? '—' }}</p>
         <p><strong>Tanggal:</strong> {{ $kegiatan->tanggal->format('d/m/Y') }} · <strong>Tempat:</strong> {{ $kegiatan->tempat }}</p>
         <p><strong>Waktu:</strong> {{ substr($kegiatan->waktu_mulai,0,5) }} – {{ substr($kegiatan->waktu_selesai,0,5) }} WIB · <strong>PIC:</strong> {{ $kegiatan->pic?->nama ?? '—' }}</p>
+        @if ($kegiatan->latar_belakang)<p><strong>Latar Belakang:</strong> {{ $kegiatan->latar_belakang }}</p>@endif
+        @if ($kegiatan->kondisi_mendukung)<p><strong>Kondisi Mendukung:</strong> {{ $kegiatan->kondisi_mendukung }}</p>@endif
+        @if ($kegiatan->manfaat_tujuan)<p><strong>Manfaat/Tujuan:</strong> {{ $kegiatan->manfaat_tujuan }}</p>@endif
+        <p><strong>Total Anggaran:</strong> Rp {{ number_format($kegiatan->total_anggaran, 0, ',', '.') }}
+            <span class="text-muted small">(Masyarakat: Rp {{ number_format($kegiatan->sumber_dana_masyarakat, 0, ',', '.') }} · Mahasiswa: Rp {{ number_format($kegiatan->sumber_dana_mahasiswa, 0, ',', '.') }} · Donatur: Rp {{ number_format($kegiatan->sumber_dana_donatur, 0, ',', '.') }}@if($kegiatan->sumber_dana_donatur_keterangan) — {{ $kegiatan->sumber_dana_donatur_keterangan }}@endif)</span>
+        </p>
     </div>
 
     <div class="row g-4">

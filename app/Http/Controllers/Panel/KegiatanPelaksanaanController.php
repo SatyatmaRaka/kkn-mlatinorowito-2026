@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\Jabatan;
 use App\Http\Controllers\Controller;
 use App\Layanan\LayananPengaturan;
 use App\Models\Anggota;
@@ -48,8 +49,16 @@ class KegiatanPelaksanaanController extends Controller
 
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
+            'tema_kegiatan' => 'nullable|string|max:255',
             'tanggal' => 'required|date',
             'tempat' => 'required|string|max:255',
+            'latar_belakang' => 'nullable|string|max:2000',
+            'kondisi_mendukung' => 'nullable|string|max:2000',
+            'manfaat_tujuan' => 'nullable|string|max:2000',
+            'sumber_dana_masyarakat' => 'nullable|integer|min:0',
+            'sumber_dana_mahasiswa' => 'nullable|integer|min:0',
+            'sumber_dana_donatur' => 'nullable|integer|min:0',
+            'sumber_dana_donatur_keterangan' => 'nullable|string|max:255',
             'waktu_mulai' => 'required|date_format:H:i',
             'waktu_selesai' => 'required|date_format:H:i|after:waktu_mulai',
             'pic_anggota_id' => 'nullable|exists:anggota,id',
@@ -65,8 +74,16 @@ class KegiatanPelaksanaanController extends Controller
 
         $kegiatan = KegiatanPelaksanaan::create([
             'nama_kegiatan' => $validated['nama_kegiatan'],
+            'tema_kegiatan' => $validated['tema_kegiatan'] ?? null,
             'tanggal' => $validated['tanggal'],
             'tempat' => $validated['tempat'],
+            'latar_belakang' => $validated['latar_belakang'] ?? null,
+            'kondisi_mendukung' => $validated['kondisi_mendukung'] ?? null,
+            'manfaat_tujuan' => $validated['manfaat_tujuan'] ?? null,
+            'sumber_dana_masyarakat' => $validated['sumber_dana_masyarakat'] ?? 0,
+            'sumber_dana_mahasiswa' => $validated['sumber_dana_mahasiswa'] ?? 0,
+            'sumber_dana_donatur' => $validated['sumber_dana_donatur'] ?? 0,
+            'sumber_dana_donatur_keterangan' => $validated['sumber_dana_donatur_keterangan'] ?? null,
             'waktu_mulai' => $validated['waktu_mulai'],
             'waktu_selesai' => $validated['waktu_selesai'],
             'pic_anggota_id' => $validated['pic_anggota_id'] ?? null,
@@ -111,14 +128,37 @@ class KegiatanPelaksanaanController extends Controller
 
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
+            'tema_kegiatan' => 'nullable|string|max:255',
             'tanggal' => 'required|date',
             'tempat' => 'required|string|max:255',
+            'latar_belakang' => 'nullable|string|max:2000',
+            'kondisi_mendukung' => 'nullable|string|max:2000',
+            'manfaat_tujuan' => 'nullable|string|max:2000',
+            'sumber_dana_masyarakat' => 'nullable|integer|min:0',
+            'sumber_dana_mahasiswa' => 'nullable|integer|min:0',
+            'sumber_dana_donatur' => 'nullable|integer|min:0',
+            'sumber_dana_donatur_keterangan' => 'nullable|string|max:255',
             'waktu_mulai' => 'required|date_format:H:i',
             'waktu_selesai' => 'required|date_format:H:i|after:waktu_mulai',
             'pic_anggota_id' => 'nullable|exists:anggota,id',
         ]);
 
-        $kegiatanPelaksanaan->update($validated);
+        $kegiatanPelaksanaan->update([
+            'nama_kegiatan' => $validated['nama_kegiatan'],
+            'tema_kegiatan' => $validated['tema_kegiatan'] ?? null,
+            'tanggal' => $validated['tanggal'],
+            'tempat' => $validated['tempat'],
+            'latar_belakang' => $validated['latar_belakang'] ?? null,
+            'kondisi_mendukung' => $validated['kondisi_mendukung'] ?? null,
+            'manfaat_tujuan' => $validated['manfaat_tujuan'] ?? null,
+            'sumber_dana_masyarakat' => $validated['sumber_dana_masyarakat'] ?? 0,
+            'sumber_dana_mahasiswa' => $validated['sumber_dana_mahasiswa'] ?? 0,
+            'sumber_dana_donatur' => $validated['sumber_dana_donatur'] ?? 0,
+            'sumber_dana_donatur_keterangan' => $validated['sumber_dana_donatur_keterangan'] ?? null,
+            'waktu_mulai' => $validated['waktu_mulai'],
+            'waktu_selesai' => $validated['waktu_selesai'],
+            'pic_anggota_id' => $validated['pic_anggota_id'] ?? null,
+        ]);
 
         return redirect()->route('panel.kegiatan-pelaksanaan.show', $kegiatanPelaksanaan)
             ->with('success', 'Kegiatan berhasil diperbarui.');
@@ -217,6 +257,29 @@ class KegiatanPelaksanaanController extends Controller
             'kabupaten' => $pengaturan->get('kabupaten', ''),
             'nama_dpl' => $pengaturan->get('nama_dpl', ''),
             'nidn_dpl' => $pengaturan->get('nidn_dpl', ''),
+        ]);
+    }
+
+    public function cetakOperasional(KegiatanPelaksanaan $kegiatanPelaksanaan): View
+    {
+        $this->authorize('view', $kegiatanPelaksanaan);
+
+        $kegiatanPelaksanaan->load(['pic', 'pesertaMasyarakat', 'tugasTim.anggota']);
+        $pengaturan = LayananPengaturan::get();
+
+        $kordes = Anggota::query()
+            ->where('jabatan', Jabatan::KoordinatorDesa->value)
+            ->first();
+
+        return view('panel.kegiatan-pelaksanaan.cetak-operasional', [
+            'kegiatan' => $kegiatanPelaksanaan,
+            'desa' => $pengaturan->get('desa', ''),
+            'kecamatan' => $pengaturan->get('kecamatan', ''),
+            'kabupaten' => $pengaturan->get('kabupaten', ''),
+            'nama_dpl' => $pengaturan->get('nama_dpl', ''),
+            'nidn_dpl' => $pengaturan->get('nidn_dpl', ''),
+            'kordes_nama' => $kordes?->nama ?? '',
+            'kordes_nim' => $kordes?->nim ?? '',
         ]);
     }
 

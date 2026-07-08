@@ -56,6 +56,11 @@
                         <i class="bi bi-calendar-event fs-5"></i><span>Kegiatan Pelaksanaan</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('panel.observasi-lapangan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.observasi-lapangan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                        <i class="bi bi-binoculars fs-5"></i><span>Observasi Lapangan</span>
+                    </a>
+                </li>
                 @if (Auth::user()->canReviewLogbook())
                     <li class="nav-item">
                         <a href="{{ route('panel.absensi.rekap') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.rekap') ? 'active' : '' }}" @click="sidebarOpen = false">

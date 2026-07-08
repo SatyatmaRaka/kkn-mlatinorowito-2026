@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,8 +16,16 @@ class KegiatanPelaksanaan extends Model
 
     protected $fillable = [
         'nama_kegiatan',
+        'tema_kegiatan',
         'tanggal',
         'tempat',
+        'latar_belakang',
+        'kondisi_mendukung',
+        'manfaat_tujuan',
+        'sumber_dana_masyarakat',
+        'sumber_dana_mahasiswa',
+        'sumber_dana_donatur',
+        'sumber_dana_donatur_keterangan',
         'waktu_mulai',
         'waktu_selesai',
         'pic_anggota_id',
@@ -27,7 +36,17 @@ class KegiatanPelaksanaan extends Model
     {
         return [
             'tanggal' => 'date',
+            'sumber_dana_masyarakat' => 'integer',
+            'sumber_dana_mahasiswa' => 'integer',
+            'sumber_dana_donatur' => 'integer',
         ];
+    }
+
+    public function totalAnggaran(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->sumber_dana_masyarakat + $this->sumber_dana_mahasiswa + $this->sumber_dana_donatur,
+        );
     }
 
     public function pic(): BelongsTo

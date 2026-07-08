@@ -13,6 +13,7 @@ use App\Http\Controllers\Panel\PengaturanController;
 use App\Http\Controllers\Panel\ProgramKerjaController;
 use App\Http\Controllers\Panel\BukuTamuController;
 use App\Http\Controllers\Panel\KegiatanPelaksanaanController;
+use App\Http\Controllers\Panel\ObservasiLapanganController;
 use App\Http\Controllers\Panel\UkmController;
 use App\Layanan\LayananTokenAbsensi;
 use Illuminate\Support\Facades\Route;
@@ -47,11 +48,18 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
 
             Route::get('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/cetak-masyarakat', [KegiatanPelaksanaanController::class, 'cetakMasyarakat'])->name('kegiatan-pelaksanaan.cetak-masyarakat');
             Route::get('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/cetak-tim', [KegiatanPelaksanaanController::class, 'cetakTim'])->name('kegiatan-pelaksanaan.cetak-tim');
+            Route::get('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/cetak-operasional', [KegiatanPelaksanaanController::class, 'cetakOperasional'])->name('kegiatan-pelaksanaan.cetak-operasional');
             Route::post('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/peserta', [KegiatanPelaksanaanController::class, 'tambahPeserta'])->name('kegiatan-pelaksanaan.peserta.store');
             Route::delete('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/peserta/{peserta}', [KegiatanPelaksanaanController::class, 'hapusPeserta'])->name('kegiatan-pelaksanaan.peserta.destroy');
             Route::post('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/tugas', [KegiatanPelaksanaanController::class, 'tambahTugas'])->name('kegiatan-pelaksanaan.tugas.store');
             Route::delete('kegiatan-pelaksanaan/{kegiatanPelaksanaan}/tugas/{tugas}', [KegiatanPelaksanaanController::class, 'hapusTugas'])->name('kegiatan-pelaksanaan.tugas.destroy');
             Route::resource('kegiatan-pelaksanaan', KegiatanPelaksanaanController::class)->parameters(['kegiatan-pelaksanaan' => 'kegiatanPelaksanaan']);
+
+            Route::get('observasi-lapangan', [ObservasiLapanganController::class, 'index'])->name('observasi-lapangan.index');
+            Route::put('observasi-lapangan', [ObservasiLapanganController::class, 'update'])->name('observasi-lapangan.update');
+            Route::post('observasi-lapangan/item', [ObservasiLapanganController::class, 'tambahItem'])->name('observasi-lapangan.item.store');
+            Route::delete('observasi-lapangan/item/{item}', [ObservasiLapanganController::class, 'hapusItem'])->name('observasi-lapangan.item.destroy');
+            Route::get('observasi-lapangan/cetak', [ObservasiLapanganController::class, 'cetak'])->name('observasi-lapangan.cetak');
         });
 
         // Panel absensi admin: rekap, QR, export (admin, koordinator & wakil koordinator)
