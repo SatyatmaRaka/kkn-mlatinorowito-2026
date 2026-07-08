@@ -61,7 +61,7 @@ class TautanSosial
     }
 
     /** Bangun URL TikTok dari handle atau URL penuh. */
-    public static function tiktokUrl(?string $handle, string $defaultHandle = 'kknumk.mlatinorowito.26'): string
+    public static function tiktokUrl(?string $handle, string $defaultHandle = 'kkn.mlatinorowito26.umk'): string
     {
         if (empty($handle)) {
             return 'https://www.tiktok.com/@'.$defaultHandle;
@@ -76,7 +76,7 @@ class TautanSosial
         return 'https://www.tiktok.com/@'.ltrim($handle, '@');
     }
 
-    public static function tiktokLabel(?string $handle, string $default = '@kknumk.mlatinorowito.26'): string
+    public static function tiktokLabel(?string $handle, string $default = '@kkn.mlatinorowito26.umk'): string
     {
         $value = $handle ?: $default;
 
