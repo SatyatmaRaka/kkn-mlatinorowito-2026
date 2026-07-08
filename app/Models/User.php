@@ -131,4 +131,57 @@ class User extends Authenticatable
             || $this->isKoordinator()
             || ($this->jabatanOrganisasi()?->dapatKelolaKeuangan() ?? false);
     }
+
+    /** Sidebar operasional ditampilkan per divisi (bukan daftar flat semua modul). */
+    public function menuPerDivisi(): bool
+    {
+        return ! $this->isAdmin() && ! $this->canReviewLogbook();
+    }
+
+    /** @return list<array{kunci: string, label: string, route: string, pola: string, ikon: string}> */
+    public function menuModulWajib(): array
+    {
+        return JabatanOrganisasi::detailModulUntuk(JabatanOrganisasi::modulWajibHarian());
+    }
+
+    /** @return list<array{kunci: string, label: string, route: string, pola: string, ikon: string}> */
+    public function menuModulDivisi(): array
+    {
+        if (! $this->menuPerDivisi()) {
+            return [];
+        }
+
+        return JabatanOrganisasi::detailModulUntuk(
+            $this->jabatanOrganisasi()?->kunciModulDivisi() ?? []
+        );
+    }
+
+    /** @return list<array{kunci: string, label: string, route: string, pola: string, ikon: string}> */
+    public function menuModulKolaborasi(): array
+    {
+        if (! $this->menuPerDivisi() || $this->jabatanOrganisasi() === JabatanOrganisasi::Bendahara) {
+            return [];
+        }
+
+        $divisi = $this->jabatanOrganisasi()?->kunciModulDivisi() ?? [];
+        $kolaborasi = array_values(array_diff(JabatanOrganisasi::modulKolaborasiTim(), $divisi));
+
+        return JabatanOrganisasi::detailModulUntuk($kolaborasi);
+    }
+
+    /** @return list<array{kunci: string, label: string, route: string, pola: string, ikon: string}> */
+    public function menuModulOperasionalLengkap(): array
+    {
+        if ($this->menuPerDivisi()) {
+            return [];
+        }
+
+        return JabatanOrganisasi::detailModulUntuk(JabatanOrganisasi::semuaModulOperasional());
+    }
+
+    /** @return array{judul: string, deskripsi: string, tugas: list<string>, ikon: string, warna: string, modul: list<string>, aksi_cepat: list<array{label: string, route: string, ikon: string, varian: string}>} */
+    public function infoDivisiDasbor(): array
+    {
+        return JabatanOrganisasi::infoDasborUntuk($this->anggota?->jabatan);
+    }
 }

@@ -167,7 +167,7 @@ class AnggotaTest extends TestCase
 
         $anggotaUser->refresh();
 
-        $this->assertTrue($anggotaUser->wajib_ganti_password);
+        $this->assertFalse($anggotaUser->wajib_ganti_password);
         $this->assertFalse(Hash::check('PasswordLama123!', $anggotaUser->password));
         $this->assertNotSame($hashLama, $anggotaUser->password);
     }

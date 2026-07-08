@@ -64,5 +64,45 @@ class UserAuthorizationTest extends TestCase
         $this->assertTrue($user->canManageAnggota());
         $this->assertTrue($user->canReviewLogbook());
         $this->assertTrue($user->canManageKeuangan());
+        $this->assertFalse($user->menuPerDivisi());
+    }
+
+    public function test_humas_menu_divisi_menampilkan_modul_utama(): void
+    {
+        $user = User::factory()->anggota()->create([
+            'anggota_id' => Anggota::factory()->create(['jabatan' => Jabatan::Humas->value])->id,
+        ]);
+
+        $kunci = array_column($user->menuModulDivisi(), 'kunci');
+
+        $this->assertTrue($user->menuPerDivisi());
+        $this->assertSame(['buku-tamu', 'kegiatan-pelaksanaan'], $kunci);
+        $this->assertSame(['observasi-lapangan'], array_column($user->menuModulKolaborasi(), 'kunci'));
+    }
+
+    public function test_pdd_menu_divisi_menampilkan_kegiatan_dan_observasi(): void
+    {
+        $user = User::factory()->anggota()->create([
+            'anggota_id' => Anggota::factory()->create(['jabatan' => Jabatan::PDD->value])->id,
+        ]);
+
+        $this->assertSame(
+            ['kegiatan-pelaksanaan', 'observasi-lapangan'],
+            array_column($user->menuModulDivisi(), 'kunci')
+        );
+        $this->assertSame([], $user->menuModulKolaborasi());
+    }
+
+    public function test_perlengkapan_melihat_modul_kolaborasi_tim(): void
+    {
+        $user = User::factory()->anggota()->create([
+            'anggota_id' => Anggota::factory()->create(['jabatan' => Jabatan::Perlengkapan->value])->id,
+        ]);
+
+        $this->assertSame([], $user->menuModulDivisi());
+        $this->assertSame(
+            ['observasi-lapangan', 'kegiatan-pelaksanaan'],
+            array_column($user->menuModulKolaborasi(), 'kunci')
+        );
     }
 }

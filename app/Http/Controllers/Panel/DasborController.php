@@ -120,7 +120,7 @@ class DasborController extends Controller
             'sudahAbsenHariIni' => Absensi::where('user_id', $user->id)
                 ->whereDate('tanggal', today())
                 ->exists(),
-            'divisi' => \App\Enums\Jabatan::infoDasborUntuk($user->anggota?->jabatan),
+            'divisi' => $user->infoDivisiDasbor(),
         ]);
     }
 }

@@ -76,9 +76,12 @@
         </div>
         <div class="col-lg-4">
             <div class="premium-card border-0 p-4 d-grid gap-2">
-                <a href="{{ route('absensi.scan') }}" class="btn btn-primary rounded-pill py-3"><i class="bi bi-qr-code-scan me-2"></i>Absensi Posko</a>
-                <a href="{{ route('panel.catatan-harian.create') }}" class="btn btn-outline-primary rounded-pill py-3"><i class="bi bi-journal-plus me-2"></i>Tulis Logbook</a>
-                <a href="{{ route('panel.absensi.riwayat') }}" class="btn btn-outline-secondary rounded-pill py-3"><i class="bi bi-clock-history me-2"></i>Riwayat Absensi</a>
+                <h5 class="fw-bold mb-1"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Aksi Cepat Divisi</h5>
+                @foreach ($divisi['aksi_cepat'] as $aksi)
+                    <a href="{{ route($aksi['route']) }}" class="btn btn-{{ $aksi['varian'] }} rounded-pill py-3">
+                        <i class="bi {{ $aksi['ikon'] }} me-2"></i>{{ $aksi['label'] }}
+                    </a>
+                @endforeach
                 <a href="{{ url('/') }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary rounded-pill py-3"><i class="bi bi-globe me-2"></i>Lihat Website Publik</a>
             </div>
         </div>

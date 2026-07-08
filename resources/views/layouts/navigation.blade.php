@@ -28,39 +28,64 @@
                     </a>
                 </li>
 
-                <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">KKN Operasional</span></li>
-                <li class="nav-item">
-                    <a href="{{ route('panel.catatan-harian.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.catatan-harian.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-journal-text fs-5"></i><span>Logbook</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('panel.absensi.riwayat') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.riwayat') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-clock-history fs-5"></i><span>Absensi</span>
-                    </a>
-                </li>
-                @if (Auth::user()->canCheckInAbsensi())
-                    <li class="nav-item">
-                        <a href="{{ route('absensi.scan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('absensi.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                            <i class="bi bi-qr-code-scan fs-5"></i><span>Scan Absensi</span>
-                        </a>
-                    </li>
+                @php($user = Auth::user())
+
+                @if ($user->menuPerDivisi())
+                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Wajib Harian</span></li>
+                    @foreach ($user->menuModulWajib() as $modul)
+                        <li class="nav-item">
+                            <a href="{{ route($modul['route']) }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs($modul['pola']) ? 'active' : '' }}" @click="sidebarOpen = false">
+                                <i class="bi {{ $modul['ikon'] }} fs-5"></i><span>{{ $modul['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                    @if ($user->canCheckInAbsensi())
+                        <li class="nav-item">
+                            <a href="{{ route('absensi.scan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('absensi.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                                <i class="bi bi-qr-code-scan fs-5"></i><span>Scan Absensi</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (count($user->menuModulDivisi()) > 0)
+                        <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Tugas {{ $user->anggota?->jabatan ?? 'Divisi' }}</span></li>
+                        @foreach ($user->menuModulDivisi() as $modul)
+                            <li class="nav-item">
+                                <a href="{{ route($modul['route']) }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs($modul['pola']) ? 'active' : '' }}" @click="sidebarOpen = false">
+                                    <i class="bi {{ $modul['ikon'] }} fs-5"></i><span>{{ $modul['label'] }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    @endif
+
+                    @if (count($user->menuModulKolaborasi()) > 0)
+                        <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">Kolaborasi Tim</span></li>
+                        @foreach ($user->menuModulKolaborasi() as $modul)
+                            <li class="nav-item">
+                                <a href="{{ route($modul['route']) }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs($modul['pola']) ? 'active' : '' }}" @click="sidebarOpen = false">
+                                    <i class="bi {{ $modul['ikon'] }} fs-5"></i><span>{{ $modul['label'] }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    @endif
+                @else
+                    <li class="nav-item mt-2 mb-1"><span class="text-white-50 small fw-bold px-3 text-uppercase">KKN Operasional</span></li>
+                    @foreach ($user->menuModulOperasionalLengkap() as $modul)
+                        <li class="nav-item">
+                            <a href="{{ route($modul['route']) }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs($modul['pola']) ? 'active' : '' }}" @click="sidebarOpen = false">
+                                <i class="bi {{ $modul['ikon'] }} fs-5"></i><span>{{ $modul['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                    @if ($user->canCheckInAbsensi())
+                        <li class="nav-item">
+                            <a href="{{ route('absensi.scan') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('absensi.*') ? 'active' : '' }}" @click="sidebarOpen = false">
+                                <i class="bi bi-qr-code-scan fs-5"></i><span>Scan Absensi</span>
+                            </a>
+                        </li>
+                    @endif
                 @endif
-                <li class="nav-item">
-                    <a href="{{ route('panel.buku-tamu.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.buku-tamu.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-book fs-5"></i><span>Buku Tamu</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('panel.kegiatan-pelaksanaan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.kegiatan-pelaksanaan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-calendar-event fs-5"></i><span>Kegiatan Pelaksanaan</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('panel.observasi-lapangan.index') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.observasi-lapangan.*') ? 'active' : '' }}" @click="sidebarOpen = false">
-                        <i class="bi bi-binoculars fs-5"></i><span>Observasi Lapangan</span>
-                    </a>
-                </li>
+
                 @if (Auth::user()->canReviewLogbook())
                     <li class="nav-item">
                         <a href="{{ route('panel.absensi.rekap') }}" class="admin-nav-link d-flex align-items-center gap-3 {{ request()->routeIs('panel.absensi.rekap') ? 'active' : '' }}" @click="sidebarOpen = false">

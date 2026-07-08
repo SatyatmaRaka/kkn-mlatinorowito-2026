@@ -88,6 +88,21 @@ class DashboardTest extends TestCase
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Dashboard Humas')
-            ->assertSee('Tugas Divisi Humas');
+            ->assertSee('Tugas Divisi Humas')
+            ->assertSee('Catat Tamu')
+            ->assertSee('Aksi Cepat Divisi');
+    }
+
+    public function test_pdd_sees_modul_divisi_di_dasbor(): void
+    {
+        $user = User::factory()->anggota()->create([
+            'anggota_id' => \App\Models\Anggota::factory()->create(['jabatan' => 'PDD'])->id,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Dashboard PDD')
+            ->assertSee('Observasi Lapangan');
     }
 }

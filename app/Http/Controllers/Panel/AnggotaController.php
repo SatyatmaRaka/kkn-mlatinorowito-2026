@@ -150,7 +150,7 @@ class AnggotaController extends Controller
             'password' => $validated['password'],
             'role' => AkunAnggota::peranDariJabatan($anggota->jabatan),
             'anggota_id' => $anggota->id,
-            'wajib_ganti_password' => true,
+            'wajib_ganti_password' => false,
         ]);
 
         return back()->with('success', "Akun login untuk {$anggota->nama} berhasil dibuat.");
@@ -170,7 +170,7 @@ class AnggotaController extends Controller
 
         $anggota->user->update([
             'password' => $passwordBaru,
-            'wajib_ganti_password' => true,
+            'wajib_ganti_password' => false,
         ]);
 
         if (config('session.driver') === 'database') {

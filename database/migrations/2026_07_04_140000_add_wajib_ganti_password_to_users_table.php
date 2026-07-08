@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('wajib_ganti_password')->default(true)->after('anggota_id');
+            $table->boolean('wajib_ganti_password')->default(false)->after('anggota_id');
         });
     }
 

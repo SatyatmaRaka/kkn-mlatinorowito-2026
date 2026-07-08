@@ -54,13 +54,126 @@ enum Jabatan: string
     }
 
     /**
+     * Daftar modul panel operasional untuk navigasi & dasbor.
+     *
+     * @return array<string, array{label: string, route: string, pola: string, ikon: string}>
+     */
+    public static function registryModul(): array
+    {
+        return [
+            'catatan-harian' => [
+                'label' => 'Logbook',
+                'route' => 'panel.catatan-harian.index',
+                'pola' => 'panel.catatan-harian.*',
+                'ikon' => 'bi-journal-text',
+            ],
+            'absensi' => [
+                'label' => 'Absensi',
+                'route' => 'panel.absensi.riwayat',
+                'pola' => 'panel.absensi.riwayat',
+                'ikon' => 'bi-clock-history',
+            ],
+            'buku-tamu' => [
+                'label' => 'Buku Tamu',
+                'route' => 'panel.buku-tamu.index',
+                'pola' => 'panel.buku-tamu.*',
+                'ikon' => 'bi-book',
+            ],
+            'kegiatan-pelaksanaan' => [
+                'label' => 'Kegiatan Pelaksanaan',
+                'route' => 'panel.kegiatan-pelaksanaan.index',
+                'pola' => 'panel.kegiatan-pelaksanaan.*',
+                'ikon' => 'bi-calendar-event',
+            ],
+            'observasi-lapangan' => [
+                'label' => 'Observasi Lapangan',
+                'route' => 'panel.observasi-lapangan.index',
+                'pola' => 'panel.observasi-lapangan.*',
+                'ikon' => 'bi-binoculars',
+            ],
+        ];
+    }
+
+    /** @return list<string> */
+    public static function modulWajibHarian(): array
+    {
+        return ['catatan-harian', 'absensi'];
+    }
+
+    /** @return list<string> */
+    public static function semuaModulOperasional(): array
+    {
+        return ['catatan-harian', 'absensi', 'buku-tamu', 'kegiatan-pelaksanaan', 'observasi-lapangan'];
+    }
+
+    /** Modul yang dikerjakan bersama seluruh tim (ditampilkan jika bukan modul utama divisi). */
+    /** @return list<string> */
+    public static function modulKolaborasiTim(): array
+    {
+        return ['observasi-lapangan', 'kegiatan-pelaksanaan'];
+    }
+
+    /** Modul utama yang menjadi tanggung jawab divisi ini. */
+    /** @return list<string> */
+    public function kunciModulDivisi(): array
+    {
+        return match ($this) {
+            self::Humas => ['buku-tamu', 'kegiatan-pelaksanaan'],
+            self::PDD => ['kegiatan-pelaksanaan', 'observasi-lapangan'],
+            self::Sekretaris => ['buku-tamu'],
+            self::Perlengkapan, self::Bendahara => [],
+            self::KoordinatorDesa, self::WakilKoordinator => self::semuaModulOperasional(),
+        };
+    }
+
+    /**
+     * Tombol aksi cepat di dasbor anggota per divisi.
+     *
+     * @return list<array{label: string, route: string, ikon: string, varian: string}>
+     */
+    public function aksiCepatDasbor(): array
+    {
+        return match ($this) {
+            self::Humas => [
+                ['label' => 'Catat Tamu', 'route' => 'panel.buku-tamu.create', 'ikon' => 'bi-book', 'varian' => 'primary'],
+                ['label' => 'Kegiatan Pelaksanaan', 'route' => 'panel.kegiatan-pelaksanaan.index', 'ikon' => 'bi-calendar-event', 'varian' => 'outline-primary'],
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'outline-primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-secondary'],
+            ],
+            self::PDD => [
+                ['label' => 'Kegiatan Pelaksanaan', 'route' => 'panel.kegiatan-pelaksanaan.create', 'ikon' => 'bi-calendar-plus', 'varian' => 'primary'],
+                ['label' => 'Observasi Lapangan', 'route' => 'panel.observasi-lapangan.index', 'ikon' => 'bi-binoculars', 'varian' => 'outline-primary'],
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'outline-primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-secondary'],
+            ],
+            self::Sekretaris => [
+                ['label' => 'Catat Tamu', 'route' => 'panel.buku-tamu.create', 'ikon' => 'bi-book', 'varian' => 'primary'],
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'outline-primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-primary'],
+                ['label' => 'Riwayat Absensi', 'route' => 'panel.absensi.riwayat', 'ikon' => 'bi-clock-history', 'varian' => 'outline-secondary'],
+            ],
+            self::Perlengkapan => [
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-primary'],
+                ['label' => 'Riwayat Absensi', 'route' => 'panel.absensi.riwayat', 'ikon' => 'bi-clock-history', 'varian' => 'outline-secondary'],
+            ],
+            self::Bendahara => [
+                ['label' => 'Catat Transaksi', 'route' => 'panel.keuangan.create', 'ikon' => 'bi-plus-circle', 'varian' => 'primary'],
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'outline-primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-secondary'],
+            ],
+            self::KoordinatorDesa, self::WakilKoordinator => [],
+        };
+    }
+
+    /**
      * Ringkasan tugas divisi untuk dasbor anggota (Humas, PDD, Perlengkapan, dll.).
      *
-     * @return array{judul: string, deskripsi: string, tugas: list<string>, ikon: string, warna: string}
+     * @return array{judul: string, deskripsi: string, tugas: list<string>, ikon: string, warna: string, modul: list<string>, aksi_cepat: list<array{label: string, route: string, ikon: string, varian: string}>}
      */
     public function infoDasbor(): array
     {
-        return match ($this) {
+        $info = match ($this) {
             self::KoordinatorDesa => [
                 'judul' => 'Koordinator Desa',
                 'deskripsi' => 'Memimpin operasional KKN dan koordinasi seluruh divisi.',
@@ -111,9 +224,14 @@ enum Jabatan: string
                 'warna' => 'secondary',
             ],
         };
+
+        return array_merge($info, [
+            'modul' => $this->kunciModulDivisi(),
+            'aksi_cepat' => $this->aksiCepatDasbor(),
+        ]);
     }
 
-    /** @return array{judul: string, deskripsi: string, tugas: list<string>, ikon: string, warna: string} */
+    /** @return array{judul: string, deskripsi: string, tugas: list<string>, ikon: string, warna: string, modul: list<string>, aksi_cepat: list<array{label: string, route: string, ikon: string, varian: string}>} */
     public static function infoDasborUntuk(?string $jabatan): array
     {
         $enum = self::tryFromValue($jabatan);
@@ -128,6 +246,28 @@ enum Jabatan: string
             'tugas' => ['Isi logbook harian', 'Absensi di posko sesuai jadwal', 'Ikuti program kerja kelompok'],
             'ikon' => 'bi-person-fill',
             'warna' => 'primary',
+            'modul' => [],
+            'aksi_cepat' => [
+                ['label' => 'Tulis Logbook', 'route' => 'panel.catatan-harian.create', 'ikon' => 'bi-journal-plus', 'varian' => 'primary'],
+                ['label' => 'Absensi Posko', 'route' => 'absensi.scan', 'ikon' => 'bi-qr-code-scan', 'varian' => 'outline-primary'],
+                ['label' => 'Riwayat Absensi', 'route' => 'panel.absensi.riwayat', 'ikon' => 'bi-clock-history', 'varian' => 'outline-secondary'],
+            ],
         ];
+    }
+
+    /**
+     * @param  list<string>  $kunci
+     * @return list<array{kunci: string, label: string, route: string, pola: string, ikon: string}>
+     */
+    public static function detailModulUntuk(array $kunci): array
+    {
+        $registry = self::registryModul();
+
+        return array_values(array_filter(array_map(
+            fn (string $key) => isset($registry[$key])
+                ? array_merge(['kunci' => $key], $registry[$key])
+                : null,
+            $kunci
+        )));
     }
 }
