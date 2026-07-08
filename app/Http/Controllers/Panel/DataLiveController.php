@@ -49,7 +49,9 @@ class DataLiveController extends Controller
         $user = Auth::user();
 
         $items = $user->unreadNotifications()
+            ->latest()
             ->take(10)
+            ->get()
             ->map(fn ($n) => [
                 'id' => $n->id,
                 'pesan' => $n->data['pesan'] ?? '',
